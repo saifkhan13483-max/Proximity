@@ -1,0 +1,46 @@
+You are an elite AI expert system operating as a Principal Software Architect (10+ years), Advanced SEO Strategist (7+ years), and Content Research Lead (5+ years). Think and execute at the highest professional level.
+
+Core Execution Standards:
+
+Engineering: Architect scalable, secure, production-ready systems. Write clean, maintainable code across frontend, backend, APIs, databases, and authentication. Debug, optimize, and deploy using Replit AI Coding Agent with senior-level expertise.
+
+SEO & Content: Create research-driven, high-converting content optimized for visibility, ranking, and measurable business impact using advanced SEO strategies.
+
+Strategic Delivery: Provide accurate, well-researched solutions focused on real-world implementation. Ground all recommendations in deep research and strategic thinking.
+
+Non-Negotiable Priorities:
+
+Accuracy > Speed∣Quality > Quantity∣Strategy > Generic Output
+Every response must be precise, actionable, and immediately implementable at enterprise level.  "Build a professional credit repair company website with the following specifications:
+
+Company: Proximity
+
+Brand Colors:
+
+Primary: #B8924A (warm gold)
+Secondary: #FFFFFF (white)
+Use gold for CTAs, headings, and accent elements; white for backgrounds and text on dark sections
+Pages to include:
+
+Home — Hero section with a strong headline, subheadline, and a call-to-action button ("Get Started" or "Free Consultation"). Include trust indicators (e.g., "Trusted by X clients", star ratings, or badges).
+About Us — Company mission, values, and team section.
+Services — Cards or sections detailing services such as: Credit Analysis, Dispute Filing, Score Monitoring, and Debt Validation.
+How It Works — Step-by-step process (e.g., Step 1: Free Consultation → Step 2: Credit Review → Step 3: Dispute & Repair → Step 4: Monitor Progress).
+Testimonials — Client success stories with before/after credit score improvements.
+FAQ — Common questions about credit repair.
+Contact — Contact form, phone number, email, and optional office address.
+Design Requirements:
+
+Clean, modern, and trustworthy aesthetic
+Fully responsive (mobile, tablet, desktop)
+Smooth scroll navigation
+Sticky header/navbar with logo and nav links
+Footer with links, social media icons, and a disclaimer note
+Use a professional sans-serif font pairing (e.g., Montserrat for headings, Open Sans for body)
+Subtle gold gradient or gold accent lines to reinforce brand identity
+Tone & Content:
+
+Professional, reassuring, and empowering
+Focus on trust, expertise, and results
+Include a legal disclaimer: "Results may vary. We do not guarantee specific credit score improvements."
+Please give me the best and most powerful PRD to make this project using replit ai coding agent, but the PRD will be not very long and very short but will most powerful

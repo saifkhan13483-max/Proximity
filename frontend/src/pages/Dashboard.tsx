@@ -186,13 +186,13 @@ export default function Dashboard() {
       {/* ── Top Nav ── */}
       <div className="border-b border-white/6 bg-[#080808]/95 backdrop-blur-xl sticky top-0 z-30">
         <div className="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
-          <div className="flex items-center gap-3">
+          <Link to="/" className="flex items-center gap-3 group">
             <ProximityLogo size={32} />
             <div className="hidden sm:block">
-              <p className="font-heading font-bold text-white text-sm leading-none">Proximity</p>
+              <p className="font-heading font-bold text-white text-sm leading-none group-hover:text-gold-primary transition-colors duration-200">Proximity</p>
               <p className="font-body text-white/30 text-[10px] tracking-widest uppercase">Client Portal</p>
             </div>
-          </div>
+          </Link>
 
           <nav className="hidden md:flex items-center gap-1">
             {[

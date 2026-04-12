@@ -2,73 +2,73 @@ import type { FAQItem } from '@/types/index'
 
 export const faqs: FAQItem[] = [
   {
-    id: '1',
+    id: 'faq-1',
     category: 'about-credit-repair',
-    question: 'Is credit repair legal?',
+    question: 'What is credit repair and how does it work?',
     answer:
-      'Yes, absolutely. Credit repair is a legal process governed by the Fair Credit Reporting Act (FCRA) and Credit Repair Organizations Act (CROA). You have the legal right to dispute inaccurate, unverifiable, or outdated information on your credit report. Proximity Credit Repair operates in full compliance with all applicable federal and state laws.',
+      'Credit repair is the process of identifying and challenging inaccurate, outdated, or unverifiable negative items on your credit report. Under the Fair Credit Reporting Act (FCRA), you have the legal right to dispute any item a bureau cannot verify. A professional credit repair service manages this process on your behalf — from analysis to dispute letters to follow-up — maximizing results efficiently.',
   },
   {
-    id: '2',
+    id: 'faq-2',
     category: 'about-credit-repair',
-    question: 'How long does credit repair take?',
+    question: 'How long does it take to see results?',
     answer:
-      'Results vary based on your unique credit situation, but most clients begin seeing meaningful improvements within 30–90 days. Significant score increases typically occur over 3–6 months. The credit bureaus are legally required to investigate and respond to disputes within 30 days, which sets the baseline timeline.',
+      'Most clients begin seeing measurable improvements within 30 to 60 days of their first dispute cycle. Full results typically unfold over 3 to 6 months, depending on the number and complexity of negative items. Cases involving multiple collections, charge-offs, or bankruptcies may take 6 to 12 months for maximum improvement.',
   },
   {
-    id: '3',
+    id: 'faq-3',
     category: 'about-credit-repair',
-    question: 'Can you remove accurate negative items?',
+    question: 'Can I repair my credit myself without a service?',
     answer:
-      "We cannot — and will not — attempt to remove accurate, verifiable information. However, many items on credit reports are inaccurate, reported incorrectly, or cannot be verified by the reporting agency. These can be legally disputed and removed. We also negotiate goodwill deletions with creditors for accurate items in certain cases.",
+      'Yes — you have the legal right to dispute items directly with credit bureaus at no cost. However, professional services bring expertise in crafting effective dispute letters, understanding bureau processes, and managing multiple rounds of challenges simultaneously. Most clients find that professional assistance delivers faster and more comprehensive results.',
   },
   {
-    id: '4',
+    id: 'faq-4',
+    category: 'about-credit-repair',
+    question: 'Will credit repair hurt my credit score?',
+    answer:
+      'No. The process of disputing inaccurate items does not negatively impact your credit score. In fact, successfully removing negative items almost always improves your score. The only actions that temporarily lower your score are new hard inquiries from credit applications, which are unrelated to the repair process itself.',
+  },
+  {
+    id: 'faq-5',
     category: 'about-credit-repair',
     question: 'What types of negative items can be removed?',
     answer:
-      "Common items that are frequently challenged and removed include: late payments reported incorrectly, accounts that don't belong to you (identity theft or mixed files), outdated collections (over 7 years old), charged-off accounts with reporting errors, medical debts that were already paid, and unverifiable collection accounts.",
+      'Items that can be challenged include late payments, collections, charge-offs, bankruptcies, foreclosures, repossessions, medical debt collections, identity theft entries, and duplicate accounts. Any item that is inaccurate, unverifiable, or reported beyond its legal time limit can be successfully disputed and removed.',
   },
   {
-    id: '5',
-    category: 'about-credit-repair',
-    question: 'How much can my score improve?',
-    answer:
-      "This depends on what's currently dragging your score down. Clients who have multiple negative items removed typically see increases of 50–200+ points. Our average client sees a 150-point improvement within 6 months. We'll give you a realistic assessment during your free consultation based on your actual credit situation.",
-  },
-  {
-    id: '6',
+    id: 'faq-6',
     category: 'working-with-proximity',
-    question: 'What happens during the free consultation?',
+    question: 'What makes Proximity Credit Repair different?',
     answer:
-      "During your free consultation, one of our certified credit specialists will review your credit reports, identify negative items impacting your score, and walk you through a personalized repair plan. There is no obligation to enroll — we want you to have all the information you need to make the best decision.",
+      'Proximity combines certified expertise with a fully transparent, client-first process. You receive a dedicated specialist, real-time progress updates, and a customized strategy — not a generic template. Our track record of over 10,000 clients helped and a 95% success rate reflects our commitment to delivering real, results-driven outcomes.',
   },
   {
-    id: '7',
+    id: 'faq-7',
     category: 'working-with-proximity',
-    question: 'How do I get started?',
+    question: 'How much does Proximity Credit Repair cost?',
     answer:
-      "Getting started is simple. Book your free consultation through our Contact page or call us directly. We'll pull your credit reports, conduct a full analysis, and present your personalized repair strategy — all at no cost and no obligation.",
+      'We offer several service tiers tailored to different credit situations and budgets. All pricing is disclosed upfront during your free consultation — we are fully transparent with no hidden fees. Contact us today to receive a personalized quote based on your specific credit profile and goals.',
   },
   {
-    id: '8',
+    id: 'faq-8',
     category: 'working-with-proximity',
-    question: 'Do I need to do anything while you\'re working on my credit?',
+    question: 'What information do I need to get started?',
     answer:
-      "We handle all the heavy lifting. However, we may ask you to provide supporting documents (like proof of payment or identity) to strengthen your disputes. We'll also provide guidance on actions to avoid — like applying for new credit — that could temporarily impact your score during the repair process.",
+      'To begin, we will need your full legal name, address, date of birth, and Social Security Number to pull your three-bureau credit reports. You can also provide copies of your reports if you already have them. Your free consultation takes about 30 minutes and gives us everything we need to build your personalized action plan.',
   },
   {
-    id: '9',
+    id: 'faq-9',
     category: 'working-with-proximity',
-    question: 'How do I track my progress?',
+    question: 'Is Proximity Credit Repair compliant with federal regulations?',
     answer:
-      "You'll receive monthly progress reports detailing every dispute filed, every response received, and every item removed. Our team is also available to answer questions at any time. We believe in radical transparency — you'll always know exactly what we're doing and why.",
+      'Absolutely. Proximity Credit Repair operates in full compliance with the Credit Repair Organizations Act (CROA), the Fair Credit Reporting Act (FCRA), and the Fair Debt Collection Practices Act (FDCPA). We never make promises we cannot legally keep, and all of our practices are transparent, ethical, and legally sound.',
   },
   {
-    id: '10',
+    id: 'faq-10',
     category: 'working-with-proximity',
-    question: 'What makes Proximity different from other credit repair companies?',
+    question: 'What happens if a dispute is not successful?',
     answer:
-      "Three things: results, transparency, and expertise. We have a 95% success rate across thousands of clients, we never make promises we can't keep, and our team includes certified credit consultants with deep knowledge of consumer protection law. We treat every client's situation as unique and build a custom strategy — not a one-size-fits-all approach.",
+      'Not all items are successfully removed in the first round. When a bureau verifies an item, we analyze their response, adjust our strategy, and submit a new challenge if grounds exist. We continue working on your behalf throughout the length of your service agreement, and we are transparent with you about the realistic outcomes for every item on your report.',
   },
 ]

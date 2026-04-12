@@ -3,58 +3,66 @@ import type { Service } from '@/types/index'
 export const services: Service[] = [
   {
     id: 'credit-analysis',
-    icon: 'BarChart3',
+    icon: 'BarChart2',
     title: 'Credit Analysis',
-    shortDescription: 'Deep dive into your credit reports to identify every negative item holding you back.',
+    shortDescription:
+      'A thorough review of your full credit report to identify errors, negative items, and opportunities for improvement.',
     description:
-      'Our certified credit analysts pull and review your reports from all three major bureaus — Equifax, Experian, and TransUnion — identifying inaccurate, outdated, and unverifiable items that are suppressing your score.',
+      'Our certified specialists perform a comprehensive, three-bureau credit analysis to map every factor affecting your score. We identify every inaccuracy, outdated record, and negative item, then build a custom action plan tailored to your unique credit profile.',
     benefits: [
-      'Full tri-bureau credit report review',
-      'Detailed score impact assessment',
-      'Personalized repair roadmap',
-      'Monthly progress tracking',
+      'Identify all negative items dragging your score down',
+      'Spot reporting errors and inaccuracies across all three bureaus',
+      'Receive a personalized, prioritized repair strategy',
+      'Understand exactly what is impacting your score and why',
+      'Get a clear baseline to measure your progress against',
     ],
   },
   {
     id: 'dispute-filing',
     icon: 'FileText',
     title: 'Dispute Filing',
-    shortDescription: 'We draft and submit legally compliant disputes to bureaus and creditors on your behalf.',
+    shortDescription:
+      'We draft and submit expert dispute letters to all three credit bureaus on your behalf.',
     description:
-      "Our team prepares customized dispute letters backed by consumer protection law (FCRA & FDCPA) targeting each negative item specifically. We handle all correspondence so you don't have to.",
+      'Our experienced dispute specialists craft legally precise challenge letters targeting inaccurate, unverifiable, or outdated items on your credit report. We manage the entire process — from drafting to follow-up — so you never have to navigate the bureaucracy alone.',
     benefits: [
-      'FCRA-compliant dispute letters',
-      'Direct bureau and creditor disputes',
-      'Goodwill deletion requests',
-      'Escalation to CFPB when necessary',
+      "Expert dispute letters tailored to each bureau's requirements",
+      'Track the status of every open dispute in real time',
+      'Follow-up correspondence handled entirely on your behalf',
+      'Challenge collections, late payments, charge-offs, and more',
+      'Legally compliant with the Fair Credit Reporting Act (FCRA)',
     ],
   },
   {
     id: 'score-monitoring',
     icon: 'TrendingUp',
     title: 'Score Monitoring',
-    shortDescription: 'Real-time alerts and monthly reporting so you always know where your score stands.',
+    shortDescription:
+      'Real-time alerts and monthly reports so you always know exactly where your credit stands.',
     description:
-      'We monitor your credit 24/7 and send alerts the moment your score changes, new items appear, or a dispute is resolved. Full monthly progress reports keep you informed every step of the way.',
+      'Stay fully informed with dedicated score monitoring that tracks changes across all three credit bureaus. Our monthly progress reports break down every improvement and flag any new negative items the moment they appear, so you are always one step ahead.',
     benefits: [
-      '24/7 credit monitoring',
-      'Real-time score change alerts',
-      'Monthly progress reports',
-      'Identity theft protection alerts',
+      'Real-time alerts for any new negative items or inquiries',
+      'Monthly three-bureau score summary reports',
+      'Track score improvements as disputes are resolved',
+      'Identify potential fraud or identity theft early',
+      'Expert analysis of each change and what it means for you',
     ],
   },
   {
     id: 'debt-validation',
     icon: 'Shield',
     title: 'Debt Validation',
-    shortDescription: "Force collectors to prove the debt is yours — and remove it if they can't.",
+    shortDescription:
+      'We demand proof that collectors have the legal right to collect — and challenge what they cannot verify.',
     description:
-      'Under the FDCPA, you have the right to demand that any debt collector validate the debt. We send legally compliant validation letters and, when collectors fail to respond properly, pursue removal from your credit report.',
+      'Under the Fair Debt Collection Practices Act, debt collectors are legally required to validate the debts they claim you owe. Our team sends certified validation requests to collectors and challenges any debt that cannot be properly verified, protecting your rights and your credit.',
     benefits: [
-      'FDCPA debt validation letters',
-      'Collection account removal strategies',
-      'Cease and desist if needed',
-      'Harassment protection guidance',
+      'Force collectors to prove the debt is legally valid and accurate',
+      'Remove unverifiable or statute-barred debts from your report',
+      'Protect your rights under the FDCPA',
+      'Challenge inflated balances and unauthorized fees',
+      'Negotiate removal of verified debts as part of payment agreements',
     ],
   },
 ]

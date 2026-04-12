@@ -6,6 +6,7 @@ import {
 } from 'lucide-react'
 import { useAuthStore } from '@store/authStore'
 import { plans } from '@data/plans'
+import ProximityLogo from '@components/ui/ProximityLogo'
 
 const STAT_CARDS = [
   { label: 'Credit Score', value: '—', sub: 'Link your report to track', icon: TrendingUp, color: 'from-gold-primary/20 to-gold-dark/10' },
@@ -64,9 +65,7 @@ export default function Dashboard() {
       <div className="border-b border-gold-primary/15 bg-[#0d0d0d]/90 backdrop-blur-md sticky top-0 z-30">
         <div className="container mx-auto px-4 h-16 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded-lg bg-gold-gradient flex items-center justify-center">
-              <span className="font-heading font-black text-white text-sm">P</span>
-            </div>
+            <ProximityLogo size={34} />
             <div className="hidden sm:block">
               <p className="font-heading font-bold text-white text-sm leading-none">Proximity</p>
               <p className="font-body text-white/35 text-[10px] tracking-widest uppercase">Client Portal</p>

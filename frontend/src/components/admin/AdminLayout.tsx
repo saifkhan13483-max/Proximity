@@ -7,6 +7,7 @@ import {
 } from 'lucide-react'
 import { useAuthStore } from '@store/authStore'
 import { cn } from '@lib/utils'
+import ProximityLogo from '@components/ui/ProximityLogo'
 
 const NAV_ITEMS = [
   { label: 'Dashboard', href: '/admin', icon: LayoutDashboard },
@@ -29,8 +30,11 @@ function SidebarContent({ onClose }: { onClose?: () => void }) {
     <div className="flex flex-col h-full">
       <div className="px-5 py-5 border-b border-white/5">
         <div className="flex items-center gap-3">
-          <div className="w-9 h-9 rounded-xl bg-gold-gradient flex items-center justify-center flex-shrink-0">
-            <ShieldCheck size={17} className="text-white" />
+          <div className="relative flex-shrink-0">
+            <ProximityLogo size={36} />
+            <div className="absolute -bottom-1 -right-1 w-4 h-4 rounded-full bg-[#111] flex items-center justify-center border border-white/10">
+              <ShieldCheck size={9} className="text-gold-primary" />
+            </div>
           </div>
           <div>
             <p className="font-heading font-black text-white text-sm leading-none">Admin Panel</p>

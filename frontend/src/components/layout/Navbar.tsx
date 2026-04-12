@@ -7,6 +7,7 @@ import {
 } from 'lucide-react'
 import { navLinks } from '@config/navigation'
 import { cn } from '@lib/utils'
+import ProximityLogo from '@components/ui/ProximityLogo'
 import { useUIStore } from '@store/uiStore'
 import { useAuthStore } from '@store/authStore'
 
@@ -34,12 +35,8 @@ function LogoMark() {
       className="flex items-center gap-2 sm:gap-2.5 group flex-shrink-0"
       aria-label="Proximity Credit Repair — Home"
     >
-      <div className="relative w-8 h-8 sm:w-9 sm:h-9 flex-shrink-0">
-        <div className="absolute inset-0 rounded-lg bg-gold-gradient opacity-90 group-hover:opacity-100 transition-opacity duration-300" />
-        <div className="absolute inset-0 rounded-lg flex items-center justify-center">
-          <span className="font-heading font-black text-white text-sm sm:text-base leading-none">P</span>
-        </div>
-        <div className="absolute -inset-0.5 rounded-lg bg-gold-gradient opacity-0 group-hover:opacity-30 blur-sm transition-opacity duration-300" />
+      <div className="relative flex-shrink-0 group-hover:drop-shadow-[0_0_8px_rgba(184,146,74,0.6)] transition-all duration-300">
+        <ProximityLogo size={36} className="sm:w-[38px] sm:h-[38px]" />
       </div>
       <div className="flex flex-col leading-none">
         <span className="font-heading font-extrabold text-sm sm:text-base lg:text-lg gold-gradient-text tracking-tight">

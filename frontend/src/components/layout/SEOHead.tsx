@@ -7,6 +7,7 @@ interface SEOHeadProps {
   ogImage?: string
   canonicalPath?: string
   schemaMarkup?: Record<string, unknown>
+  keywords?: string
 }
 
 function setOrUpdateMeta(selector: string, attribute: string, value: string): HTMLElement {
@@ -29,32 +30,46 @@ function setOrUpdateMeta(selector: string, attribute: string, value: string): HT
 export default function SEOHead({
   title,
   description,
-  ogImage = '/og-image.jpg',
+  ogImage = '/og-image.png',
   canonicalPath,
   schemaMarkup,
+  keywords,
 }: SEOHeadProps) {
   useEffect(() => {
     const siteUrl = siteMetadata.siteUrl
     const fullTitle = `${title} | Proximity Credit Repair`
     const canonicalUrl = `${siteUrl}${canonicalPath || ''}`
+    const absoluteOgImage = ogImage.startsWith('http') ? ogImage : `${siteUrl}${ogImage}`
 
     document.title = fullTitle
 
-    const injected: HTMLElement[] = []
-
     const addMeta = (selector: string, attr: string, value: string) => {
-      injected.push(setOrUpdateMeta(selector, attr, value))
+      setOrUpdateMeta(selector, attr, value)
     }
 
     addMeta('meta[name="description"]', 'content', description)
-    addMeta(`meta[property="og:title"]`, 'content', fullTitle)
-    addMeta(`meta[property="og:description"]`, 'content', description)
-    addMeta(`meta[property="og:image"]`, 'content', ogImage)
-    addMeta(`meta[property="og:url"]`, 'content', canonicalUrl)
-    addMeta(`meta[name="twitter:card"]`, 'content', 'summary_large_image')
-    addMeta(`meta[name="twitter:title"]`, 'content', fullTitle)
-    addMeta(`meta[name="twitter:description"]`, 'content', description)
-    addMeta(`link[rel="canonical"]`, 'href', canonicalUrl)
+    addMeta('meta[name="robots"]', 'content', 'index, follow')
+
+    if (keywords) {
+      addMeta('meta[name="keywords"]', 'content', keywords)
+    }
+
+    addMeta('meta[property="og:type"]', 'content', 'website')
+    addMeta('meta[property="og:site_name"]', 'content', 'Proximity Credit Repair')
+    addMeta('meta[property="og:title"]', 'content', fullTitle)
+    addMeta('meta[property="og:description"]', 'content', description)
+    addMeta('meta[property="og:image"]', 'content', absoluteOgImage)
+    addMeta('meta[property="og:image:width"]', 'content', '1200')
+    addMeta('meta[property="og:image:height"]', 'content', '630')
+    addMeta('meta[property="og:url"]', 'content', canonicalUrl)
+
+    addMeta('meta[name="twitter:card"]', 'content', 'summary_large_image')
+    addMeta('meta[name="twitter:site"]', 'content', siteMetadata.twitterHandle)
+    addMeta('meta[name="twitter:title"]', 'content', fullTitle)
+    addMeta('meta[name="twitter:description"]', 'content', description)
+    addMeta('meta[name="twitter:image"]', 'content', absoluteOgImage)
+
+    addMeta('link[rel="canonical"]', 'href', canonicalUrl)
 
     let schemaEl: HTMLScriptElement | null = null
     if (schemaMarkup) {
@@ -67,7 +82,7 @@ export default function SEOHead({
     return () => {
       if (schemaEl) document.head.removeChild(schemaEl)
     }
-  }, [title, description, ogImage, canonicalPath, schemaMarkup])
+  }, [title, description, ogImage, canonicalPath, schemaMarkup, keywords])
 
   return null
 }

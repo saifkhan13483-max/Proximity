@@ -2,14 +2,15 @@ import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { Phone, Mail, MapPin, Facebook, Instagram, Twitter, Linkedin } from 'lucide-react'
 import { navLinks, footerServiceLinks } from '@config/navigation'
+import { siteConfig } from '@config/site'
 import { SectionDivider } from '@components/ui'
 
 const socialLinks = [
-  { icon: Facebook, label: 'Facebook', href: '#' },
-  { icon: Instagram, label: 'Instagram', href: '#' },
-  { icon: Twitter, label: 'Twitter', href: '#' },
-  { icon: Linkedin, label: 'LinkedIn', href: '#' },
-]
+  { icon: Facebook, label: 'Facebook', href: siteConfig.social.facebook },
+  { icon: Instagram, label: 'Instagram', href: siteConfig.social.instagram },
+  { icon: Twitter, label: 'Twitter / X', href: siteConfig.social.twitter },
+  { icon: Linkedin, label: 'LinkedIn', href: siteConfig.social.linkedin },
+].filter((s) => s.href)
 
 export default function Footer() {
   return (
@@ -26,19 +27,23 @@ export default function Footer() {
             <p className="text-muted-text font-body text-caption leading-relaxed mb-6">
               Rebuilding credit. Rebuilding lives.
             </p>
-            <div className="flex gap-4">
-              {socialLinks.map(({ icon: Icon, label, href }) => (
-                <motion.a
-                  key={label}
-                  href={href}
-                  aria-label={`Follow Proximity Credit Repair on ${label}`}
-                  whileHover={{ scale: 1.15 }}
-                  className="text-white/40 hover:text-gold-primary transition-colors duration-200"
-                >
-                  <Icon size={20} />
-                </motion.a>
-              ))}
-            </div>
+            {socialLinks.length > 0 && (
+              <div className="flex gap-4">
+                {socialLinks.map(({ icon: Icon, label, href }) => (
+                  <motion.a
+                    key={label}
+                    href={href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label={`Follow Proximity Credit Repair on ${label}`}
+                    whileHover={{ scale: 1.15 }}
+                    className="text-white/40 hover:text-gold-primary transition-colors duration-200"
+                  >
+                    <Icon size={20} />
+                  </motion.a>
+                ))}
+              </div>
+            )}
           </div>
 
           <div>
@@ -79,25 +84,25 @@ export default function Footer() {
               <li className="flex items-start">
                 <Phone className="text-gold-primary w-4 h-4 mr-2 flex-shrink-0 mt-0.5" />
                 <a
-                  href="tel:8005550192"
+                  href={siteConfig.phoneHref}
                   className="text-white/60 hover:text-white text-caption font-body transition-colors duration-200"
                 >
-                  (800) 555-0192
+                  {siteConfig.phone}
                 </a>
               </li>
               <li className="flex items-start">
                 <Mail className="text-gold-primary w-4 h-4 mr-2 flex-shrink-0 mt-0.5" />
                 <a
-                  href="mailto:hello@proximitycreditrepair.com"
+                  href={`mailto:${siteConfig.email}`}
                   className="text-white/60 hover:text-white text-caption font-body transition-colors duration-200"
                 >
-                  hello@proximitycreditrepair.com
+                  {siteConfig.email}
                 </a>
               </li>
               <li className="flex items-start">
                 <MapPin className="text-gold-primary w-4 h-4 mr-2 flex-shrink-0 mt-0.5" />
                 <span className="text-white/60 text-caption font-body">
-                  123 Financial Plaza, Suite 400, Atlanta, GA 30301
+                  {siteConfig.address}
                 </span>
               </li>
             </ul>
@@ -110,7 +115,7 @@ export default function Footer() {
 
         <div className="flex flex-col md:flex-row justify-between items-center gap-2 pt-6">
           <p className="text-muted-text text-caption">
-            © 2026 Proximity Credit Repair. All rights reserved.
+            © {new Date().getFullYear()} Proximity Credit Repair. All rights reserved.
           </p>
           <p className="text-muted-text text-label italic">
             Results may vary. We do not guarantee specific credit score improvements.

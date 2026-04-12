@@ -73,6 +73,7 @@ import { useState } from 'react'
           description="Meet the expert team behind Proximity Credit Repair. Dedicated to empowering clients with proven, transparent credit repair strategies. Discover our mission, values, and the specialists fighting for your financial future."
           canonicalPath="/about"
           schemaMarkup={aboutSchema}
+          keywords="credit repair team, about proximity credit repair, credit repair experts, certified credit specialists, credit repair company"
         />
 
         <div className="bg-hero-gradient py-20 px-4">

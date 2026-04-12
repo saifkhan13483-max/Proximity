@@ -45,6 +45,16 @@ function StatItem({ stat }: { stat: Stat }) {
 }
 
 export default function HeroSection() {
+  const handleScrollDown = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    e.preventDefault()
+    const el = document.getElementById('services')
+    if (el) {
+      el.scrollIntoView({ behavior: 'smooth' })
+    } else {
+      window.scrollBy({ top: window.innerHeight, behavior: 'smooth' })
+    }
+  }
+
   return (
     <section className="min-h-screen bg-hero-gradient relative overflow-hidden flex flex-col items-center justify-center text-center px-4">
       <div className="absolute inset-0 bg-gold-glow pointer-events-none" />
@@ -120,9 +130,14 @@ export default function HeroSection() {
         animate={{ y: [0, 8, 0] }}
         transition={{ repeat: Infinity, duration: 1.5 }}
       >
-        <Link to="#services" aria-label="Scroll down">
+        <a
+          href="#services"
+          aria-label="Scroll down to services"
+          onClick={handleScrollDown}
+          className="block"
+        >
           <ChevronDown className="text-gold-primary/60" size={32} />
-        </Link>
+        </a>
       </motion.div>
     </section>
   )

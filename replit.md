@@ -81,7 +81,30 @@ npm run dev --prefix frontend    # Dev server at localhost:5000
 npm run build --prefix frontend  # Production build
 ```
 
+## Environment Variables
+See `.env.example` for all supported environment variables:
+- `VITE_SITE_URL` — canonical site URL for SEO (defaults to `https://proximity-credit-repair.replit.app`)
+- `VITE_CONTACT_API_URL` — POST endpoint for contact form submissions (Formspree or custom backend). Without this, the form shows an error directing users to call directly.
+- `VITE_ANALYTICS_ID` — Google Analytics 4 Measurement ID (e.g. `G-XXXXXXXXXX`)
+
+## Production Readiness (Completed)
+- All contact info unified: phone `(800) 555-0192`, email `hello@proximitycreditrepair.com`, address `123 Financial Plaza, Suite 400, Atlanta, GA 30301` — sourced from `siteConfig` everywhere
+- Social media links removed from Footer until real URLs are configured in `siteConfig`
+- `robots.txt` and `sitemap.xml` created in `frontend/public/`
+- OG image generated and placed at `frontend/public/og-image.png`
+- `SEOHead` updated: adds `og:type`, `og:site_name`, `og:image:width/height`, `twitter:image`, `meta[name=robots]`, and per-page `keywords`
+- All 7 pages have unique meta keywords
+- `index.html` has full OG/Twitter card meta, theme-color, apple-touch-icon, color-scheme
+- `OptimizedImage` has `onError` fallback rendering (shows alt text div or fallbackSrc)
+- `Modal` has proper focus trap and restores focus on close
+- `analyticsService` integrated with GA4's `window.gtag` API, no console.logs
+- `contactService` returns honest error when `VITE_CONTACT_API_URL` is not configured (no fake success)
+- Team member photos use `ui-avatars.com` API (gold/white initials avatars) until real photos are provided
+- Contact page: "Interactive map coming soon" replaced with real Google Maps embed (dark-theme via CSS filter)
+- HeroSection scroll-down link uses proper `<a>` tag with smooth scroll handler (not React Router `<Link>`)
+- Navbar `boxShadow` animation fixed (was animating to `"none"` which Framer Motion can't interpolate)
+- Dynamic copyright year in Footer (no hardcoded year)
+
 ## Notes
 - Framer Motion pinned to v10 (v11+ dist structure incompatibility with Vite)
-- Contact form simulates API submission (no backend connected yet)
 - `v7_startTransition` future flag set on `RouterProvider` to suppress React Router v7 migration warning

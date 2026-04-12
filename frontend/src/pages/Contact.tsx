@@ -2,7 +2,7 @@ import { useEffect, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { Phone, Mail, MapPin, Map, Loader2, CheckCircle } from 'lucide-react'
+import { Phone, Mail, MapPin, Loader2, CheckCircle } from 'lucide-react'
 import PageWrapper from '@components/layout/PageWrapper'
 import SEOHead from '@components/layout/SEOHead'
 import Section from '@components/layout/Section'
@@ -13,6 +13,7 @@ import { formatPhone } from '@lib/utils'
 import { useFormStore } from '@store/formStore'
 import { useUIStore } from '@store/uiStore'
 import { submitContactForm } from '@services/contactService'
+import { siteConfig } from '@config/site'
 import type { ContactFormData } from '@/types/index'
 
 const serviceOptions = [
@@ -62,7 +63,7 @@ export default function Contact() {
     } else {
       setSubmissionStatus('error')
       addToast({
-        message: 'Something went wrong. Please try again.',
+        message: result.message,
         type: 'error',
         duration: 6000,
       })
@@ -83,6 +84,7 @@ export default function Contact() {
         title="Contact Us — Start Your Free Credit Consultation"
         description="Get in touch with Proximity Credit Repair. Schedule your free consultation and take the first step toward rebuilding your credit. Call, email, or use our contact form."
         canonicalPath="/contact"
+        keywords="contact credit repair, free credit consultation, credit repair near me, speak to credit expert"
       />
 
       <div className="bg-hero-gradient py-20 px-4">
@@ -101,23 +103,39 @@ export default function Contact() {
             </h2>
             <div className="flex items-start gap-3 mb-5">
               <Phone className="text-gold-primary flex-shrink-0 mt-0.5" size={20} />
-              <span className="font-body text-body-base text-body-text">(800) 555-0192</span>
+              <a
+                href={siteConfig.phoneHref}
+                className="font-body text-body-base text-body-text hover:text-gold-primary transition-colors duration-200"
+              >
+                {siteConfig.phone}
+              </a>
             </div>
             <div className="flex items-start gap-3 mb-5">
               <Mail className="text-gold-primary flex-shrink-0 mt-0.5" size={20} />
-              <span className="font-body text-body-base text-body-text">
-                hello@proximitycreditrepair.com
-              </span>
+              <a
+                href={`mailto:${siteConfig.email}`}
+                className="font-body text-body-base text-body-text hover:text-gold-primary transition-colors duration-200"
+              >
+                {siteConfig.email}
+              </a>
             </div>
             <div className="flex items-start gap-3 mb-5">
               <MapPin className="text-gold-primary flex-shrink-0 mt-0.5" size={20} />
               <span className="font-body text-body-base text-body-text">
-                123 Financial Plaza, Suite 400, Atlanta, GA 30301
+                {siteConfig.address}
               </span>
             </div>
-            <div className="bg-card-black rounded-card h-56 flex flex-col items-center justify-center gap-2 mt-6">
-              <Map className="text-gold-primary" size={40} />
-              <p className="text-muted-text text-caption">Interactive map coming soon</p>
+            <div className="rounded-card overflow-hidden mt-6 h-56 border border-gold-primary/10">
+              <iframe
+                title="Proximity Credit Repair office location"
+                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d424143.73836082885!2d-84.56201937588938!3d33.76731936017985!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x88f5045d6993098d%3A0x66fede2f990b630b!2sAtlanta%2C%20GA!5e0!3m2!1sen!2sus!4v1620000000000!5m2!1sen!2sus"
+                width="100%"
+                height="100%"
+                style={{ border: 0, filter: 'invert(90%) hue-rotate(180deg)' }}
+                allowFullScreen
+                loading="lazy"
+                referrerPolicy="no-referrer-when-downgrade"
+              />
             </div>
           </div>
 
@@ -212,7 +230,14 @@ export default function Contact() {
                     </Button>
                     {submissionStatus === 'error' && (
                       <p role="alert" className="text-red-400 text-label text-center font-body">
-                        Something went wrong. Please try again or call us at (800) 555-0192.
+                        Something went wrong. Please try again or call us at{' '}
+                        <a
+                          href={siteConfig.phoneHref}
+                          className="underline hover:text-red-300 transition-colors"
+                        >
+                          {siteConfig.phone}
+                        </a>
+                        .
                       </p>
                     )}
                   </motion.form>

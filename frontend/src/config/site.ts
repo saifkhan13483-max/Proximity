@@ -3,13 +3,15 @@ export const siteConfig = {
   tagline: 'Restore Your Credit, Reclaim Your Life',
   description:
     'Proximity Credit Repair helps clients remove negative items, boost credit scores, and achieve financial freedom through expert dispute filing and personalized service.',
-  phone: '(800) 555-0199',
-  email: 'hello@proximitycredit.com',
-  address: '1234 Financial District, Suite 500, Miami, FL 33101',
+  phone: '(800) 555-0192',
+  phoneHref: 'tel:+18005550192',
+  email: 'hello@proximitycreditrepair.com',
+  address: '123 Financial Plaza, Suite 400, Atlanta, GA 30301',
   social: {
-    facebook: '#',
-    instagram: '#',
-    linkedin: '#',
+    facebook: '',
+    instagram: '',
+    linkedin: '',
+    twitter: '',
   },
 }
 

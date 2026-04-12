@@ -35,6 +35,7 @@ import { useState } from 'react'
           description="Find answers to the most common credit repair questions. Learn about the process, timeline, compliance, and what to expect when working with Proximity Credit Repair."
           canonicalPath="/faq"
           schemaMarkup={faqSchema}
+          keywords="credit repair FAQ, how does credit repair work, credit repair questions, credit score questions, credit repair timeline"
         />
 
         <div className="bg-hero-gradient py-20 px-4">

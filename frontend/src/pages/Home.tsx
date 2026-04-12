@@ -26,6 +26,7 @@ import PageWrapper from '@components/layout/PageWrapper'
           description={siteMetadata.siteDescription}
           canonicalPath="/"
           schemaMarkup={homeSchema}
+          keywords="credit repair, fix credit score, remove negative items, credit dispute, credit repair service, boost credit score, credit restoration"
         />
         <HeroSection />
         <ServicesPreview />

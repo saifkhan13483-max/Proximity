@@ -207,7 +207,7 @@ export default function Navbar() {
           animate={{
             backgroundColor: isScrolled ? 'rgba(10,10,10,0.92)' : 'rgba(10,10,10,0)',
             borderBottomColor: isScrolled ? 'rgba(184,146,74,0.15)' : 'rgba(184,146,74,0)',
-            boxShadow: isScrolled ? '0 4px 32px rgba(0,0,0,0.4)' : 'none',
+            boxShadow: isScrolled ? '0 4px 32px rgba(0,0,0,0.4)' : '0 0px 0px rgba(0,0,0,0)',
           }}
           transition={{ duration: 0.3, ease: 'easeInOut' }}
           className="relative border-b backdrop-blur-md"

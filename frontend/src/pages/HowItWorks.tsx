@@ -65,6 +65,7 @@ import { motion } from 'framer-motion'
           title="How Credit Repair Works — Our Proven 4-Step Process"
           description="Learn exactly how Proximity Credit Repair works. From your free consultation to full credit review, expert dispute filing, and ongoing progress monitoring — four steps to a better score."
           canonicalPath="/how-it-works"
+          keywords="how credit repair works, credit repair process, credit repair steps, credit dispute process, how to fix credit score"
         />
 
         <div className="bg-hero-gradient py-20 px-4">

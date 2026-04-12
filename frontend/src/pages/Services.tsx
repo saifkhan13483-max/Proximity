@@ -72,6 +72,7 @@ import { motion } from 'framer-motion'
           description="Explore Proximity Credit Repair's full suite of services: Credit Analysis, Dispute Filing, Score Monitoring, and Debt Validation. Expert strategies tailored to your unique credit profile."
           canonicalPath="/services"
           schemaMarkup={servicesSchema}
+          keywords="credit analysis, dispute filing, score monitoring, debt validation, credit repair services, remove negative items, credit bureau disputes"
         />
 
         <div className="bg-hero-gradient py-20 px-4">

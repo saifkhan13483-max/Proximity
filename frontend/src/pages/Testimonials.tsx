@@ -25,6 +25,7 @@ import { motion } from 'framer-motion'
           title="Client Testimonials & Credit Repair Success Stories"
           description="Read real success stories from Proximity Credit Repair clients who improved their credit scores by 100–175+ points. Before/after results from clients across the United States."
           canonicalPath="/testimonials"
+          keywords="credit repair testimonials, credit repair success stories, credit score improvement results, credit repair reviews"
         />
 
         <div className="bg-hero-gradient py-20 px-4">

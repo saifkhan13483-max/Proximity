@@ -9,7 +9,6 @@ import { useUIStore } from '@store/uiStore'
 
 export default function Navbar() {
   const mobileMenuOpen = useUIStore((state) => state.mobileMenuOpen)
-  const openMobileMenu = useUIStore((state) => state.openMobileMenu)
   const closeMobileMenu = useUIStore((state) => state.closeMobileMenu)
   const toggleMobileMenu = useUIStore((state) => state.toggleMobileMenu)
   const { isScrolled } = useScrollPosition()
@@ -43,12 +42,17 @@ export default function Navbar() {
                 to={link.href}
                 className={cn(
                   'font-body text-sm font-medium transition-colors duration-200 relative pb-1',
-                  isActive
-                    ? 'text-gold-primary after:absolute after:bottom-0 after:left-0 after:right-0 after:h-0.5 after:bg-gold-primary'
-                    : 'text-white/80 hover:text-white'
+                  isActive ? 'text-gold-primary' : 'text-white/80 hover:text-white'
                 )}
               >
                 {link.label}
+                {isActive && (
+                  <motion.span
+                    layoutId="nav-underline"
+                    className="absolute bottom-0 left-0 right-0 h-0.5 bg-gold-primary"
+                    transition={{ type: 'spring', stiffness: 400, damping: 30 }}
+                  />
+                )}
               </Link>
             )
           })}
@@ -85,6 +89,9 @@ export default function Navbar() {
               animate={{ x: 0 }}
               exit={{ x: '100%' }}
               transition={{ type: 'tween', duration: 0.3 }}
+              role="dialog"
+              aria-label="Navigation menu"
+              aria-modal="true"
               className="fixed inset-y-0 right-0 w-64 bg-near-black z-50 flex flex-col p-6 lg:hidden"
             >
               <button

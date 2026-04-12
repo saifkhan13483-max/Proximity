@@ -1,5 +1,6 @@
 import { Suspense, useEffect } from 'react'
 import { Outlet, useLocation } from 'react-router-dom'
+import { motion, AnimatePresence } from 'framer-motion'
 import Navbar from './Navbar'
 import Footer from './Footer'
 import { ToastContainer, BackToTopButton, LoadingScreen } from '@components/ui'
@@ -13,6 +14,8 @@ function ScrollToTop() {
 }
 
 export default function AppLayout() {
+  const location = useLocation()
+
   return (
     <>
       <a
@@ -23,9 +26,19 @@ export default function AppLayout() {
       </a>
       <ScrollToTop />
       <Navbar />
-      <Suspense fallback={<LoadingScreen />}>
-        <Outlet />
-      </Suspense>
+      <AnimatePresence mode="wait">
+        <motion.div
+          key={location.pathname}
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -10 }}
+          transition={{ duration: 0.4, ease: 'easeInOut' }}
+        >
+          <Suspense fallback={<LoadingScreen />}>
+            <Outlet />
+          </Suspense>
+        </motion.div>
+      </AnimatePresence>
       <Footer />
       <ToastContainer />
       <BackToTopButton />

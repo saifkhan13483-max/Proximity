@@ -4,59 +4,73 @@ interface ProximityLogoProps {
 }
 
 export default function ProximityLogo({ size = 34, className = '' }: ProximityLogoProps) {
-  const gid = `pcr-card-${size}`
-  const cid = `pcr-chip-${size}`
-  const w = Math.round(size * (40 / 28))
+  const uid = `pcr-${size}`
   return (
     <svg
-      width={w}
+      width={size}
       height={size}
-      viewBox="0 0 40 28"
+      viewBox="0 0 40 40"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
       className={className}
       aria-label="Proximity Credit Repair logo"
     >
       <defs>
-        <linearGradient id={gid} x1="0" y1="0" x2="40" y2="28" gradientUnits="userSpaceOnUse">
+        <linearGradient id={`${uid}-bg`} x1="0" y1="0" x2="40" y2="40" gradientUnits="userSpaceOnUse">
           <stop offset="0%" stopColor="#D4AF72" />
-          <stop offset="55%" stopColor="#B8924A" />
-          <stop offset="100%" stopColor="#8B6A2E" />
+          <stop offset="50%" stopColor="#B8924A" />
+          <stop offset="100%" stopColor="#7A5C22" />
         </linearGradient>
-        <linearGradient id={cid} x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0%" stopColor="#F0D898" />
-          <stop offset="100%" stopColor="#C8A055" />
+        <linearGradient id={`${uid}-shine`} x1="0" y1="0" x2="0" y2="22" gradientUnits="userSpaceOnUse">
+          <stop offset="0%" stopColor="rgba(255,255,255,0.28)" />
+          <stop offset="100%" stopColor="rgba(255,255,255,0)" />
         </linearGradient>
+        <linearGradient id={`${uid}-p`} x1="14" y1="10" x2="14" y2="30" gradientUnits="userSpaceOnUse">
+          <stop offset="0%" stopColor="rgba(255,255,255,1)" />
+          <stop offset="100%" stopColor="rgba(255,255,255,0.80)" />
+        </linearGradient>
+        <filter id={`${uid}-glow`} x="-30%" y="-30%" width="160%" height="160%">
+          <feGaussianBlur in="SourceGraphic" stdDeviation="1.5" result="blur" />
+          <feColorMatrix in="blur" type="matrix" values="1 0.8 0 0 0  0.8 0.6 0 0 0  0 0 0 0 0  0 0 0 0.6 0" result="golden" />
+          <feMerge><feMergeNode in="golden" /><feMergeNode in="SourceGraphic" /></feMerge>
+        </filter>
       </defs>
 
-      {/* Card body — gold gradient, no background square */}
-      <rect x="0.5" y="0.5" width="39" height="27" rx="3.5" fill={`url(#${gid})`} />
-      <rect x="0.5" y="0.5" width="39" height="27" rx="3.5" stroke="rgba(255,255,255,0.18)" strokeWidth="0.6" />
+      {/* Shield body */}
+      <path
+        d="M20 2.5 L36.5 8.5 L36.5 22 C36.5 31.5 28.5 37.8 20 39.5 C11.5 37.8 3.5 31.5 3.5 22 L3.5 8.5 Z"
+        fill={`url(#${uid}-bg)`}
+        filter={`url(#${uid}-glow)`}
+      />
 
-      {/* Magnetic stripe */}
-      <rect x="0" y="6" width="40" height="6" fill="rgba(0,0,0,0.35)" />
+      {/* Inner border */}
+      <path
+        d="M20 5 L34 10.5 L34 22 C34 29.8 27.5 35.5 20 37 C12.5 35.5 6 29.8 6 22 L6 10.5 Z"
+        fill="none"
+        stroke="rgba(255,255,255,0.20)"
+        strokeWidth="0.75"
+      />
 
-      {/* EMV chip */}
-      <rect x="5" y="14.5" width="8" height="6.5" rx="1.2" fill={`url(#${cid})`} />
-      <line x1="9" y1="14.5" x2="9" y2="21" stroke="rgba(0,0,0,0.22)" strokeWidth="0.7" />
-      <line x1="5" y1="17.75" x2="13" y2="17.75" stroke="rgba(0,0,0,0.22)" strokeWidth="0.7" />
+      {/* Shine top half */}
+      <path
+        d="M20 2.5 L36.5 8.5 L36.5 22 C36.5 31.5 28.5 37.8 20 39.5 C11.5 37.8 3.5 31.5 3.5 22 L3.5 8.5 Z"
+        fill={`url(#${uid}-shine)`}
+        style={{ mixBlendMode: 'overlay' }}
+      />
 
-      {/* "P" lettermark */}
+      {/* "P" lettermark — centered in shield */}
       <text
         x="20"
-        y="22.5"
+        y="27"
         fontFamily="Georgia, 'Times New Roman', serif"
-        fontSize="11"
+        fontSize="20"
         fontWeight="900"
-        fill="rgba(255,255,255,0.92)"
+        fill={`url(#${uid}-p)`}
+        textAnchor="middle"
         letterSpacing="-0.5"
       >
         P
       </text>
-
-      {/* Contactless signal arcs */}
-      <path d="M31 16 Q33.5 18 31 20" stroke="rgba(255,255,255,0.55)" strokeWidth="1" fill="none" strokeLinecap="round" />
-      <path d="M33 14.5 Q37 18 33 21.5" stroke="rgba(255,255,255,0.30)" strokeWidth="1" fill="none" strokeLinecap="round" />
     </svg>
   )
 }

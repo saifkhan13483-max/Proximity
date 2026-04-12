@@ -1,9 +1,10 @@
 import { useState } from 'react'
 import { Link, useNavigate, useLocation } from 'react-router-dom'
 import { motion } from 'framer-motion'
-import { Mail, Lock, Eye, EyeOff, ArrowRight, Shield } from 'lucide-react'
+import { Mail, Lock, Eye, EyeOff, ArrowRight } from 'lucide-react'
 import { useAuthStore } from '@store/authStore'
 import { loginUser } from '@services/authService'
+import ProximityLogo from '@components/ui/ProximityLogo'
 
 export default function Login() {
   const navigate = useNavigate()
@@ -41,8 +42,8 @@ export default function Login() {
         className="w-full max-w-md"
       >
         <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-gold-gradient mb-4 shadow-gold-md">
-            <Shield size={26} className="text-white" />
+          <div className="inline-flex items-center justify-center mb-4 drop-shadow-[0_0_16px_rgba(184,146,74,0.5)]">
+            <ProximityLogo size={56} />
           </div>
           <h1 className="font-heading text-3xl font-black text-white mb-2">Welcome Back</h1>
           <p className="font-body text-white/50 text-sm">Sign in to your Proximity client portal</p>

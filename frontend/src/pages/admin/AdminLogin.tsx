@@ -1,7 +1,8 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
-import { Mail, Lock, Eye, EyeOff, ShieldCheck } from 'lucide-react'
+import { Mail, Lock, Eye, EyeOff } from 'lucide-react'
+import ProximityLogo from '@components/ui/ProximityLogo'
 import { useAuthStore } from '@store/authStore'
 import { loginUser } from '@services/authService'
 
@@ -49,8 +50,8 @@ export default function AdminLogin() {
         className="w-full max-w-sm"
       >
         <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-gold-gradient mb-4 shadow-gold-md">
-            <ShieldCheck size={26} className="text-white" />
+          <div className="inline-flex items-center justify-center mb-4 drop-shadow-[0_0_16px_rgba(184,146,74,0.5)]">
+            <ProximityLogo size={56} />
           </div>
           <h1 className="font-heading text-2xl font-black text-white mb-1">Admin Portal</h1>
           <p className="font-body text-white/40 text-sm">Proximity Credit Repair · Restricted Access</p>

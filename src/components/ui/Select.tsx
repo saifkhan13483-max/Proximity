@@ -57,7 +57,11 @@ function SelectInner<T extends FieldValues>(
           </option>
         ))}
       </select>
-      {error && <p className="text-label text-red-400 mt-1">{error}</p>}
+      {error && (
+        <p role="alert" className="text-label text-red-400 mt-1">
+          {error}
+        </p>
+      )}
     </div>
   )
 }

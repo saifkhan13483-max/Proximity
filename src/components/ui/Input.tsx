@@ -36,7 +36,11 @@ function InputInner<T extends FieldValues>(
             : 'border-gray-200 focus:border-gold-primary focus:ring-2 focus:ring-gold-primary/20 focus:outline-none'
         )}
       />
-      {error && <p className="text-label text-red-400 mt-1">{error}</p>}
+      {error && (
+        <p role="alert" className="text-label text-red-400 mt-1">
+          {error}
+        </p>
+      )}
     </div>
   )
 }

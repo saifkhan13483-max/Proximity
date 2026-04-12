@@ -1,4 +1,5 @@
 import { useEffect } from 'react'
+import { siteMetadata } from '@config/siteMetadata'
 
 interface SEOHeadProps {
   title: string
@@ -33,7 +34,7 @@ export default function SEOHead({
   schemaMarkup,
 }: SEOHeadProps) {
   useEffect(() => {
-    const siteUrl = import.meta.env.VITE_SITE_URL || ''
+    const siteUrl = siteMetadata.siteUrl
     const fullTitle = `${title} | Proximity Credit Repair`
     const canonicalUrl = `${siteUrl}${canonicalPath || ''}`
 

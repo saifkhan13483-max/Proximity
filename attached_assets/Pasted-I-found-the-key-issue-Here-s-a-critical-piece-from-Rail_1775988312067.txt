@@ -1,0 +1,98 @@
+I found the key issue. Here's a critical piece from Railway's docs:
+
+"The Railway Config File does NOT follow the Root Directory path. You have to specify the absolute path for the railway.json or railway.toml file, for example: /backend/railway.toml"
+
+This changes everything. Here's the definitive fix:
+
+The Problem
+You have a monorepo structure and Railway is confused about what to build. There are two things going wrong:
+
+Railway looks for railway.toml at the repo root by absolute path — even if you set Root Directory to backend, the config file still needs to be referenced by its absolute path.
+
+Railpack is scanning your repo and can't determine the app type — likely because it's seeing the whole repo (frontend + backend + miscellaneous files) instead of just the backend/ folder.
+
+Definitive Fix — Do This Exactly
+Step 1: In your GitHub repo
+Make sure backend/package.json exists and has a proper start script:
+
+Copy{
+  "name": "your-backend",
+  "version": "1.0.0",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "engines": {
+    "node": "18.x"
+  },
+  "dependencies": {
+    ...
+  }
+}
+The "engines" field helps Railpack know which Node version to install. If you're using Node 20 or 22, adjust accordingly.
+
+Step 2: Delete ALL config files that could confuse Railway
+Remove these files if they exist:
+
+railway.toml (at repo root)
+backend/railway.toml
+Dockerfile (at repo root)
+backend/Dockerfile
+Procfile (at repo root)
+backend/Procfile
+railpack.json (at repo root)
+backend/railpack.json
+nixpacks.toml (anywhere)
+Delete all of them. Let Railway auto-detect cleanly.
+
+Step 3: In the Railway Dashboard (NOT in code)
+Go to your service → Settings
+Source → Root Directory → set to backend
+Build → Builder → make sure it says Railpack (the default)
+Build → Build Command → leave blank (let Railpack auto-detect)
+Deploy → Start Command → set to node server.js
+Click Redeploy
+That's it. No config files. No railway.toml. No Dockerfile. Railway will:
+
+Look only inside backend/
+Find package.json → detect Node.js
+Run npm install automatically
+Use your start command node server.js
+Step 4: If it STILL fails, force the provider
+Only if Step 3 doesn't work, create one file — backend/railpack.json:
+
+Copy{
+  "$schema": "https://schema.railpack.com",
+  "provider": "node",
+  "deploy": {
+    "startCommand": "node server.js"
+  }
+}
+And set the environment variable in Railway Dashboard:
+
+RAILPACK_CONFIG_FILE = railpack.json
+Prompt for Your AI Coding Assistant
+CopyCRITICAL DEPLOYMENT FIX — READ CAREFULLY:
+
+1. DELETE every single one of these files if they exist anywhere in the repo:
+   - railway.toml (root AND backend/)
+   - Dockerfile (root AND backend/)
+   - Procfile (root AND backend/)
+   - railpack.json (root AND backend/)
+   - nixpacks.toml (root AND backend/)
+   - docker-compose.yml (if not needed for local dev)
+
+2. VERIFY backend/package.json has:
+   - A "start" script: "node server.js"
+   - An "engines" field specifying the Node version, e.g.: "node": "18.x"
+   - All dependencies properly listed
+
+3. DO NOT create any Railway/Docker/Nixpacks config files.
+   All configuration will be done in the Railway dashboard.
+
+4. Commit and push these deletions.
+
+I will configure everything else in the Railway dashboard:
+   - Root Directory = backend
+   - Start Command = node server.js
+   - Builder = Railpack (auto-detect)

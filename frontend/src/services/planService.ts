@@ -1,8 +1,9 @@
 import { useAuthStore } from '@store/authStore'
+import { API_BASE } from './api'
 
 export async function selectPlan(planId: string): Promise<{ plan: string }> {
   const token = useAuthStore.getState().token
-  const res = await fetch('/api/users/plan', {
+  const res = await fetch(`${API_BASE}/api/users/plan`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',

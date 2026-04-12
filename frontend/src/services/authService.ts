@@ -1,6 +1,7 @@
 import type { AuthUser } from '@store/authStore'
+import { API_BASE } from './api'
 
-const BASE = '/api/auth'
+const BASE = `${API_BASE}/api/auth`
 
 interface AuthResponse {
   token: string

@@ -1,4 +1,5 @@
 import { useAuthStore } from '@store/authStore'
+import { API_BASE } from './api'
 
 export interface AdminUser {
   id: string
@@ -46,29 +47,29 @@ async function request<T>(url: string, options: RequestInit = {}): Promise<T> {
 }
 
 export async function fetchAdminStats(): Promise<AdminStats> {
-  return request('/api/admin/stats')
+  return request(`${API_BASE}/api/admin/stats`)
 }
 
 export async function fetchAdminUsers(): Promise<AdminUser[]> {
-  return request('/api/admin/users')
+  return request(`${API_BASE}/api/admin/users`)
 }
 
 export async function updateUser(id: string, data: Partial<{ plan: string; creditScore: number | null }>): Promise<AdminUser> {
-  return request(`/api/admin/users/${id}`, { method: 'PATCH', body: JSON.stringify(data) })
+  return request(`${API_BASE}/api/admin/users/${id}`, { method: 'PATCH', body: JSON.stringify(data) })
 }
 
 export async function deleteUser(id: string): Promise<void> {
-  return request(`/api/admin/users/${id}`, { method: 'DELETE' })
+  return request(`${API_BASE}/api/admin/users/${id}`, { method: 'DELETE' })
 }
 
 export async function fetchAdminContacts(): Promise<AdminContact[]> {
-  return request('/api/admin/contacts')
+  return request(`${API_BASE}/api/admin/contacts`)
 }
 
 export async function updateContactStatus(id: string, status: AdminContact['status']): Promise<AdminContact> {
-  return request(`/api/admin/contacts/${id}`, { method: 'PATCH', body: JSON.stringify({ status }) })
+  return request(`${API_BASE}/api/admin/contacts/${id}`, { method: 'PATCH', body: JSON.stringify({ status }) })
 }
 
 export async function deleteContact(id: string): Promise<void> {
-  return request(`/api/admin/contacts/${id}`, { method: 'DELETE' })
+  return request(`${API_BASE}/api/admin/contacts/${id}`, { method: 'DELETE' })
 }

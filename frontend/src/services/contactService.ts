@@ -1,10 +1,11 @@
 import type { ContactFormData } from '@/types/index'
+import { API_BASE } from './api'
 
 export async function submitContactForm(
   data: ContactFormData
 ): Promise<{ success: boolean; message: string }> {
   try {
-    const response = await fetch('/api/contacts', {
+    const response = await fetch(`${API_BASE}/api/contacts`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(data),

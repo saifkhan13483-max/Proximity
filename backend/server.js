@@ -6,16 +6,46 @@ const { v4: uuidv4 } = require('uuid')
 const fs = require('fs')
 const path = require('path')
 
-const app = express()
-const PORT = 3001
-const JWT_SECRET = process.env.JWT_SECRET || 'proximity-credit-repair-secret-2026'
-const USERS_FILE = path.join(__dirname, 'users.json')
-const CONTACTS_FILE = path.join(__dirname, 'contacts.json')
+// ── Startup validation ────────────────────────────────────────────────────────
 
-app.use(cors({ origin: true, credentials: true }))
+if (!process.env.JWT_SECRET) {
+  console.error('FATAL: JWT_SECRET environment variable is not set. Refusing to start.')
+  process.exit(1)
+}
+
+const app = express()
+const PORT = process.env.PORT || 3001
+const JWT_SECRET = process.env.JWT_SECRET
+
+// ── CORS ──────────────────────────────────────────────────────────────────────
+
+const rawOrigins = process.env.ALLOWED_ORIGINS || 'http://localhost:5000,http://localhost:3000'
+const allowedOrigins = rawOrigins.split(',').map((o) => o.trim()).filter(Boolean)
+
+app.use(
+  cors({
+    origin: (origin, callback) => {
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true)
+      } else {
+        callback(new Error(`CORS: origin ${origin} is not allowed`))
+      }
+    },
+    credentials: true,
+  })
+)
+
+app.set('trust proxy', 1)
 app.use(express.json())
 
-// ── Data Helpers ───────────────────────────────────────────────────────────
+// ── Data Helpers ───────────────────────────────────────────────────────────────
+//
+// WARNING: Railway's filesystem is ephemeral — users.json and contacts.json
+// are wiped on every deploy. Migrate to Railway's PostgreSQL plugin for
+// durable storage before going to production with real user data.
+
+const USERS_FILE = path.join(__dirname, 'users.json')
+const CONTACTS_FILE = path.join(__dirname, 'contacts.json')
 
 function loadUsers() {
   if (!fs.existsSync(USERS_FILE)) return []
@@ -36,6 +66,7 @@ function saveContacts(contacts) {
 }
 
 // ── Seed Admin User ─────────────────────────────────────────────────────────
+// Re-seeds on every startup so the admin account survives ephemeral redeploys.
 
 async function seedAdmin() {
   const users = loadUsers()
@@ -300,7 +331,7 @@ app.post('/api/users/plan', authenticateToken, (req, res) => {
 // ── Health ───────────────────────────────────────────────────────────────────
 
 app.get('/api/health', (_req, res) => {
-  res.json({ status: 'ok', timestamp: new Date().toISOString() })
+  res.json({ status: 'ok', uptime: process.uptime() })
 })
 
 // ── Start ─────────────────────────────────────────────────────────────────────

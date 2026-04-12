@@ -8,5 +8,15 @@
     "message": "Test message",
     "status": "new",
     "createdAt": "2026-04-12T07:35:36.103Z"
+  },
+  {
+    "id": "7600ccf3-2e00-4825-be33-de87fc874ae4",
+    "fullName": "Test User",
+    "email": "test@test.com",
+    "phone": "",
+    "serviceOfInterest": "General Inquiry",
+    "message": "This is a test message for the contact form",
+    "status": "new",
+    "createdAt": "2026-04-12T12:46:34.760Z"
   }
 ]

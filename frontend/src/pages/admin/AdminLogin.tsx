@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, Navigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { Mail, Lock, Eye, EyeOff } from 'lucide-react'
 import ProximityLogo from '@components/ui/ProximityLogo'
@@ -17,8 +17,7 @@ export default function AdminLogin() {
   const [loading, setLoading] = useState(false)
 
   if (isAdmin()) {
-    navigate('/admin', { replace: true })
-    return null
+    return <Navigate to="/admin" replace />
   }
 
   async function handleSubmit(e: React.FormEvent) {
@@ -124,7 +123,7 @@ export default function AdminLogin() {
         </div>
 
         <p className="text-center mt-5 font-body text-xs text-white/15">
-          Default: admin@proximity.com · Admin@2026!
+          Restricted to authorized administrators only.
         </p>
       </motion.div>
     </div>

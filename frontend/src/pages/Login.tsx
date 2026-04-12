@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Link, useNavigate, useLocation } from 'react-router-dom'
+import { Link, useNavigate, useLocation, Navigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { Mail, Lock, Eye, EyeOff, ArrowRight } from 'lucide-react'
 import { useAuthStore } from '@store/authStore'
@@ -9,7 +9,7 @@ import ProximityLogo from '@components/ui/ProximityLogo'
 export default function Login() {
   const navigate = useNavigate()
   const location = useLocation()
-  const { setAuth } = useAuthStore()
+  const { setAuth, isAuthenticated, isAdmin } = useAuthStore()
   const from = (location.state as { from?: string })?.from || '/dashboard'
 
   const [email, setEmail] = useState('')
@@ -17,6 +17,10 @@ export default function Login() {
   const [showPassword, setShowPassword] = useState(false)
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
+
+  if (isAuthenticated()) {
+    return <Navigate to={isAdmin() ? '/admin' : '/dashboard'} replace />
+  }
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()

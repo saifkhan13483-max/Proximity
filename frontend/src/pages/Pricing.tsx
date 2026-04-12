@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, Link } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Check, X, Zap, ArrowRight, Shield, Star, Phone } from 'lucide-react'
 import { plans } from '@data/plans'
@@ -337,12 +337,12 @@ export default function Pricing() {
             <h2 className="font-heading text-2xl font-black text-white mb-2">Not sure which plan is right for you?</h2>
             <p className="font-body text-white/40 text-sm mb-6">Talk to a credit specialist — we'll match you to the perfect plan for your situation.</p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
-              <a
-                href="/contact"
+              <Link
+                to="/contact"
                 className="inline-flex items-center gap-2 px-6 py-3 rounded-pill bg-gold-gradient text-white font-heading font-bold text-sm shadow-gold-sm hover:shadow-gold-md transition-all"
               >
                 Book Free Consultation <ArrowRight size={14} />
-              </a>
+              </Link>
               <a
                 href="tel:+18005550192"
                 className="inline-flex items-center gap-2 px-6 py-3 rounded-pill border border-gold-primary/25 text-gold-primary font-body font-semibold text-sm hover:bg-gold-primary/8 transition-all"

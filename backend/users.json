@@ -46,5 +46,15 @@
     "plan": "Free Consultation",
     "role": "user",
     "creditScore": null
+  },
+  {
+    "id": "db33f672-d147-4648-8aab-f7c9522bfc85",
+    "name": "Test User",
+    "email": "testuser1775998207@test.com",
+    "passwordHash": "$2b$12$hngCZdNkk/QU0zdB6rSRZOd4IlEfl.J6.x1gUbR2qjTHeGz0vWyh.",
+    "createdAt": "2026-04-12T12:50:08.228Z",
+    "plan": "Free Consultation",
+    "role": "user",
+    "creditScore": null
   }
 ]

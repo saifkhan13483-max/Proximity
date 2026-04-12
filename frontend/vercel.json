@@ -1,8 +1,11 @@
 {
+  "buildCommand": "npm run build",
+  "outputDirectory": "dist",
+  "rootDirectory": "frontend",
   "rewrites": [
     {
       "source": "/api/:path*",
-      "destination": "https://proximity-prd-production.up.railway.app/api/:path*"
+      "destination": "proximity-prd-production.up.railway.app"
     },
     {
       "source": "/(.*)",

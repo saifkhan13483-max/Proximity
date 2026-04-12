@@ -52,7 +52,6 @@ export default function OptimizedImage({
       className={className}
       loading={priority ? 'eager' : 'lazy'}
       decoding="async"
-      fetchPriority={priority ? 'high' : 'auto'}
       onError={handleError}
       {...(width !== undefined ? { width } : {})}
       {...(height !== undefined ? { height } : {})}

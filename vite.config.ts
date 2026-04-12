@@ -27,4 +27,21 @@ export default defineConfig({
       '@config': fileURLToPath(new URL('./src/config', import.meta.url)),
     },
   },
+  build: {
+    target: 'es2020',
+    minify: 'esbuild',
+    cssMinify: true,
+    reportCompressedSize: true,
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          'vendor-react': ['react', 'react-dom', 'react-router-dom'],
+          'vendor-motion': ['framer-motion'],
+          'vendor-icons': ['lucide-react'],
+          'vendor-forms': ['react-hook-form', 'zod', '@hookform/resolvers'],
+          'vendor-state': ['zustand', '@tanstack/react-query'],
+        },
+      },
+    },
+  },
 })

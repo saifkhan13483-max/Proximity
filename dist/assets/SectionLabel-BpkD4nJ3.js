@@ -1,0 +1,1 @@
+import{j as o}from"./vendor-state-D7A7tI4T.js";import{c as a}from"./index-Cx_ftMyL.js";function n({children:t,className:e}){return o.jsx("span",{className:a("font-heading font-semibold text-label tracking-widest uppercase text-gold-primary mb-3 block",e),children:t})}export{n as S};

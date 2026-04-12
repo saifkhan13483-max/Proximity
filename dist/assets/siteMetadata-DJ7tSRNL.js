@@ -1,0 +1,1 @@
+const e={siteDescription:"Expert credit repair services that deliver real results. Join 10,000+ clients who have improved their credit scores with Proximity Credit Repair.",siteUrl:"https://proximity-credit-repair.replit.app"};export{e as s};

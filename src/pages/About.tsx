@@ -6,7 +6,7 @@ import { useState } from 'react'
   import SEOHead from '@components/layout/SEOHead'
   import Section from '@components/layout/Section'
   import SectionLabel from '@components/ui/SectionLabel'
-  import { Card } from '@components/ui'
+  import { Card, OptimizedImage } from '@components/ui'
   import { fadeUp } from '@lib/animations'
   import { teamMembers } from '@data/team'
   import { siteMetadata } from '@config/siteMetadata'
@@ -38,11 +38,12 @@ import { useState } from 'react'
             onMouseEnter={() => setHovered(true)}
             onMouseLeave={() => setHovered(false)}
           >
-            <img
+            <OptimizedImage
               src={member.photoUrl}
-              alt={`Photo of ${member.name}, ${member.title}`}
+              alt={`Photo of ${member.name}, ${member.title} at Proximity Credit Repair`}
               className="w-full h-full object-cover"
-              loading="lazy"
+              width={400}
+              height={192}
             />
             <AnimatePresence>
               {hovered && (

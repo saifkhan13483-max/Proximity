@@ -213,7 +213,7 @@ export default function Pricing() {
 
   return (
     <div className="min-h-screen bg-[#080808]">
-      <section className="relative pt-28 pb-16 overflow-hidden">
+      <section className="relative pt-20 sm:pt-28 pb-12 sm:pb-16 overflow-hidden">
         <div className="absolute inset-0">
           <div className="absolute top-20 left-1/2 -translate-x-1/2 w-[600px] h-[300px] bg-gold-primary/6 rounded-full blur-[80px]" />
         </div>

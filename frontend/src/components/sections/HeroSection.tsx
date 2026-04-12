@@ -34,12 +34,12 @@ function StatItem({ stat }: { stat: Stat }) {
   })
   const Icon = statIconMap[stat.icon]
   return (
-    <div ref={ref} className="flex flex-col items-center gap-2 text-center">
-      {Icon && <Icon className="text-gold-primary mb-1" size={32} />}
-      <div className="font-heading font-extrabold text-4xl md:text-5xl text-gold-primary">
+    <div ref={ref} className="flex flex-col items-center gap-1 sm:gap-2 text-center">
+      {Icon && <Icon className="text-gold-primary mb-0 sm:mb-1 hidden sm:block" size={28} />}
+      <div className="font-heading font-extrabold text-xl sm:text-4xl md:text-5xl text-gold-primary">
         {formattedValue}
       </div>
-      <p className="text-white/60 text-sm font-body">{stat.label}</p>
+      <p className="text-white/60 text-xs sm:text-sm font-body leading-tight">{stat.label}</p>
     </div>
   )
 }
@@ -117,7 +117,7 @@ export default function HeroSection() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 1.2, duration: 0.6 }}
-          className="mt-16 w-full max-w-4xl grid grid-cols-1 md:grid-cols-3 gap-4 rounded-card border border-gold-primary/20 bg-card-black/60 backdrop-blur-sm p-6"
+          className="mt-10 sm:mt-16 w-full max-w-4xl grid grid-cols-3 gap-2 sm:gap-4 rounded-card border border-gold-primary/20 bg-card-black/60 backdrop-blur-sm p-4 sm:p-6"
         >
           {stats.map((stat) => (
             <StatItem key={stat.label} stat={stat} />

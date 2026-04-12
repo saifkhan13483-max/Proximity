@@ -48,7 +48,7 @@ export default function Login() {
           <p className="font-body text-white/50 text-sm">Sign in to your Proximity client portal</p>
         </div>
 
-        <div className="bg-[#111111] border border-gold-primary/20 rounded-2xl p-8 shadow-gold-lg">
+        <div className="bg-[#111111] border border-gold-primary/20 rounded-2xl p-5 sm:p-8 shadow-gold-lg">
           <form onSubmit={handleSubmit} className="space-y-5" noValidate>
             <div>
               <label className="block font-body text-sm font-medium text-white/70 mb-2">Email Address</label>

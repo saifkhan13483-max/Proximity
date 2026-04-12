@@ -59,8 +59,8 @@ body {
   }
 
   .section-padding {
-    padding-top: 96px;
-    padding-bottom: 96px;
+    padding-top: clamp(3rem, 8vw, 6rem);
+    padding-bottom: clamp(3rem, 8vw, 6rem);
   }
 
   .section-label {

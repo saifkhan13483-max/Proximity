@@ -103,7 +103,8 @@ export default function TestimonialsSlider() {
                 className={`w-2 h-2 rounded-full transition-colors ${
                   i === currentIndex ? 'bg-gold-primary' : 'bg-gold-primary/30'
                 }`}
-                aria-label={`Go to slide ${i + 1}`}
+                aria-label={`Go to testimonial ${i + 1}`}
+                aria-current={i === currentIndex ? 'true' : undefined}
               />
             ))}
           </div>

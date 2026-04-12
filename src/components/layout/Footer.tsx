@@ -31,7 +31,7 @@ export default function Footer() {
                 <motion.a
                   key={label}
                   href={href}
-                  aria-label={`Follow us on ${label}`}
+                  aria-label={`Follow Proximity Credit Repair on ${label}`}
                   whileHover={{ scale: 1.15 }}
                   className="text-white/40 hover:text-gold-primary transition-colors duration-200"
                 >

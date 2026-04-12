@@ -1,3 +1,4 @@
+import { useRef, useEffect } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Menu, X } from 'lucide-react'
@@ -13,6 +14,23 @@ export default function Navbar() {
   const toggleMobileMenu = useUIStore((state) => state.toggleMobileMenu)
   const { isScrolled } = useScrollPosition()
   const location = useLocation()
+
+  const hamburgerRef = useRef<HTMLButtonElement>(null)
+  const firstLinkRef = useRef<HTMLAnchorElement>(null)
+  const wasOpenRef = useRef(false)
+
+  useEffect(() => {
+    if (mobileMenuOpen) {
+      wasOpenRef.current = true
+      const timer = setTimeout(() => {
+        firstLinkRef.current?.focus()
+      }, 50)
+      return () => clearTimeout(timer)
+    } else if (wasOpenRef.current) {
+      wasOpenRef.current = false
+      hamburgerRef.current?.focus()
+    }
+  }, [mobileMenuOpen])
 
   return (
     <header
@@ -65,6 +83,7 @@ export default function Navbar() {
         </div>
 
         <button
+          ref={hamburgerRef}
           onClick={toggleMobileMenu}
           className="lg:hidden text-white p-2"
           aria-label={mobileMenuOpen ? 'Close navigation menu' : 'Open navigation menu'}
@@ -102,11 +121,12 @@ export default function Navbar() {
                 <X size={24} />
               </button>
               <div className="flex flex-col gap-4 flex-1">
-                {navLinks.map((link) => {
+                {navLinks.map((link, index) => {
                   const isActive = location.pathname === link.href
                   return (
                     <Link
                       key={link.href}
+                      ref={index === 0 ? firstLinkRef : undefined}
                       to={link.href}
                       onClick={closeMobileMenu}
                       className={cn(

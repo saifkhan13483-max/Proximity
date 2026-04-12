@@ -330,9 +330,12 @@ app.post('/api/users/plan', authenticateToken, (req, res) => {
 
 // ── Health ───────────────────────────────────────────────────────────────────
 
-app.get('/api/health', (_req, res) => {
-  res.json({ status: 'ok', uptime: process.uptime() })
-})
+function healthResponse() {
+  return { status: 'ok', uptime: process.uptime(), timestamp: new Date().toISOString() }
+}
+
+app.get('/health', (_req, res) => res.json(healthResponse()))
+app.get('/api/health', (_req, res) => res.json(healthResponse()))
 
 // ── Start ─────────────────────────────────────────────────────────────────────
 

@@ -108,8 +108,9 @@ export default function Navbar() {
   const mobileMenuOpen = useUIStore((state) => state.mobileMenuOpen)
   const closeMobileMenu = useUIStore((state) => state.closeMobileMenu)
   const toggleMobileMenu = useUIStore((state) => state.toggleMobileMenu)
-  const { user, logout, isAuthenticated } = useAuthStore()
+  const { user, logout, isAuthenticated, isAdmin } = useAuthStore()
   const loggedIn = isAuthenticated()
+  const adminUser = isAdmin()
   const location = useLocation()
   const navigate = useNavigate()
 
@@ -344,12 +345,14 @@ export default function Navbar() {
               {loggedIn ? (
                 <div className="hidden md:flex items-center gap-2">
                   <Link
-                    to="/dashboard"
+                    to={adminUser ? '/admin' : '/dashboard'}
                     className="flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-gold-primary/10 border border-gold-primary/25 text-gold-primary font-body font-semibold text-sm hover:bg-gold-primary/20 transition-all duration-200"
                   >
                     <LayoutDashboard size={14} />
-                    <span className="hidden lg:inline">{user?.name?.split(' ')[0] || 'Dashboard'}</span>
-                    <span className="lg:hidden">Portal</span>
+                    <span className="hidden lg:inline">
+                      {adminUser ? 'Admin Panel' : (user?.name?.split(' ')[0] || 'Dashboard')}
+                    </span>
+                    <span className="lg:hidden">{adminUser ? 'Admin' : 'Portal'}</span>
                   </Link>
                   <button
                     onClick={handleLogout}
@@ -552,12 +555,12 @@ export default function Navbar() {
                 {loggedIn ? (
                   <>
                     <Link
-                      to="/dashboard"
+                      to={adminUser ? '/admin' : '/dashboard'}
                       onClick={closeMobileMenu}
                       className="flex items-center justify-center gap-2 w-full py-3 rounded-pill bg-gold-gradient text-white font-heading font-bold text-sm shadow-gold-sm"
                     >
                       <LayoutDashboard size={14} />
-                      My Dashboard
+                      {adminUser ? 'Admin Panel' : 'My Dashboard'}
                     </Link>
                     <button
                       onClick={handleLogout}

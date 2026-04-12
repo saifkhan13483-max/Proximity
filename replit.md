@@ -77,14 +77,23 @@ proximity/
 
 ## Authentication System
 - **Backend:** Express.js REST API on port 3001 (`backend/server.js`)
-- **Routes:** `POST /api/auth/register`, `POST /api/auth/login`, `GET /api/auth/me`
-- **Tokens:** JWT (7-day expiry), signed with `JWT_SECRET` env var
+- **Auth Routes:** `POST /api/auth/register`, `POST /api/auth/login`, `GET /api/auth/me`
+- **Contact Route:** `POST /api/contacts` — stores contact form submissions in `backend/contacts.json`
+- **Tokens:** JWT (7-day expiry), signed with `JWT_SECRET` env var, includes `role` claim
 - **Passwords:** bcryptjs (12 salt rounds)
-- **Storage:** JSON file (`backend/users.json`) — file-based user persistence
+- **Storage:** JSON files — `backend/users.json` (users), `backend/contacts.json` (contact leads)
 - **Frontend Store:** Zustand `authStore.ts` with `persist` middleware (localStorage)
-- **Protected Routes:** `ProtectedRoute` component redirects unauthenticated users to `/login`
-- **Pages:** `/login`, `/register`, `/dashboard` (protected)
-- **Navbar:** Shows "Sign In" + "Get Started" when logged out; "Dashboard" + logout icon when logged in
+- **Protected Routes:** `ProtectedRoute` (user) and `AdminRoute` (admin only)
+- **User Pages:** `/login`, `/register`, `/dashboard` (protected)
+- **Admin Pages:** `/admin/login`, `/admin`, `/admin/users`, `/admin/contacts`
+- **Navbar:** Shows "Sign In"/"Get Started" when logged out; "Dashboard"/"Admin Panel" + logout when logged in
+
+## Admin Panel
+- **Default Credentials:** `admin@proximity.com` / `Admin@2026!` (seeded on first run)
+- **Dashboard:** Stats overview — total users, contact leads, unread leads, plan distribution
+- **Users:** Full table with search, edit plan, delete user
+- **Contacts:** All contact form submissions — expandable cards, status management (new/in-progress/resolved), reply by email, delete
+- **Admin Routes (backend):** `GET /api/admin/stats`, `GET /api/admin/users`, `PATCH /api/admin/users/:id`, `DELETE /api/admin/users/:id`, `GET /api/admin/contacts`, `PATCH /api/admin/contacts/:id`, `DELETE /api/admin/contacts/:id`
 
 ## Running the App
 ```

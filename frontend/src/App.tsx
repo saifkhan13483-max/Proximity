@@ -1,8 +1,9 @@
 import { lazy, Suspense } from 'react'
-import { createBrowserRouter, RouterProvider } from 'react-router-dom'
+import { createBrowserRouter, RouterProvider, Navigate } from 'react-router-dom'
 import AppLayout from '@components/layout/AppLayout'
 import NotFound from '@pages/NotFound'
 import ProtectedRoute from '@components/auth/ProtectedRoute'
+import AdminRoute from '@components/auth/AdminRoute'
 import LoadingScreen from '@components/ui/LoadingScreen'
 
 const Home = lazy(() => import('@pages/Home'))
@@ -15,6 +16,14 @@ const Contact = lazy(() => import('@pages/Contact'))
 const Login = lazy(() => import('@pages/Login'))
 const Register = lazy(() => import('@pages/Register'))
 const Dashboard = lazy(() => import('@pages/Dashboard'))
+const AdminLogin = lazy(() => import('@pages/admin/AdminLogin'))
+const AdminDashboard = lazy(() => import('@pages/admin/AdminDashboard'))
+const AdminUsers = lazy(() => import('@pages/admin/AdminUsers'))
+const AdminContacts = lazy(() => import('@pages/admin/AdminContacts'))
+
+function Wrap({ children }: { children: React.ReactNode }) {
+  return <Suspense fallback={<LoadingScreen />}>{children}</Suspense>
+}
 
 const router = createBrowserRouter([
   {
@@ -32,29 +41,35 @@ const router = createBrowserRouter([
   },
   {
     path: '/login',
-    element: (
-      <Suspense fallback={<LoadingScreen />}>
-        <Login />
-      </Suspense>
-    ),
+    element: <Wrap><Login /></Wrap>,
   },
   {
     path: '/register',
-    element: (
-      <Suspense fallback={<LoadingScreen />}>
-        <Register />
-      </Suspense>
-    ),
+    element: <Wrap><Register /></Wrap>,
   },
   {
     path: '/dashboard',
-    element: (
-      <Suspense fallback={<LoadingScreen />}>
-        <ProtectedRoute>
-          <Dashboard />
-        </ProtectedRoute>
-      </Suspense>
-    ),
+    element: <Wrap><ProtectedRoute><Dashboard /></ProtectedRoute></Wrap>,
+  },
+  {
+    path: '/admin/login',
+    element: <Wrap><AdminLogin /></Wrap>,
+  },
+  {
+    path: '/admin',
+    element: <Wrap><AdminRoute><AdminDashboard /></AdminRoute></Wrap>,
+  },
+  {
+    path: '/admin/users',
+    element: <Wrap><AdminRoute><AdminUsers /></AdminRoute></Wrap>,
+  },
+  {
+    path: '/admin/contacts',
+    element: <Wrap><AdminRoute><AdminContacts /></AdminRoute></Wrap>,
+  },
+  {
+    path: '/admin/*',
+    element: <Navigate to="/admin" replace />,
   },
 ])
 

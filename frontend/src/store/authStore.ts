@@ -6,6 +6,7 @@ export interface AuthUser {
   name: string
   email: string
   plan: string
+  role: 'user' | 'admin'
   createdAt: string
 }
 
@@ -17,6 +18,7 @@ interface AuthStore {
   setLoading: (loading: boolean) => void
   logout: () => void
   isAuthenticated: () => boolean
+  isAdmin: () => boolean
 }
 
 export const useAuthStore = create<AuthStore>()(
@@ -29,6 +31,7 @@ export const useAuthStore = create<AuthStore>()(
       setLoading: (isLoading) => set({ isLoading }),
       logout: () => set({ user: null, token: null }),
       isAuthenticated: () => !!get().token && !!get().user,
+      isAdmin: () => get().user?.role === 'admin',
     }),
     {
       name: 'proximity-auth',

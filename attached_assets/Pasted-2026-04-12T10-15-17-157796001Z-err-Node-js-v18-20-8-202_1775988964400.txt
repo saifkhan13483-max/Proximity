@@ -1,0 +1,122 @@
+2026-04-12T10:15:17.157796001Z [err]  Node.js v18.20.8
+2026-04-12T10:15:17.157809515Z [err]  const { v4: uuidv4 } = require('uuid')
+2026-04-12T10:15:17.157813944Z [err]                         ^
+2026-04-12T10:15:17.157818727Z [err]  
+2026-04-12T10:15:17.157822414Z [err]  Error [ERR_REQUIRE_ESM]: require() of ES Module /app/node_modules/uuid/dist-node/index.js from /app/server.js not supported.
+2026-04-12T10:15:17.157826122Z [err]  Instead change the require of index.js in /app/server.js to a dynamic import() which is available in all CommonJS modules.
+2026-04-12T10:15:17.157829260Z [err]  /app/server.js:5
+2026-04-12T10:15:17.157832978Z [err]      at Object.<anonymous> (/app/server.js:5:24) {
+2026-04-12T10:15:17.157834944Z [err]  const { v4: uuidv4 } = require('uuid')
+2026-04-12T10:15:17.157839667Z [err]    code: 'ERR_REQUIRE_ESM'
+2026-04-12T10:15:17.157839798Z [err]                         ^
+2026-04-12T10:15:17.157845516Z [err]  }
+2026-04-12T10:15:17.157845758Z [err]  
+2026-04-12T10:15:17.157851408Z [err]  
+2026-04-12T10:15:17.157853496Z [err]  Error [ERR_REQUIRE_ESM]: require() of ES Module /app/node_modules/uuid/dist-node/index.js from /app/server.js not supported.
+2026-04-12T10:15:17.157857365Z [err]  Instead change the require of index.js in /app/server.js to a dynamic import() which is available in all CommonJS modules.
+2026-04-12T10:15:17.157861289Z [err]      at Object.<anonymous> (/app/server.js:5:24) {
+2026-04-12T10:15:17.157865360Z [err]    code: 'ERR_REQUIRE_ESM'
+2026-04-12T10:15:17.157869794Z [err]  }
+2026-04-12T10:15:17.157873849Z [err]  
+2026-04-12T10:15:17.157877684Z [err]  Node.js v18.20.8
+2026-04-12T10:15:17.157882089Z [err]  /app/server.js:5
+2026-04-12T10:15:17.221629599Z [inf]  Starting Container
+2026-04-12T10:15:17.627490035Z [err]  /app/server.js:5
+2026-04-12T10:15:17.627494266Z [err]  const { v4: uuidv4 } = require('uuid')
+2026-04-12T10:15:17.627499005Z [err]                         ^
+2026-04-12T10:15:17.627512833Z [err]  
+2026-04-12T10:15:17.627516986Z [err]  Error [ERR_REQUIRE_ESM]: require() of ES Module /app/node_modules/uuid/dist-node/index.js from /app/server.js not supported.
+2026-04-12T10:15:17.627521196Z [err]  Instead change the require of index.js in /app/server.js to a dynamic import() which is available in all CommonJS modules.
+2026-04-12T10:15:17.627524810Z [err]      at Object.<anonymous> (/app/server.js:5:24) {
+2026-04-12T10:15:17.627528601Z [err]    code: 'ERR_REQUIRE_ESM'
+2026-04-12T10:15:17.627532215Z [err]  }
+2026-04-12T10:15:17.627536669Z [err]  
+2026-04-12T10:15:17.627540487Z [err]  Node.js v18.20.8
+2026-04-12T10:15:18.264616928Z [err]  
+2026-04-12T10:15:18.264622305Z [err]  Node.js v18.20.8
+2026-04-12T10:15:18.264633880Z [err]  /app/server.js:5
+2026-04-12T10:15:18.264639252Z [err]  const { v4: uuidv4 } = require('uuid')
+2026-04-12T10:15:18.264644224Z [err]                         ^
+2026-04-12T10:15:18.264648984Z [err]  
+2026-04-12T10:15:18.264654153Z [err]  Error [ERR_REQUIRE_ESM]: require() of ES Module /app/node_modules/uuid/dist-node/index.js from /app/server.js not supported.
+2026-04-12T10:15:18.264658608Z [err]  Instead change the require of index.js in /app/server.js to a dynamic import() which is available in all CommonJS modules.
+2026-04-12T10:15:18.264663292Z [err]      at Object.<anonymous> (/app/server.js:5:24) {
+2026-04-12T10:15:18.264667860Z [err]    code: 'ERR_REQUIRE_ESM'
+2026-04-12T10:15:18.264673104Z [err]  }
+2026-04-12T10:15:19.177494159Z [err]  Node.js v18.20.8
+2026-04-12T10:15:19.177511570Z [err]  Error [ERR_REQUIRE_ESM]: require() of ES Module /app/node_modules/uuid/dist-node/index.js from /app/server.js not supported.
+2026-04-12T10:15:19.177512669Z [err]  /app/server.js:5
+2026-04-12T10:15:19.177518243Z [err]  Instead change the require of index.js in /app/server.js to a dynamic import() which is available in all CommonJS modules.
+2026-04-12T10:15:19.177520049Z [err]  const { v4: uuidv4 } = require('uuid')
+2026-04-12T10:15:19.177524867Z [err]      at Object.<anonymous> (/app/server.js:5:24) {
+2026-04-12T10:15:19.177527618Z [err]                         ^
+2026-04-12T10:15:19.177532526Z [err]    code: 'ERR_REQUIRE_ESM'
+2026-04-12T10:15:19.177532947Z [err]  }
+2026-04-12T10:15:19.177535660Z [err]  
+2026-04-12T10:15:19.177542226Z [err]  
+2026-04-12T10:15:19.651753340Z [err]  /app/server.js:5
+2026-04-12T10:15:19.651763182Z [err]  const { v4: uuidv4 } = require('uuid')
+2026-04-12T10:15:19.651772156Z [err]                         ^
+2026-04-12T10:15:19.651785295Z [err]  
+2026-04-12T10:15:19.651791119Z [err]  Error [ERR_REQUIRE_ESM]: require() of ES Module /app/node_modules/uuid/dist-node/index.js from /app/server.js not supported.
+2026-04-12T10:15:19.651799877Z [err]  Instead change the require of index.js in /app/server.js to a dynamic import() which is available in all CommonJS modules.
+2026-04-12T10:15:19.651812737Z [err]      at Object.<anonymous> (/app/server.js:5:24) {
+2026-04-12T10:15:19.651818449Z [err]    code: 'ERR_REQUIRE_ESM'
+2026-04-12T10:15:19.651825203Z [err]  }
+2026-04-12T10:15:19.651840284Z [err]  
+2026-04-12T10:15:19.651860027Z [err]  Node.js v18.20.8
+2026-04-12T10:15:20.339014573Z [err]  /app/server.js:5
+2026-04-12T10:15:20.339020934Z [err]  const { v4: uuidv4 } = require('uuid')
+2026-04-12T10:15:20.339024533Z [err]                         ^
+2026-04-12T10:15:20.339028792Z [err]  
+2026-04-12T10:15:20.339032024Z [err]  Error [ERR_REQUIRE_ESM]: require() of ES Module /app/node_modules/uuid/dist-node/index.js from /app/server.js not supported.
+2026-04-12T10:15:20.339035386Z [err]  Instead change the require of index.js in /app/server.js to a dynamic import() which is available in all CommonJS modules.
+2026-04-12T10:15:20.339039115Z [err]      at Object.<anonymous> (/app/server.js:5:24) {
+2026-04-12T10:15:20.339042983Z [err]    code: 'ERR_REQUIRE_ESM'
+2026-04-12T10:15:20.339047049Z [err]  }
+2026-04-12T10:15:20.339050680Z [err]  
+2026-04-12T10:15:20.339054177Z [err]  Node.js v18.20.8
+2026-04-12T10:15:21.185208515Z [err]  Node.js v18.20.8
+2026-04-12T10:15:21.185223110Z [err]  Instead change the require of index.js in /app/server.js to a dynamic import() which is available in all CommonJS modules.
+2026-04-12T10:15:21.185228753Z [err]      at Object.<anonymous> (/app/server.js:5:24) {
+2026-04-12T10:15:21.185229882Z [err]                         ^
+2026-04-12T10:15:21.185233592Z [err]    code: 'ERR_REQUIRE_ESM'
+2026-04-12T10:15:21.185238774Z [err]  }
+2026-04-12T10:15:21.185239892Z [err]  
+2026-04-12T10:15:21.185246620Z [err]  
+2026-04-12T10:15:21.185247876Z [err]  Error [ERR_REQUIRE_ESM]: require() of ES Module /app/node_modules/uuid/dist-node/index.js from /app/server.js not supported.
+2026-04-12T10:15:21.185251351Z [err]  /app/server.js:5
+2026-04-12T10:15:21.185258560Z [err]  const { v4: uuidv4 } = require('uuid')
+2026-04-12T10:15:21.736768906Z [err]  /app/server.js:5
+2026-04-12T10:15:21.736774227Z [err]  const { v4: uuidv4 } = require('uuid')
+2026-04-12T10:15:21.736777689Z [err]                         ^
+2026-04-12T10:15:21.736780863Z [err]  
+2026-04-12T10:15:21.736783984Z [err]  Error [ERR_REQUIRE_ESM]: require() of ES Module /app/node_modules/uuid/dist-node/index.js from /app/server.js not supported.
+2026-04-12T10:15:21.736786715Z [err]  Instead change the require of index.js in /app/server.js to a dynamic import() which is available in all CommonJS modules.
+2026-04-12T10:15:21.736790922Z [err]      at Object.<anonymous> (/app/server.js:5:24) {
+2026-04-12T10:15:21.736793881Z [err]    code: 'ERR_REQUIRE_ESM'
+2026-04-12T10:15:21.736797122Z [err]  }
+2026-04-12T10:15:21.736800327Z [err]  
+2026-04-12T10:15:21.736803579Z [err]  Node.js v18.20.8
+2026-04-12T10:15:22.349909067Z [err]  /app/server.js:5
+2026-04-12T10:15:22.349916613Z [err]  const { v4: uuidv4 } = require('uuid')
+2026-04-12T10:15:22.349921150Z [err]                         ^
+2026-04-12T10:15:22.349925114Z [err]  
+2026-04-12T10:15:22.349929080Z [err]  Error [ERR_REQUIRE_ESM]: require() of ES Module /app/node_modules/uuid/dist-node/index.js from /app/server.js not supported.
+2026-04-12T10:15:22.349933114Z [err]  Instead change the require of index.js in /app/server.js to a dynamic import() which is available in all CommonJS modules.
+2026-04-12T10:15:22.349937037Z [err]      at Object.<anonymous> (/app/server.js:5:24) {
+2026-04-12T10:15:22.349941038Z [err]    code: 'ERR_REQUIRE_ESM'
+2026-04-12T10:15:22.349944949Z [err]  }
+2026-04-12T10:15:22.349949182Z [err]  
+2026-04-12T10:15:22.349953058Z [err]  Node.js v18.20.8
+2026-04-12T10:15:23.276483165Z [err]  /app/server.js:5
+2026-04-12T10:15:23.276486591Z [err]  const { v4: uuidv4 } = require('uuid')
+2026-04-12T10:15:23.276489872Z [err]                         ^
+2026-04-12T10:15:23.276494317Z [err]  
+2026-04-12T10:15:23.276499087Z [err]  Error [ERR_REQUIRE_ESM]: require() of ES Module /app/node_modules/uuid/dist-node/index.js from /app/server.js not supported.
+2026-04-12T10:15:23.276502371Z [err]  Instead change the require of index.js in /app/server.js to a dynamic import() which is available in all CommonJS modules.
+2026-04-12T10:15:23.276506005Z [err]      at Object.<anonymous> (/app/server.js:5:24) {
+2026-04-12T10:15:23.276509477Z [err]    code: 'ERR_REQUIRE_ESM'
+2026-04-12T10:15:23.276512876Z [err]  }
+2026-04-12T10:15:23.276516317Z [err]  
+2026-04-12T10:15:23.276519525Z [err]  Node.js v18.20.8

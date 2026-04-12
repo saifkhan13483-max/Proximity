@@ -236,7 +236,7 @@ In the Proximity Credit Repair project, set up global styles.
 
 2. Create `src/styles/globals.css` with:
    - `@tailwind base`, `@tailwind components`, `@tailwind utilities` directives
-   - CSS custom properties under `:root` for all 9 brand colors from the PRD:
+   - CSS custom properties under `:root` for the 8 custom brand color tokens (pure white uses Tailwind's default `white` and does NOT get a custom property):
      --color-gold-primary: #B8924A; --color-gold-light: #D4AF72; --color-gold-dark: #8B6A2E;
      --color-offwhite: #F9F6F1; --color-near-black: #0A0A0A; --color-card-black: #141414;
      --color-body-text: #1A1A1A; --color-muted-text: #6B6B6B;
@@ -1464,7 +1464,7 @@ Sections:
    - Heading: "Watch Marcus's Journey"
    - Dark card `bg-card-black rounded-card` with `aspect-video` (16:9 ratio)
    - Centered `PlayCircle` icon `w-20 h-20 text-gold-primary` with `motion.div whileHover={{ scale: 1.1 }}`
-   - Caption below card: "Marcus T. — From 512 to 743 in 6 months" in `text-muted-text text-caption italic`
+   - Caption below card: "Marcus T. — From 521 to 694 in 6 months" in `text-muted-text text-caption italic`
 
 5. `SEOHead`:
    - title: 'Client Testimonials & Credit Repair Success Stories'
@@ -1842,7 +1842,7 @@ Fix every issue found:
    - Testimonial slider dots: `aria-label="Go to testimonial {n}"` + `aria-current={isActive}`
    - FAQ accordion buttons: `aria-expanded`, `aria-controls`; answer panels: `role="region"`, `id` matching controls
    - Modal: `role="dialog"`, `aria-modal="true"`, `aria-labelledby` pointing to title
-   - BackToTopButton: `aria-label="Scroll back to top"`
+   - BackToTopButton: `aria-label="Back to top"` (matches the definition in Phase 3.10)
    - Footer social icons: `aria-label="Follow Proximity Credit Repair on [Platform Name]"`
 
 4. Focus management:
@@ -1909,7 +1909,7 @@ In the Proximity Credit Repair project, implement performance optimizations.
    - Add to `src/components/ui/index.ts` exports
 
 2. Update all `<img>` tags in the codebase to use `OptimizedImage`:
-   - Team photos: `<OptimizedImage src={member.photoUrl} alt={`Photo of ${member.name}`} width={400} height={192} />`
+   - Team photos: `<OptimizedImage src={member.photoUrl} alt={`Photo of ${member.name}, ${member.title} at Proximity Credit Repair`} width={400} height={192} />`
    - Any other images
 
 3. In `index.html`, add a preload for the Google Fonts stylesheet:

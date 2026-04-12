@@ -1,107 +1,121 @@
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Menu, X } from 'lucide-react'
-import { navLinks, siteConfig } from '@config/site'
-import { cn } from '@lib/cn'
+import { navLinks } from '@config/navigation'
+import { useScrollPosition } from '@hooks/useScrollPosition'
+import { Button } from '@components/ui'
+import { cn } from '@lib/utils'
 
 export default function Navbar() {
-  const [scrolled, setScrolled] = useState(false)
-  const [menuOpen, setMenuOpen] = useState(false)
+  const [drawerOpen, setDrawerOpen] = useState(false)
+  const { isScrolled } = useScrollPosition()
   const location = useLocation()
 
-  useEffect(() => {
-    const handleScroll = () => setScrolled(window.scrollY > 20)
-    window.addEventListener('scroll', handleScroll)
-    return () => window.removeEventListener('scroll', handleScroll)
-  }, [])
-
-  useEffect(() => {
-    setMenuOpen(false)
-  }, [location.pathname])
+  const closeDrawer = () => setDrawerOpen(false)
 
   return (
     <header
       className={cn(
         'fixed top-0 left-0 right-0 z-50 transition-all duration-300',
-        scrolled
-          ? 'bg-dark-hero/95 backdrop-blur-md shadow-lg shadow-black/20'
+        isScrolled
+          ? 'backdrop-blur-md bg-near-black/80 border-b border-gold-primary/10'
           : 'bg-transparent'
       )}
     >
-      <nav className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl flex items-center justify-between h-20">
-        <Link to="/" className="flex items-center gap-2">
-          <span className="font-heading font-extrabold text-xl text-gold-gradient">
-            PROXIMITY
-          </span>
-          <span className="font-heading font-medium text-white text-sm hidden sm:block">
-            Credit Repair
-          </span>
+      <nav
+        role="navigation"
+        aria-label="Main navigation"
+        className="container mx-auto flex items-center justify-between h-20"
+      >
+        <Link to="/" className="flex flex-col leading-tight">
+          <span className="font-heading font-extrabold text-xl gold-gradient-text">Proximity</span>
+          <span className="font-body text-white text-xs">Credit Repair</span>
         </Link>
 
         <div className="hidden lg:flex items-center gap-8">
-          {navLinks.slice(0, -1).map((link) => (
-            <Link
-              key={link.path}
-              to={link.path}
-              className={cn(
-                'font-body text-sm font-medium transition-colors duration-200',
-                location.pathname === link.path
-                  ? 'text-gold-primary'
-                  : 'text-white/80 hover:text-gold-light'
-              )}
-            >
-              {link.label}
-            </Link>
-          ))}
+          {navLinks.map((link) => {
+            const isActive = location.pathname === link.href
+            return (
+              <Link
+                key={link.href}
+                to={link.href}
+                className={cn(
+                  'font-body text-sm font-medium transition-colors duration-200 relative pb-1',
+                  isActive
+                    ? 'text-gold-primary after:absolute after:bottom-0 after:left-0 after:right-0 after:h-0.5 after:bg-gold-primary'
+                    : 'text-white/80 hover:text-white'
+                )}
+              >
+                {link.label}
+              </Link>
+            )
+          })}
         </div>
 
-        <div className="hidden lg:flex items-center gap-4">
-          <Link
-            to="/contact"
-            className="btn-primary text-sm px-6 py-3"
-          >
-            Free Consultation
-          </Link>
+        <div className="hidden lg:block">
+          <Button variant="primary" size="md" href="/contact">
+            Get Free Consultation
+          </Button>
         </div>
 
         <button
-          onClick={() => setMenuOpen(!menuOpen)}
+          onClick={() => setDrawerOpen(!drawerOpen)}
           className="lg:hidden text-white p-2"
-          aria-label="Toggle menu"
+          aria-label={drawerOpen ? 'Close navigation menu' : 'Open navigation menu'}
+          aria-expanded={drawerOpen}
         >
-          {menuOpen ? <X size={24} /> : <Menu size={24} />}
+          {drawerOpen ? <X size={24} /> : <Menu size={24} />}
         </button>
       </nav>
 
       <AnimatePresence>
-        {menuOpen && (
-          <motion.div
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: 'auto' }}
-            exit={{ opacity: 0, height: 0 }}
-            className="lg:hidden bg-dark-hero/98 backdrop-blur-md border-t border-gold-primary/10"
-          >
-            <div className="container mx-auto px-4 py-6 flex flex-col gap-4">
-              {navLinks.map((link) => (
-                <Link
-                  key={link.path}
-                  to={link.path}
-                  className={cn(
-                    'font-body font-medium py-2 transition-colors',
-                    location.pathname === link.path
-                      ? 'text-gold-primary'
-                      : 'text-white/80'
-                  )}
-                >
-                  {link.label}
-                </Link>
-              ))}
-              <Link to="/contact" className="btn-primary text-center mt-2">
-                Free Consultation
-              </Link>
-            </div>
-          </motion.div>
+        {drawerOpen && (
+          <>
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 bg-black/50 z-40 lg:hidden"
+              onClick={closeDrawer}
+            />
+            <motion.div
+              initial={{ x: '100%' }}
+              animate={{ x: 0 }}
+              exit={{ x: '100%' }}
+              transition={{ type: 'tween', duration: 0.3 }}
+              className="fixed inset-y-0 right-0 w-64 bg-near-black z-50 flex flex-col p-6 lg:hidden"
+            >
+              <button
+                onClick={closeDrawer}
+                className="self-end text-white mb-6"
+                aria-label="Close navigation menu"
+              >
+                <X size={24} />
+              </button>
+              <div className="flex flex-col gap-4 flex-1">
+                {navLinks.map((link) => {
+                  const isActive = location.pathname === link.href
+                  return (
+                    <Link
+                      key={link.href}
+                      to={link.href}
+                      onClick={closeDrawer}
+                      className={cn(
+                        'font-body font-medium py-2 transition-colors duration-200',
+                        isActive ? 'text-gold-primary' : 'text-white/80 hover:text-white'
+                      )}
+                    >
+                      {link.label}
+                    </Link>
+                  )
+                })}
+              </div>
+              <Button variant="primary" size="md" href="/contact" className="w-full text-center mt-4">
+                Get Free Consultation
+              </Button>
+            </motion.div>
+          </>
         )}
       </AnimatePresence>
     </header>

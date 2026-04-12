@@ -1,47 +1,54 @@
 import { Link } from 'react-router-dom'
-import { Phone, Mail, MapPin, Facebook, Instagram, Linkedin } from 'lucide-react'
-import { siteConfig, navLinks } from '@config/site'
+import { motion } from 'framer-motion'
+import { Phone, Mail, MapPin, Facebook, Instagram, Twitter, Linkedin } from 'lucide-react'
+import { navLinks, footerServiceLinks } from '@config/navigation'
+import { SectionDivider } from '@components/ui'
+
+const socialLinks = [
+  { icon: Facebook, label: 'Facebook', href: '#' },
+  { icon: Instagram, label: 'Instagram', href: '#' },
+  { icon: Twitter, label: 'Twitter', href: '#' },
+  { icon: Linkedin, label: 'LinkedIn', href: '#' },
+]
 
 export default function Footer() {
-  const year = new Date().getFullYear()
-
   return (
-    <footer className="bg-dark-hero border-t border-gold-primary/10">
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl py-16">
+    <footer className="bg-near-black text-white">
+      <div className="container mx-auto py-16">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12">
-          <div className="lg:col-span-1">
+          <div>
             <Link to="/" className="inline-block mb-4">
-              <span className="font-heading font-extrabold text-2xl text-gold-gradient">
-                PROXIMITY
+              <span className="font-heading font-extrabold text-xl gold-gradient-text block">
+                Proximity
               </span>
-              <span className="block font-heading font-medium text-white/60 text-sm">
-                Credit Repair
-              </span>
+              <span className="font-body text-white text-xs">Credit Repair</span>
             </Link>
-            <p className="text-white/60 text-sm leading-relaxed mb-6">
-              Helping thousands of clients restore their credit, achieve financial freedom, and build the life they deserve.
+            <p className="text-muted-text font-body text-caption leading-relaxed mb-6">
+              Rebuilding credit. Rebuilding lives.
             </p>
             <div className="flex gap-4">
-              <a href={siteConfig.social.facebook} className="text-white/40 hover:text-gold-primary transition-colors" aria-label="Facebook">
-                <Facebook size={20} />
-              </a>
-              <a href={siteConfig.social.instagram} className="text-white/40 hover:text-gold-primary transition-colors" aria-label="Instagram">
-                <Instagram size={20} />
-              </a>
-              <a href={siteConfig.social.linkedin} className="text-white/40 hover:text-gold-primary transition-colors" aria-label="LinkedIn">
-                <Linkedin size={20} />
-              </a>
+              {socialLinks.map(({ icon: Icon, label, href }) => (
+                <motion.a
+                  key={label}
+                  href={href}
+                  aria-label={`Follow us on ${label}`}
+                  whileHover={{ scale: 1.15 }}
+                  className="text-white/40 hover:text-gold-primary transition-colors duration-200"
+                >
+                  <Icon size={20} />
+                </motion.a>
+              ))}
             </div>
           </div>
 
           <div>
-            <h3 className="font-heading font-semibold text-white mb-5">Quick Links</h3>
+            <h3 className="text-gold-primary font-heading font-bold mb-4">Quick Links</h3>
             <ul className="space-y-3">
               {navLinks.map((link) => (
-                <li key={link.path}>
+                <li key={link.href}>
                   <Link
-                    to={link.path}
-                    className="text-white/60 hover:text-gold-light text-sm transition-colors"
+                    to={link.href}
+                    className="text-white/60 hover:text-white text-caption font-body transition-colors duration-200"
                   >
                     {link.label}
                   </Link>
@@ -51,54 +58,63 @@ export default function Footer() {
           </div>
 
           <div>
-            <h3 className="font-heading font-semibold text-white mb-5">Services</h3>
+            <h3 className="text-gold-primary font-heading font-bold mb-4">Our Services</h3>
             <ul className="space-y-3">
-              {['Credit Analysis', 'Dispute Filing', 'Score Monitoring', 'Debt Validation'].map(
-                (service) => (
-                  <li key={service}>
-                    <Link
-                      to="/services"
-                      className="text-white/60 hover:text-gold-light text-sm transition-colors"
-                    >
-                      {service}
-                    </Link>
-                  </li>
-                )
-              )}
+              {footerServiceLinks.map((link) => (
+                <li key={link.href}>
+                  <Link
+                    to={link.href}
+                    className="text-white/60 hover:text-white text-caption font-body transition-colors duration-200"
+                  >
+                    {link.label}
+                  </Link>
+                </li>
+              ))}
             </ul>
           </div>
 
           <div>
-            <h3 className="font-heading font-semibold text-white mb-5">Contact Us</h3>
+            <h3 className="text-gold-primary font-heading font-bold mb-4">Contact Us</h3>
             <ul className="space-y-4">
-              <li className="flex items-start gap-3">
-                <Phone size={16} className="text-gold-primary mt-1 shrink-0" />
-                <a href={`tel:${siteConfig.phone}`} className="text-white/60 hover:text-gold-light text-sm transition-colors">
-                  {siteConfig.phone}
+              <li className="flex items-start">
+                <Phone className="text-gold-primary w-4 h-4 mr-2 flex-shrink-0 mt-0.5" />
+                <a
+                  href="tel:8005550192"
+                  className="text-white/60 hover:text-white text-caption font-body transition-colors duration-200"
+                >
+                  (800) 555-0192
                 </a>
               </li>
-              <li className="flex items-start gap-3">
-                <Mail size={16} className="text-gold-primary mt-1 shrink-0" />
-                <a href={`mailto:${siteConfig.email}`} className="text-white/60 hover:text-gold-light text-sm transition-colors">
-                  {siteConfig.email}
+              <li className="flex items-start">
+                <Mail className="text-gold-primary w-4 h-4 mr-2 flex-shrink-0 mt-0.5" />
+                <a
+                  href="mailto:hello@proximitycreditrepair.com"
+                  className="text-white/60 hover:text-white text-caption font-body transition-colors duration-200"
+                >
+                  hello@proximitycreditrepair.com
                 </a>
               </li>
-              <li className="flex items-start gap-3">
-                <MapPin size={16} className="text-gold-primary mt-1 shrink-0" />
-                <span className="text-white/60 text-sm">{siteConfig.address}</span>
+              <li className="flex items-start">
+                <MapPin className="text-gold-primary w-4 h-4 mr-2 flex-shrink-0 mt-0.5" />
+                <span className="text-white/60 text-caption font-body">
+                  123 Financial Plaza, Suite 400, Atlanta, GA 30301
+                </span>
               </li>
             </ul>
           </div>
         </div>
 
-        <div className="gold-divider mt-12 mb-8" />
+        <div className="mt-12 mb-6">
+          <SectionDivider />
+        </div>
 
-        <div className="flex flex-col md:flex-row justify-between items-center gap-4 text-white/40 text-sm">
-          <p>© {year} {siteConfig.name}. All rights reserved.</p>
-          <div className="flex gap-6">
-            <Link to="/contact" className="hover:text-gold-light transition-colors">Privacy Policy</Link>
-            <Link to="/contact" className="hover:text-gold-light transition-colors">Terms of Service</Link>
-          </div>
+        <div className="flex flex-col md:flex-row justify-between items-center gap-2 pt-6">
+          <p className="text-muted-text text-caption">
+            © 2026 Proximity Credit Repair. All rights reserved.
+          </p>
+          <p className="text-muted-text text-label italic">
+            Results may vary. We do not guarantee specific credit score improvements.
+          </p>
         </div>
       </div>
     </footer>

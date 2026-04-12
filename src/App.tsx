@@ -1,7 +1,7 @@
-import { Suspense, lazy } from 'react'
-import { Routes, Route } from 'react-router-dom'
-import Navbar from '@components/layout/Navbar'
-import Footer from '@components/layout/Footer'
+import { lazy } from 'react'
+import { createBrowserRouter, RouterProvider } from 'react-router-dom'
+import AppLayout from '@components/layout/AppLayout'
+import NotFound from '@pages/NotFound'
 
 const Home = lazy(() => import('@pages/Home'))
 const About = lazy(() => import('@pages/About'))
@@ -11,32 +11,22 @@ const Testimonials = lazy(() => import('@pages/Testimonials'))
 const FAQ = lazy(() => import('@pages/FAQ'))
 const Contact = lazy(() => import('@pages/Contact'))
 
-function LoadingSpinner() {
-  return (
-    <div className="min-h-screen bg-dark-hero flex items-center justify-center">
-      <div className="w-12 h-12 border-2 border-gold-primary border-t-transparent rounded-full animate-spin" />
-    </div>
-  )
-}
+const router = createBrowserRouter([
+  {
+    element: <AppLayout />,
+    children: [
+      { path: '/', element: <Home /> },
+      { path: '/about', element: <About /> },
+      { path: '/services', element: <Services /> },
+      { path: '/how-it-works', element: <HowItWorks /> },
+      { path: '/testimonials', element: <Testimonials /> },
+      { path: '/faq', element: <FAQ /> },
+      { path: '/contact', element: <Contact /> },
+      { path: '*', element: <NotFound /> },
+    ],
+  },
+])
 
 export default function App() {
-  return (
-    <div className="min-h-screen flex flex-col">
-      <Navbar />
-      <main className="flex-1">
-        <Suspense fallback={<LoadingSpinner />}>
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/about" element={<About />} />
-            <Route path="/services" element={<Services />} />
-            <Route path="/how-it-works" element={<HowItWorks />} />
-            <Route path="/testimonials" element={<Testimonials />} />
-            <Route path="/faq" element={<FAQ />} />
-            <Route path="/contact" element={<Contact />} />
-          </Routes>
-        </Suspense>
-      </main>
-      <Footer />
-    </div>
-  )
+  return <RouterProvider router={router} />
 }

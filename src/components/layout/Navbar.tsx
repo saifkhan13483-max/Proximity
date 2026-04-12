@@ -22,21 +22,29 @@ const NAV_WITH_DROPDOWN: NavItemWithDropdown[] = navLinks.map((link) =>
   link.label === 'Services' ? { ...link, hasDropdown: true } : { ...link }
 )
 
+const TABLET_LINKS = navLinks.filter((l) =>
+  ['Home', 'About', 'Services', 'Contact'].includes(l.label)
+)
+
 function LogoMark() {
   return (
-    <Link to="/" className="flex items-center gap-3 group" aria-label="Proximity Credit Repair — Home">
-      <div className="relative w-10 h-10 flex-shrink-0">
+    <Link
+      to="/"
+      className="flex items-center gap-2 sm:gap-2.5 group flex-shrink-0"
+      aria-label="Proximity Credit Repair — Home"
+    >
+      <div className="relative w-8 h-8 sm:w-9 sm:h-9 flex-shrink-0">
         <div className="absolute inset-0 rounded-lg bg-gold-gradient opacity-90 group-hover:opacity-100 transition-opacity duration-300" />
         <div className="absolute inset-0 rounded-lg flex items-center justify-center">
-          <span className="font-heading font-black text-white text-lg leading-none">P</span>
+          <span className="font-heading font-black text-white text-sm sm:text-base leading-none">P</span>
         </div>
         <div className="absolute -inset-0.5 rounded-lg bg-gold-gradient opacity-0 group-hover:opacity-30 blur-sm transition-opacity duration-300" />
       </div>
       <div className="flex flex-col leading-none">
-        <span className="font-heading font-extrabold text-lg gold-gradient-text tracking-tight">
+        <span className="font-heading font-extrabold text-sm sm:text-base lg:text-lg gold-gradient-text tracking-tight">
           Proximity
         </span>
-        <span className="font-body text-white/50 text-[10px] tracking-widest uppercase mt-0.5">
+        <span className="font-body text-white/50 text-[9px] sm:text-[10px] tracking-widest uppercase mt-0.5">
           Credit Repair
         </span>
       </div>
@@ -109,7 +117,6 @@ export default function Navbar() {
 
   const hamburgerRef = useRef<HTMLButtonElement>(null)
   const firstLinkRef = useRef<HTMLAnchorElement>(null)
-  const wasOpenRef = useRef(false)
   const servicesRef = useRef<HTMLDivElement>(null)
 
   const { scrollY: motionScrollY } = useScroll()
@@ -120,12 +127,10 @@ export default function Navbar() {
 
   useEffect(() => {
     if (mobileMenuOpen) {
-      wasOpenRef.current = true
       document.body.style.overflow = 'hidden'
       const timer = setTimeout(() => firstLinkRef.current?.focus(), 50)
       return () => clearTimeout(timer)
     } else {
-      wasOpenRef.current = false
       document.body.style.overflow = ''
       hamburgerRef.current?.focus()
     }
@@ -151,6 +156,8 @@ export default function Navbar() {
   return (
     <>
       <header className="fixed top-0 left-0 right-0 z-50">
+
+        {/* ── Announcement Bar ─────────────────────────────── */}
         <AnimatePresence>
           {announcementVisible && !hideAnnouncement && (
             <motion.div
@@ -161,16 +168,22 @@ export default function Navbar() {
               className="overflow-hidden"
             >
               <div className="bg-gold-gradient text-near-black">
-                <div className="container mx-auto flex items-center justify-between py-2 px-4">
-                  <div className="flex items-center gap-2 text-xs font-body font-semibold">
-                    <Star size={11} fill="currentColor" className="flex-shrink-0" />
-                    <span>Rated #1 Credit Repair Service — Join 10,000+ Clients</span>
-                    <Star size={11} fill="currentColor" className="flex-shrink-0" />
+                <div className="container mx-auto flex items-center justify-between py-1.5 px-3 sm:px-4 gap-2">
+                  {/* Left: rating text */}
+                  <div className="flex items-center gap-1.5 min-w-0">
+                    <Star size={10} fill="currentColor" className="flex-shrink-0" />
+                    <span className="text-[11px] sm:text-xs font-body font-semibold truncate">
+                      <span className="hidden sm:inline">Rated #1 Credit Repair — </span>
+                      Join 10,000+ Clients
+                    </span>
+                    <Star size={10} fill="currentColor" className="flex-shrink-0 hidden sm:inline" />
                   </div>
-                  <div className="flex items-center gap-4">
+
+                  {/* Right: phone + close */}
+                  <div className="flex items-center gap-2 sm:gap-3 flex-shrink-0">
                     <a
                       href="tel:+18005550192"
-                      className="hidden sm:flex items-center gap-1.5 text-xs font-body font-bold hover:opacity-80 transition-opacity"
+                      className="hidden sm:flex items-center gap-1.5 text-[11px] sm:text-xs font-body font-bold hover:opacity-80 transition-opacity whitespace-nowrap"
                     >
                       <Phone size={11} />
                       (800) 555-0192
@@ -178,7 +191,7 @@ export default function Navbar() {
                     <button
                       onClick={() => setAnnouncementVisible(false)}
                       aria-label="Close announcement"
-                      className="text-near-black/60 hover:text-near-black transition-colors"
+                      className="text-near-black/60 hover:text-near-black transition-colors p-0.5"
                     >
                       <X size={13} />
                     </button>
@@ -189,6 +202,7 @@ export default function Navbar() {
           )}
         </AnimatePresence>
 
+        {/* ── Main Nav Bar ─────────────────────────────────── */}
         <motion.div
           animate={{
             backgroundColor: isScrolled ? 'rgba(10,10,10,0.92)' : 'rgba(10,10,10,0)',
@@ -200,13 +214,16 @@ export default function Navbar() {
           style={{ borderBottomWidth: 1 }}
         >
           <ScrollProgress />
+
           <nav
             role="navigation"
             aria-label="Main navigation"
-            className="container mx-auto flex items-center justify-between h-[70px]"
+            className="container mx-auto flex items-center justify-between h-[62px] sm:h-[68px] lg:h-[72px] px-2 sm:px-4 lg:px-0"
           >
+            {/* Logo */}
             <LogoMark />
 
+            {/* ── Desktop Nav Links (lg+) ── */}
             <div className="hidden lg:flex items-center gap-1">
               {NAV_WITH_DROPDOWN.map((link) => {
                 const isActive =
@@ -233,7 +250,6 @@ export default function Navbar() {
                           <ChevronDown size={13} className="mt-0.5" />
                         </motion.span>
                       </button>
-
                       <AnimatePresence>
                         {servicesOpen && (
                           <ServicesDropdown onClose={() => setServicesOpen(false)} />
@@ -267,65 +283,107 @@ export default function Navbar() {
               })}
             </div>
 
-            <div className="hidden lg:flex items-center gap-3">
+            {/* ── Tablet Nav Links (md only — 4 key links) ── */}
+            <div className="hidden md:flex lg:hidden items-center gap-0.5">
+              {TABLET_LINKS.map((link) => {
+                const isActive =
+                  location.pathname === link.href ||
+                  (link.href === '/services' && location.pathname.startsWith('/services'))
+                return (
+                  <Link
+                    key={link.href}
+                    to={link.href}
+                    className={cn(
+                      'px-3 py-2 rounded-lg font-body text-sm font-medium transition-all duration-200',
+                      isActive
+                        ? 'text-gold-primary bg-gold-primary/8'
+                        : 'text-white/75 hover:text-white hover:bg-white/5'
+                    )}
+                  >
+                    {link.label}
+                  </Link>
+                )
+              })}
+            </div>
+
+            {/* ── Right Side Controls ── */}
+            <div className="flex items-center gap-1.5 sm:gap-2">
+
+              {/* Phone icon — mobile only */}
               <a
                 href="tel:+18005550192"
-                className="flex items-center gap-2 text-white/50 hover:text-gold-primary transition-colors duration-200 font-body text-sm"
+                className="flex md:hidden items-center justify-center w-8 h-8 sm:w-9 sm:h-9 rounded-lg text-white/60 hover:text-gold-primary hover:bg-white/5 transition-all duration-200"
+                aria-label="Call (800) 555-0192"
+              >
+                <Phone size={16} />
+              </a>
+
+              {/* Phone text — desktop only */}
+              <a
+                href="tel:+18005550192"
+                className="hidden lg:flex items-center gap-2 text-white/50 hover:text-gold-primary transition-colors duration-200 font-body text-sm"
               >
                 <Phone size={14} />
                 <span className="font-medium">(800) 555-0192</span>
               </a>
-              <div className="w-px h-5 bg-white/10" />
+
+              {/* Divider — desktop only */}
+              <div className="hidden lg:block w-px h-5 bg-white/10" />
+
+              {/* CTA — tablet: compact, desktop: full */}
               <Link
                 to="/contact"
-                className="relative group inline-flex items-center gap-2 px-5 py-2.5 rounded-pill bg-gold-gradient font-heading font-bold text-white text-sm shadow-gold-sm hover:shadow-gold-md transition-all duration-200 overflow-hidden"
+                className="hidden md:inline-flex items-center gap-1.5 rounded-pill bg-gold-gradient font-heading font-bold text-white shadow-gold-sm hover:shadow-gold-md transition-all duration-200 overflow-hidden px-3.5 py-2 text-xs lg:px-5 lg:py-2.5 lg:text-sm lg:gap-2"
               >
-                <span className="relative z-10">Free Consultation</span>
-                <ArrowRight size={14} className="relative z-10 group-hover:translate-x-0.5 transition-transform duration-200" />
-                <span className="absolute inset-0 bg-white/0 group-hover:bg-white/10 transition-colors duration-200" />
+                <span className="lg:hidden">Consult</span>
+                <span className="hidden lg:inline">Free Consultation</span>
+                <ArrowRight size={12} className="lg:hidden" />
+                <ArrowRight size={14} className="hidden lg:inline" />
               </Link>
-            </div>
 
-            <button
-              ref={hamburgerRef}
-              onClick={toggleMobileMenu}
-              className={cn(
-                'lg:hidden relative w-10 h-10 rounded-lg flex items-center justify-center transition-all duration-200',
-                mobileMenuOpen
-                  ? 'bg-gold-primary/15 text-gold-primary'
-                  : 'text-white/70 hover:text-white hover:bg-white/5'
-              )}
-              aria-label={mobileMenuOpen ? 'Close navigation menu' : 'Open navigation menu'}
-              aria-expanded={mobileMenuOpen}
-            >
-              <AnimatePresence mode="wait" initial={false}>
-                {mobileMenuOpen ? (
-                  <motion.div
-                    key="close"
-                    initial={{ rotate: -90, opacity: 0 }}
-                    animate={{ rotate: 0, opacity: 1 }}
-                    exit={{ rotate: 90, opacity: 0 }}
-                    transition={{ duration: 0.15 }}
-                  >
-                    <X size={20} />
-                  </motion.div>
-                ) : (
-                  <motion.div
-                    key="open"
-                    initial={{ rotate: 90, opacity: 0 }}
-                    animate={{ rotate: 0, opacity: 1 }}
-                    exit={{ rotate: -90, opacity: 0 }}
-                    transition={{ duration: 0.15 }}
-                  >
-                    <Menu size={20} />
-                  </motion.div>
+              {/* Hamburger — mobile and tablet (hidden on desktop) */}
+              <button
+                ref={hamburgerRef}
+                onClick={toggleMobileMenu}
+                className={cn(
+                  'lg:hidden relative w-8 h-8 sm:w-9 sm:h-9 rounded-lg flex items-center justify-center transition-all duration-200',
+                  mobileMenuOpen
+                    ? 'bg-gold-primary/15 text-gold-primary'
+                    : 'text-white/70 hover:text-white hover:bg-white/5'
                 )}
-              </AnimatePresence>
-            </button>
+                aria-label={mobileMenuOpen ? 'Close navigation menu' : 'Open navigation menu'}
+                aria-expanded={mobileMenuOpen}
+              >
+                <AnimatePresence mode="wait" initial={false}>
+                  {mobileMenuOpen ? (
+                    <motion.div
+                      key="close"
+                      initial={{ rotate: -90, opacity: 0 }}
+                      animate={{ rotate: 0, opacity: 1 }}
+                      exit={{ rotate: 90, opacity: 0 }}
+                      transition={{ duration: 0.15 }}
+                    >
+                      <X size={18} />
+                    </motion.div>
+                  ) : (
+                    <motion.div
+                      key="open"
+                      initial={{ rotate: 90, opacity: 0 }}
+                      animate={{ rotate: 0, opacity: 1 }}
+                      exit={{ rotate: -90, opacity: 0 }}
+                      transition={{ duration: 0.15 }}
+                    >
+                      <Menu size={18} />
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </button>
+            </div>
           </nav>
         </motion.div>
       </header>
 
+      {/* ── Mobile / Tablet Drawer ─────────────────────────── */}
       <AnimatePresence>
         {mobileMenuOpen && (
           <>
@@ -334,7 +392,7 @@ export default function Navbar() {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               transition={{ duration: 0.2 }}
-              className="fixed inset-0 bg-black/70 backdrop-blur-sm z-40 lg:hidden"
+              className="fixed inset-0 bg-black/70 backdrop-blur-sm z-40"
               onClick={closeMobileMenu}
             />
 
@@ -346,20 +404,22 @@ export default function Navbar() {
               role="dialog"
               aria-label="Navigation menu"
               aria-modal="true"
-              className="fixed inset-y-0 right-0 w-[300px] bg-[#0d0d0d] border-l border-gold-primary/15 z-50 flex flex-col lg:hidden"
+              className="fixed inset-y-0 right-0 w-[min(300px,88vw)] bg-[#0d0d0d] border-l border-gold-primary/15 z-50 flex flex-col"
             >
-              <div className="flex items-center justify-between px-5 py-4 border-b border-white/5">
+              {/* Drawer header */}
+              <div className="flex items-center justify-between px-4 sm:px-5 py-4 border-b border-white/5">
                 <LogoMark />
                 <button
                   onClick={closeMobileMenu}
-                  className="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center text-white/60 hover:text-white hover:bg-white/10 transition-colors"
+                  className="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center text-white/60 hover:text-white hover:bg-white/10 transition-colors flex-shrink-0"
                   aria-label="Close navigation menu"
                 >
                   <X size={16} />
                 </button>
               </div>
 
-              <div className="flex-1 overflow-y-auto py-4 px-3">
+              {/* Nav links */}
+              <div className="flex-1 overflow-y-auto py-4 px-2 sm:px-3">
                 <p className="px-3 mb-2 text-[10px] font-body font-semibold tracking-widest uppercase text-white/25">
                   Navigation
                 </p>
@@ -403,7 +463,7 @@ export default function Navbar() {
                                     key={item.href}
                                     to={item.href}
                                     onClick={closeMobileMenu}
-                                    className="flex items-center gap-3 px-2 py-2.5 rounded-lg hover:bg-white/5 transition-colors group"
+                                    className="flex items-center gap-3 px-2 py-2.5 rounded-lg hover:bg-white/5 transition-colors"
                                   >
                                     <item.icon size={14} className="text-gold-primary flex-shrink-0" />
                                     <div>
@@ -442,7 +502,8 @@ export default function Navbar() {
                 })}
               </div>
 
-              <div className="px-4 py-5 border-t border-white/5 space-y-3">
+              {/* Drawer footer actions */}
+              <div className="px-3 sm:px-4 py-4 sm:py-5 border-t border-white/5 space-y-3">
                 <a
                   href="tel:+18005550192"
                   className="flex items-center justify-center gap-2 w-full py-3 rounded-lg border border-gold-primary/25 text-gold-primary font-body font-semibold text-sm hover:bg-gold-primary/8 transition-colors duration-150"
@@ -459,7 +520,7 @@ export default function Navbar() {
                 </Link>
               </div>
 
-              <div className="px-5 pb-5">
+              <div className="px-4 pb-5">
                 <p className="text-white/20 text-[10px] font-body text-center">
                   © 2026 Proximity Credit Repair
                 </p>

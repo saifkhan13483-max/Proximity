@@ -2,27 +2,74 @@
 @tailwind components;
 @tailwind utilities;
 
-@layer base {
-  html {
-    scroll-behavior: smooth;
-  }
-
-  body {
-    @apply font-body text-dark-charcoal bg-white;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-  }
-
-  h1, h2, h3, h4, h5, h6 {
-    @apply font-heading;
-  }
+/* ─── Brand CSS Custom Properties ─────────────────────────────────────────── */
+:root {
+  --color-gold-primary: #B8924A;
+  --color-gold-light:   #D4AF72;
+  --color-gold-dark:    #8B6A2E;
+  --color-offwhite:     #F9F6F1;
+  --color-near-black:   #0A0A0A;
+  --color-card-black:   #141414;
+  --color-body-text:    #1A1A1A;
+  --color-muted-text:   #6B6B6B;
 }
 
+/* ─── Global Reset ─────────────────────────────────────────────────────────── */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+/* ─── Base ──────────────────────────────────────────────────────────────────── */
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: 'Open Sans', sans-serif;
+  color: var(--color-body-text);
+  background: #ffffff;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ─── Focus Visible ─────────────────────────────────────────────────────────── */
+*:focus-visible {
+  outline: 2px solid #B8924A;
+  outline-offset: 2px;
+}
+
+/* ─── Component Utilities ────────────────────────────────────────────────────── */
 @layer components {
+  /* Phase 2 required class name */
+  .gold-gradient-text {
+    background: linear-gradient(135deg, #B8924A 0%, #D4AF72 50%, #8B6A2E 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  /* Legacy alias — existing components use this */
+  .text-gold-gradient {
+    background: linear-gradient(135deg, #B8924A 0%, #D4AF72 50%, #8B6A2E 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .section-padding {
+    padding-top: 96px;
+    padding-bottom: 96px;
+  }
+
+  .section-label {
+    @apply text-gold-primary uppercase tracking-widest text-sm font-heading font-semibold mb-3 block;
+  }
+
   .btn-primary {
     @apply bg-gold-gradient text-white font-heading font-bold px-8 py-4 rounded-full
-           shadow-lg hover:shadow-gold-primary/30 hover:shadow-xl
-           transition-all duration-300;
+           shadow-lg hover:shadow-gold-md transition-all duration-300;
   }
 
   .btn-secondary {
@@ -30,40 +77,26 @@
            hover:bg-gold-primary hover:text-white transition-all duration-300;
   }
 
-  .section-label {
-    @apply text-gold-primary uppercase tracking-widest text-sm font-heading font-semibold mb-3;
-  }
-
   .gold-divider {
     @apply h-px w-full bg-gold-gradient opacity-30;
   }
 
   .glass-card {
-    @apply backdrop-blur-sm bg-dark-card/80 border border-gold-primary/20 rounded-2xl
-           hover:border-gold-primary/40 hover:shadow-lg hover:shadow-gold-primary/10
-           transition-all duration-300;
+    @apply backdrop-blur-sm bg-dark-card/80 border border-gold-primary/20 rounded-card
+           hover:border-gold-primary/40 hover:shadow-gold-sm transition-all duration-300;
   }
 }
 
-@layer utilities {
-  .text-gold-gradient {
-    background: linear-gradient(135deg, #B8924A 0%, #D4AF72 50%, #8B6A2E 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-  }
-}
-
-/* Scrollbar */
+/* ─── Custom Scrollbar ───────────────────────────────────────────────────────── */
 ::-webkit-scrollbar {
   width: 6px;
 }
 
 ::-webkit-scrollbar-track {
-  background: #0A0A0A;
+  background: var(--color-near-black);
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #B8924A;
+  background: var(--color-gold-primary);
   border-radius: 3px;
 }

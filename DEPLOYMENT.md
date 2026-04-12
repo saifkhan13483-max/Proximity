@@ -64,10 +64,14 @@ All `/api/*` requests made to the Vercel domain are transparently forwarded to t
 
 ## vercel.json — Proxy Configuration
 
-This file lives at the project root and tells Vercel to forward all `/api/*` requests to the Railway backend and serve `index.html` for all other routes (SPA mode):
+The active configuration Vercel reads is **`frontend/vercel.json`** (not the root `vercel.json`). Because the Vercel Root Directory is set to `frontend`, Vercel only reads the config file within that directory.
+
+`frontend/vercel.json` forwards all `/api/*` requests to the Railway backend and serves `index.html` for all other routes (SPA mode):
 
 ```json
 {
+  "buildCommand": "npm run build",
+  "outputDirectory": "dist",
   "rewrites": [
     {
       "source": "/api/:path*",
@@ -94,6 +98,8 @@ This file lives at the project root and tells Vercel to forward all `/api/*` req
   ]
 }
 ```
+
+> The `vercel.json` at the project root is **not used** by Vercel when Root Directory is set to `frontend`. Any proxy or rewrite changes must be made in `frontend/vercel.json`.
 
 ---
 

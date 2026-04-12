@@ -1,9 +1,19 @@
 # Proximity Credit Repair — Deployment Guide
 
-This document covers every step needed to deploy the Proximity Credit Repair application to production. The architecture uses two separate hosting platforms:
+This document covers the full deployment setup for the Proximity Credit Repair application. The architecture uses two separate hosting platforms:
 
-- **Frontend** → [Vercel](https://vercel.com)
-- **Backend API** → [Railway](https://railway.app)
+- **Frontend** → [Vercel](https://vercel.com) — `https://proximity-murex.vercel.app`
+- **Backend API** → [Railway](https://railway.app) — `https://proximity-prd-production.up.railway.app`
+
+---
+
+## Live Production URLs
+
+| Service | URL |
+|---|---|
+| Frontend (Vercel) | https://proximity-murex.vercel.app |
+| Backend API (Railway) | https://proximity-prd-production.up.railway.app |
+| Health Check | https://proximity-prd-production.up.railway.app/health |
 
 ---
 
@@ -17,94 +27,51 @@ Browser
         └── /api/*            → Proxy rewrite → Railway Backend
 
 Railway (Backend — Node.js + Express)
-  └── Express REST API on port assigned by Railway
+  └── proximity-prd-production.up.railway.app
         ├── /api/auth/*       → Register, Login, Me
         ├── /api/contacts     → Contact form submissions
         ├── /api/users/plan   → Plan selection
         ├── /api/admin/*      → Admin routes (JWT + admin role required)
         └── /health           → Health check endpoint
+
+Railway (Database)
+  └── PostgreSQL (Postgres plugin — connected to Proximity-PRD service)
+        └── DATABASE_URL / DATABASE_PUBLIC_URL auto-injected by Railway
 ```
 
 All `/api/*` requests made to the Vercel domain are transparently forwarded to the Railway backend via `vercel.json` rewrites — no CORS issues in production.
 
 ---
 
-## Environment Variables
+## Current Production Environment Variables
 
-### Backend (Railway)
+### Backend (Railway — Proximity-PRD service)
 
-| Variable | Required | Description |
-|---|---|---|
-| `JWT_SECRET` | **Yes** | Long random string for signing JWTs. The server will refuse to start without it. |
-| `PORT` | No | Automatically assigned by Railway. Defaults to `3001` locally. |
-| `ALLOWED_ORIGINS` | **Yes** | Comma-separated list of allowed CORS origins (e.g. `https://your-app.vercel.app,http://localhost:5000`). |
+| Variable | Value / Notes |
+|---|---|
+| `JWT_SECRET` | Set — used to sign all JWTs |
+| `ALLOWED_ORIGINS` | `http://localhost:5000,https://proximity-murex.vercel.app` |
+| `PORT` | `3001` — **see warning below** |
+| `VITE_SITE_URL` | `https://proximity-murex.vercel.app/` |
+| `DATABASE_URL` | Auto-injected by Railway Postgres plugin (internal) |
+| `DATABASE_PUBLIC_URL` | Auto-injected by Railway Postgres plugin (external) |
 
-### Frontend (Vercel)
-
-| Variable | Required | Description |
-|---|---|---|
-| `VITE_API_URL` | No | Backend base URL for the Vite dev proxy only. Not needed in production — handled by `vercel.json` rewrites. |
-| `VITE_SITE_URL` | Recommended | Canonical site URL for SEO and Open Graph meta tags. |
-| `VITE_ANALYTICS_ID` | No | Google Analytics 4 Measurement ID (e.g. `G-XXXXXXXXXX`). Leave blank to disable. |
-
----
-
-## Step 1 — Deploy the Backend to Railway
-
-### 1.1 Create a New Railway Project
-
-1. Go to [railway.app](https://railway.app) and sign in.
-2. Click **New Project** → **Deploy from GitHub repo**.
-3. Select your repository.
-4. Under **Root Directory**, set it to `backend`.
-
-### 1.2 Set Environment Variables
-
-In Railway, go to your service → **Variables** tab, and add the following:
-
-```
-JWT_SECRET=<a long, random, secret string — at least 48 characters>
-ALLOWED_ORIGINS=http://localhost:5000
-```
-
-> You will update `ALLOWED_ORIGINS` again after the frontend is deployed to Vercel.
-
-### 1.3 Generate a Public Domain
-
-1. In Railway, go to **Settings → Networking**.
-2. Click **Generate Domain**.
-3. Copy the public URL (e.g. `https://proximity-backend.up.railway.app`).
-
-### 1.4 Verify the Backend is Running
-
-Open your browser and visit:
-
-```
-https://your-backend.up.railway.app/health
-```
-
-You should see a response like:
-
-```json
-{ "status": "ok", "uptime": 12.3, "timestamp": "2026-04-12T00:00:00.000Z" }
-```
-
-If the server fails to start, check the Railway deployment logs for the `FATAL: JWT_SECRET` error — it means the environment variable was not set correctly.
+> **PORT WARNING:** Railway's public networking for this service is mapped to **port 8080**, but the `PORT` variable is manually set to `3001`. This means Express listens on 3001, but Railway routes external traffic to 8080 — the two don't match and the backend will be unreachable from the internet.
+>
+> **Fix:** Go to Railway → Proximity-PRD → Variables → **delete the `PORT` variable entirely**. Railway will then automatically inject the correct port at runtime and the server will bind to it.
 
 ---
 
-## Step 2 — Configure the Frontend for Production
+## vercel.json — Proxy Configuration
 
-### 2.1 Update vercel.json
-
-Open `vercel.json` in the project root and replace the Railway backend URL in the `/api/*` rewrite with your actual Railway domain:
+This file lives at the project root and tells Vercel to forward all `/api/*` requests to the Railway backend and serve `index.html` for all other routes (SPA mode):
 
 ```json
 {
   "rewrites": [
     {
       "source": "/api/:path*",
-      "destination": "https://your-backend.up.railway.app/api/:path*"
+      "destination": "https://proximity-prd-production.up.railway.app/api/:path*"
     },
     {
       "source": "/(.*)",
@@ -128,67 +95,101 @@ Open `vercel.json` in the project root and replace the Railway backend URL in th
 }
 ```
 
-Commit and push this change to GitHub before deploying to Vercel.
+---
+
+## Redeploying — Step by Step
+
+### Redeploy the Backend (Railway)
+
+Railway redeploys automatically on every push to the connected GitHub branch. To trigger a manual redeploy:
+
+1. Go to [railway.app](https://railway.app) → your project → **Proximity-PRD** service.
+2. Click **Deployments** → **Redeploy** on the latest deployment.
+3. Monitor the build logs for any errors.
+4. Verify the backend is live: `https://proximity-prd-production.up.railway.app/health`
+
+### Redeploy the Frontend (Vercel)
+
+Vercel redeploys automatically on every push to the connected GitHub branch. To trigger a manual redeploy:
+
+1. Go to [vercel.com](https://vercel.com) → your project.
+2. Click **Deployments** → **...** on the latest → **Redeploy**.
+3. Once complete, verify at `https://proximity-murex.vercel.app`.
 
 ---
 
-## Step 3 — Deploy the Frontend to Vercel
+## Deploying for the First Time (Fresh Setup)
 
-### 3.1 Create a New Vercel Project
+### Step 1 — Deploy the Backend to Railway
 
-1. Go to [vercel.com](https://vercel.com) and sign in.
-2. Click **Add New Project** → select your GitHub repository.
-3. Vercel will auto-detect the configuration from `vercel.json`.
+1. Go to [railway.app](https://railway.app) → **New Project** → **Deploy from GitHub repo**.
+2. Select the repository and set **Root Directory** to `backend`.
+3. Under **Variables**, add:
+   ```
+   JWT_SECRET=<strong random string, 48+ characters>
+   ALLOWED_ORIGINS=http://localhost:5000
+   ```
+4. Do **not** manually set `PORT` — let Railway assign it automatically.
+5. Go to **Settings → Networking** → **Generate Domain**.
+6. Verify: `https://your-backend.up.railway.app/health` returns `{"status":"ok",...}`.
 
-### 3.2 Configure the Build Settings
+### Step 2 — Configure vercel.json
 
-If Vercel does not auto-detect them, set the following manually:
+Open `vercel.json` at the project root and set the Railway URL in the `/api/*` rewrite:
 
-| Setting | Value |
-|---|---|
-| Framework Preset | Vite |
-| Root Directory | `frontend` |
-| Build Command | `npm run build` |
-| Output Directory | `dist` |
-| Install Command | `npm install` |
-
-### 3.3 Add Environment Variables
-
-In Vercel, go to **Settings → Environment Variables** and add:
-
-```
-VITE_SITE_URL=https://your-app.vercel.app
+```json
+"destination": "https://your-backend.up.railway.app/api/:path*"
 ```
 
-Optionally add `VITE_ANALYTICS_ID` if you have a Google Analytics 4 property.
+Commit and push before deploying to Vercel.
 
-### 3.4 Deploy
+### Step 3 — Deploy the Frontend to Vercel
 
-Click **Deploy**. Vercel will build the frontend and publish it. Once complete, copy your live Vercel URL (e.g. `https://proximity-credit-repair.vercel.app`).
+1. Go to [vercel.com](https://vercel.com) → **Add New Project** → select the repo.
+2. Set build settings if not auto-detected:
 
----
+   | Setting | Value |
+   |---|---|
+   | Root Directory | `frontend` |
+   | Build Command | `npm run build` |
+   | Output Directory | `dist` |
+   | Install Command | `npm install` |
 
-## Step 4 — Connect Frontend and Backend
+3. Add environment variable:
+   ```
+   VITE_SITE_URL=https://your-app.vercel.app
+   ```
+4. Click **Deploy** and copy the live Vercel URL.
 
-Now that both are live, you need to allow the Vercel domain in the backend's CORS policy.
+### Step 4 — Connect Frontend and Backend
 
-1. Go back to **Railway** → **Variables**.
-2. Update `ALLOWED_ORIGINS` to include your Vercel URL:
+Go back to Railway → **Variables** and update `ALLOWED_ORIGINS`:
 
 ```
 ALLOWED_ORIGINS=https://your-app.vercel.app,http://localhost:5000
 ```
 
-3. Railway will automatically redeploy the backend with the new variable.
+Railway will redeploy automatically.
+
+### Step 5 — Verify Full Stack
+
+1. Visit the Vercel URL.
+2. Go to **/register** and create an account — tests the full API proxy.
+3. Log in and visit **/dashboard** — verifies JWT auth.
+4. Log in as admin and visit **/admin** — verifies admin role guard.
 
 ---
 
-## Step 5 — Verify the Full Stack
+## Railway PostgreSQL Database
 
-1. Visit your Vercel URL in the browser.
-2. Navigate to **/register** and create a new account — this tests the full API proxy chain.
-3. Log in and access the **/dashboard** — this verifies JWT authentication is working.
-4. Log in with the default admin account (see below) and check **/admin**.
+A PostgreSQL plugin is connected to the Proximity-PRD service. Railway auto-injects these variables:
+
+| Variable | Description |
+|---|---|
+| `DATABASE_URL` | Internal connection string (used inside Railway network) |
+| `DATABASE_PUBLIC_URL` | External connection string (for connecting from outside Railway) |
+
+> **Note:** The current backend code (`server.js`) still uses flat JSON files (`users.json`, `contacts.json`) and does **not** yet use the PostgreSQL database. The Postgres plugin is connected and the connection strings are available, but the backend needs to be updated to use them for data to persist across redeploys.
 
 ---
 
@@ -207,43 +208,46 @@ The admin account is automatically seeded every time the backend starts:
 
 ## Replit Development Environment
 
-When working locally inside Replit, the two workflows below must be running:
+When working inside Replit, both workflows must be running:
 
 | Workflow | Command | Port |
 |---|---|---|
 | Auth API | `node backend/server.js` | 3001 |
 | Start application | `npm run dev --prefix frontend` | 5000 |
 
-The Vite dev server proxies all `/api/*` requests to `http://localhost:3001` automatically, so no manual CORS configuration is needed during development.
+The Vite dev server proxies all `/api/*` requests to `http://localhost:3001` automatically.
 
 Required secret in Replit:
 
 | Secret | Description |
 |---|---|
-| `JWT_SECRET` | Must be set in Replit Secrets before the backend will start. |
+| `JWT_SECRET` | Must be set in Replit Secrets — backend refuses to start without it. |
 
 ---
 
-## Important Production Warnings
+## Important Warnings
 
-### Ephemeral Storage on Railway
+### PORT Variable Conflict (Railway)
 
-Railway's filesystem is reset on every deployment. This means `users.json` and `contacts.json` — which store all user accounts and contact form submissions — **will be wiped** on every redeploy.
+Do **not** manually set a `PORT` variable in Railway. Railway injects the correct port automatically at runtime. If you override it, Express will listen on the wrong port and the service will be unreachable publicly.
 
-- The admin account is automatically re-seeded on startup, so it will always exist.
-- All other user accounts and contact data will be permanently lost after a redeploy.
+**Fix:** Delete the `PORT` variable from Railway → Proximity-PRD → Variables.
 
-**For production use, migrate to a persistent database** (e.g. Railway's PostgreSQL plugin) before handling real user data.
+### Ephemeral JSON Storage
+
+The current backend uses `users.json` and `contacts.json` for storage. These files are wiped on every Railway redeploy. The admin account is re-seeded automatically, but **all other user and contact data will be lost** on each deploy.
+
+The PostgreSQL database is already connected — migrate the backend to use it for durable production storage.
 
 ### JWT_SECRET Strength
 
 - Use a minimum of 48 randomly generated characters.
 - Never use a short, guessable, or default value.
-- The backend will refuse to start entirely if this variable is missing.
+- The backend will refuse to start if this variable is missing.
 
 ### Framer Motion Version
 
-Framer Motion is pinned to **v10** in `frontend/package.json`. Do not upgrade to v11+ — it has a dist structure incompatibility with Vite that will break the build.
+Pinned to **v10** in `frontend/package.json`. Do not upgrade to v11+ — it has a dist structure incompatibility with Vite that breaks the build.
 
 ---
 
@@ -259,7 +263,7 @@ cd backend && node server.js
 # Install frontend dependencies
 cd frontend && npm install
 
-# Run frontend dev server
+# Run frontend dev server (port 5000)
 cd frontend && npm run dev
 
 # Build frontend for production
@@ -275,5 +279,5 @@ cd frontend && npm run preview
 
 | URL | Description |
 |---|---|
-| `https://your-backend.up.railway.app/health` | Used by Railway for uptime monitoring |
-| `https://your-backend.up.railway.app/api/health` | Alternate health check path |
+| `https://proximity-prd-production.up.railway.app/health` | Railway uptime monitoring |
+| `https://proximity-prd-production.up.railway.app/api/health` | Alternate health check path |

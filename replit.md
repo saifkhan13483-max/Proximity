@@ -61,7 +61,7 @@ proximity/
 ## Pages (Phase 7 — Fully Implemented)
 1. **Home** (`/`) — Full-screen hero with particles + animated headline, animated stat counters, services preview, how-it-works strip, testimonials auto-slider, CTA band
 2. **About** (`/about`) — Sub-hero banner, mission blockquote with gold accent bar, core values grid, team grid with hover bio overlay
-3. **Services** (`/services`) — Sub-hero, 4 alternating service detail sections with hash IDs for anchor navigation, CTA strip
+3. **Services** (`/services`) — Sub-hero, 7 alternating service detail sections with hash IDs for anchor navigation: Credit Analysis, Dispute Filing, Score Monitoring, Debt Validation, Creditor Negotiation, Educational Resources, Identity Theft Protection. CTA strip at bottom.
 4. **How It Works** (`/how-it-works`) — Sub-hero, 4-step timeline with animated gold connector lines (desktop) and vertical connectors (mobile)
 5. **Testimonials** (`/testimonials`) — Sub-hero, trust badges row, full 8-card testimonials grid, video placeholder
 6. **FAQ** (`/faq`) — Sub-hero, animated accordion organized by 2 categories (5 items each), only 1 item open at a time

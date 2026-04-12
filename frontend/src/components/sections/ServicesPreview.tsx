@@ -1,14 +1,15 @@
 import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { useInView } from 'react-intersection-observer'
-import { BarChart2, FileText, TrendingUp, Shield } from 'lucide-react'
+import { BarChart2, FileText, TrendingUp, Shield, Handshake, BookOpen, ShieldCheck } from 'lucide-react'
 import type { LucideIcon } from 'lucide-react'
 import Section from '@components/layout/Section'
 import SectionLabel from '@components/ui/SectionLabel'
 import { fadeUp, staggerContainer } from '@lib/animations'
 import { services } from '@data/services'
 
-const iconMap: Record<string, LucideIcon> = { BarChart2, FileText, TrendingUp, Shield }
+const iconMap: Record<string, LucideIcon> = { BarChart2, FileText, TrendingUp, Shield, Handshake, BookOpen, ShieldCheck }
+const CORE_SERVICE_IDS = ['credit-analysis', 'dispute-filing', 'score-monitoring', 'debt-validation']
 
 export default function ServicesPreview() {
   const { ref, inView } = useInView({ triggerOnce: true, threshold: 0.1 })
@@ -28,7 +29,7 @@ export default function ServicesPreview() {
         animate={inView ? 'visible' : 'hidden'}
         className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6"
       >
-        {services.map((service) => {
+        {services.filter(s => CORE_SERVICE_IDS.includes(s.id)).map((service) => {
           const Icon = iconMap[service.icon]
           return (
             <motion.div

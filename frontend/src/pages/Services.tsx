@@ -1,7 +1,7 @@
 import { motion } from 'framer-motion'
   import { useInView } from 'react-intersection-observer'
   import { Link } from 'react-router-dom'
-  import { BarChart2, FileText, TrendingUp, Shield, CheckCircle } from 'lucide-react'
+  import { BarChart2, FileText, TrendingUp, Shield, CheckCircle, Handshake, BookOpen, ShieldCheck } from 'lucide-react'
   import type { LucideIcon } from 'lucide-react'
   import PageWrapper from '@components/layout/PageWrapper'
   import SEOHead from '@components/layout/SEOHead'
@@ -10,7 +10,7 @@ import { motion } from 'framer-motion'
   import { fadeUp } from '@lib/animations'
   import { services } from '@data/services'
 
-  const iconMap: Record<string, LucideIcon> = { BarChart2, FileText, TrendingUp, Shield }
+  const iconMap: Record<string, LucideIcon> = { BarChart2, FileText, TrendingUp, Shield, Handshake, BookOpen, ShieldCheck }
 
   const servicesSchema = {
     '@context': 'https://schema.org',

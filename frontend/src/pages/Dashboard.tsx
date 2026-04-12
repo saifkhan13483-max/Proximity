@@ -3,6 +3,7 @@ import { motion } from 'framer-motion'
 import {
   Shield, TrendingUp, FileText, BarChart2, LogOut,
   User, CheckCircle, Clock, Star, ArrowRight, Bell, Zap, CreditCard,
+  BookOpen, Handshake, ShieldCheck, CalendarDays,
 } from 'lucide-react'
 import { useAuthStore } from '@store/authStore'
 import { plans } from '@data/plans'
@@ -15,12 +16,32 @@ const STAT_CARDS = [
   { label: 'Days Active', value: '1', sub: 'Member since today', icon: Clock, color: 'from-purple-500/10 to-purple-600/5' },
 ]
 
-const QUICK_ACTIONS = [
-  { label: 'Start Credit Analysis', desc: 'Get a full 3-bureau review', icon: BarChart2, href: '/services#credit-analysis' },
-  { label: 'File a Dispute', desc: 'Remove inaccurate items', icon: FileText, href: '/services#dispute-filing' },
-  { label: 'Score Monitoring', desc: 'Real-time credit alerts', icon: TrendingUp, href: '/services#score-monitoring' },
-  { label: 'Book Consultation', desc: 'Speak with an expert', icon: Star, href: '/contact' },
-]
+const ALL_ACTIONS = {
+  creditAnalysis: { label: 'Credit Analysis', desc: 'Full 3-bureau report review', icon: BarChart2, href: '/services#credit-analysis' },
+  disputeFiling: { label: 'File a Dispute', desc: 'Remove inaccurate items', icon: FileText, href: '/services#dispute-filing' },
+  scoreMonitoring: { label: 'Score Monitoring', desc: 'Real-time credit alerts', icon: TrendingUp, href: '/services#score-monitoring' },
+  debtValidation: { label: 'Debt Validation', desc: 'Challenge unverifiable debts', icon: Shield, href: '/services#debt-validation' },
+  educationalResources: { label: 'Educational Resources', desc: 'Guides, tools & tutorials', icon: BookOpen, href: '/services#educational-resources' },
+  creditorNegotiation: { label: 'Creditor Negotiation', desc: 'Pay-for-delete & goodwill letters', icon: Handshake, href: '/services#creditor-negotiation' },
+  identityProtection: { label: 'Identity Protection', desc: 'Dark web & fraud monitoring', icon: ShieldCheck, href: '/services#identity-protection' },
+  bookConsultation: { label: 'Book Consultation', desc: 'Speak with an expert', icon: Star, href: '/contact' },
+  advisorSession: { label: 'Book Advisor Session', desc: 'Weekly 1-on-1 strategy call', icon: CalendarDays, href: '/contact' },
+}
+
+function getPlanActions(plan: string) {
+  const { creditAnalysis, disputeFiling, scoreMonitoring, debtValidation,
+    educationalResources, creditorNegotiation, identityProtection,
+    bookConsultation, advisorSession } = ALL_ACTIONS
+  if (plan === 'VIP Plan')
+    return [disputeFiling, creditorNegotiation, identityProtection, advisorSession]
+  if (plan === 'Premium Plan')
+    return [disputeFiling, creditorNegotiation, educationalResources, advisorSession]
+  if (plan === 'Standard Plan')
+    return [scoreMonitoring, debtValidation, educationalResources, bookConsultation]
+  if (plan === 'Basic Plan')
+    return [creditAnalysis, disputeFiling, bookConsultation, scoreMonitoring]
+  return [creditAnalysis, disputeFiling, scoreMonitoring, bookConsultation]
+}
 
 const PLAN_BENEFITS: Record<string, string[]> = {
   'Free Consultation': ['Initial credit report review', 'One-time consultation session'],
@@ -54,6 +75,7 @@ export default function Dashboard() {
   const currentPlan = user?.plan || 'Free Consultation'
   const benefits = PLAN_BENEFITS[currentPlan] || []
   const isUpgradeable = currentPlan === 'Free Consultation' || currentPlan === 'Basic Plan'
+  const quickActions = getPlanActions(currentPlan)
 
   const matchedPlan = plans.find((p) => `${p.name} Plan` === currentPlan)
   const nextPlan = matchedPlan
@@ -173,9 +195,9 @@ export default function Dashboard() {
         </motion.div>
 
         <motion.div {...fadeUp(0.2)} className="mb-6">
-          <h3 className="font-heading text-base font-bold text-white mb-3">Quick Actions</h3>
+          <h3 className="font-heading text-base font-bold text-white mb-3">Your Plan Features</h3>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            {QUICK_ACTIONS.map((action) => (
+            {quickActions.map((action) => (
               <a
                 key={action.label}
                 href={action.href}

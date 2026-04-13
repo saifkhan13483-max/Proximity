@@ -91,8 +91,31 @@ async function seedAdmin() {
     return
   }
 
+  // Step 1: Sync custom claims for ALL users already marked as admin in Firestore
+  try {
+    const adminDocs = await db.collection('users').where('role', '==', 'admin').get()
+    for (const doc of adminDocs.docs) {
+      const data = doc.data()
+      try {
+        const firebaseUser = await adminAuth.getUser(doc.id)
+        const claims = firebaseUser.customClaims || {}
+        if (claims.role !== 'admin') {
+          await adminAuth.setCustomUserClaims(doc.id, { role: 'admin' })
+          console.log(`[seedAdmin] Admin custom claims applied to existing admin: ${data.email}`)
+        } else {
+          console.log(`[seedAdmin] Admin claims already set for: ${data.email}`)
+        }
+      } catch (err) {
+        console.warn(`[seedAdmin] Could not sync claims for ${data.email}:`, err.message)
+      }
+    }
+  } catch (err) {
+    console.warn('[seedAdmin] Could not sync existing admin claims:', err.message)
+  }
+
+  // Step 2: Ensure the ADMIN_EMAIL account exists and has admin role
   if (!ADMIN_PASSWORD) {
-    console.warn('[seedAdmin] Skipping: ADMIN_PASSWORD environment variable is not set.')
+    console.warn('[seedAdmin] Skipping ADMIN_EMAIL seed: ADMIN_PASSWORD environment variable is not set.')
     return
   }
 

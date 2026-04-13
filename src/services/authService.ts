@@ -77,7 +77,8 @@ export async function loginUser(email: string, password: string): Promise<AuthRe
   if (!auth) throw new Error('Authentication is not configured. Please contact the site administrator.')
   try {
     const credential = await signInWithEmailAndPassword(auth, email, password)
-    const token = await credential.user.getIdToken()
+    // Force-refresh the token so any custom claims (e.g. role: admin) set server-side are included
+    const token = await credential.user.getIdToken(true)
 
     try {
       const user = await apiRequest<AuthUser>(`${BASE}/me`, {

@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Link, useNavigate, Navigate } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { User, Mail, Lock, Eye, EyeOff, ArrowRight, Shield } from 'lucide-react'
 import { useAuthStore } from '@store/authStore'
@@ -7,7 +7,7 @@ import { registerUser } from '@services/authService'
 
 export default function Register() {
   const navigate = useNavigate()
-  const { setAuth, isAuthenticated } = useAuthStore()
+  const { setAuth } = useAuthStore()
 
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
@@ -15,10 +15,6 @@ export default function Register() {
   const [showPassword, setShowPassword] = useState(false)
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
-
-  if (isAuthenticated()) {
-    return <Navigate to="/dashboard" replace />
-  }
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()

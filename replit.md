@@ -178,15 +178,6 @@ See `frontend/.env.example` for a template.
 - Navbar `boxShadow` animation fixed (was animating to `"none"` which Framer Motion can't interpolate)
 - Dynamic copyright year in Footer (no hardcoded year)
 
-## Bug Fixes (Audit April 2026)
-- **Pricing page CTA**: Changed `<a href="/contact">` to `<Link to="/contact">` for proper SPA navigation
-- **Admin login security**: Removed plaintext default credentials from the admin login page UI
-- **Auth redirects**: Added `<Navigate>` redirect on Login and Register pages for already-authenticated users
-- **AdminLogin anti-pattern**: Replaced `navigate()` call during render with `<Navigate>` component (React concurrent-mode safe)
-- **`lib/cn.ts`**: Fixed `clsx(inputs)` → `clsx(...inputs)` (array spread correctness)
-- **`formatPhone`**: Upgraded to a progressive formatter — shows partial formatting as the user types instead of only formatting after 10 full digits
-
 ## Notes
 - Framer Motion pinned to v10 (v11+ dist structure incompatibility with Vite)
 - `v7_startTransition` future flag set on `RouterProvider` to suppress React Router v7 migration warning
-- Admin default credentials: `admin@proximity.com` / `Admin@2026!` — seeded on every backend startup (change for production)

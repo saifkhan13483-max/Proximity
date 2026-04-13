@@ -144,6 +144,19 @@ body {
   animation: goldGlow 1.5s ease-in-out infinite;
 }
 
+/* ─── Hide Replit Injected Badge ────────────────────────────────────────────── */
+#replit-badge,
+[data-replit-badge],
+.replit-ui-theme-root,
+iframe[src*="replit.com/badge"],
+a[href*="replit.com"][target="_blank"][style*="position: fixed"],
+div[style*="z-index: 9999"][style*="position: fixed"] > a[href*="replit.com"] {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
+
 /* ─── Custom Scrollbar ───────────────────────────────────────────────────────── */
 ::-webkit-scrollbar {
   width: 6px;

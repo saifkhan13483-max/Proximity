@@ -47,7 +47,7 @@ function QuickNavCard({ service }: { service: typeof services[0] }) {
       href={`#${service.id}`}
       className="group bg-card-black border border-white/10 hover:border-gold-primary rounded-card p-5 flex flex-col items-center text-center gap-3 transition-all duration-300 hover:-translate-y-1"
     >
-      {Icon && <Icon className="text-gold-primary" size={32} />}
+      {Icon && <Icon className="text-gold-primary" size={28} />}
       <span className="font-heading font-semibold text-white text-sm leading-snug group-hover:text-gold-primary transition-colors">
         {service.title}
       </span>
@@ -57,7 +57,7 @@ function QuickNavCard({ service }: { service: typeof services[0] }) {
 
 function ServiceBlock({ service, index }: { service: typeof services[0]; index: number }) {
   const { ref, inView } = useInView({ triggerOnce: true, threshold: 0.08 })
-  const isEven = index % 2 === 0
+  const isDark = index % 2 === 0
   const Icon = iconMap[service.icon]
 
   const InfoCol = (
@@ -70,26 +70,34 @@ function ServiceBlock({ service, index }: { service: typeof services[0]; index: 
           Service {String(index + 1).padStart(2, '0')}
         </span>
       </div>
-      <h2 className="font-heading font-bold text-h3 text-body-text mb-4">{service.title}</h2>
-      <p className="font-body text-body-base text-body-text leading-relaxed">{service.description}</p>
-      <a
-        href="#contact"
-        className="inline-flex items-center gap-2 text-gold-primary font-semibold text-sm mt-6 hover:text-gold-light transition-colors group"
+      <h2 className={`font-heading font-bold text-h3 mb-4 ${isDark ? 'text-white' : 'text-body-text'}`}>
+        {service.title}
+      </h2>
+      <p className={`font-body text-body-base leading-relaxed ${isDark ? 'text-muted-text' : 'text-body-text/80'}`}>
+        {service.description}
+      </p>
+      <Link
+        to="/contact"
+        className="inline-flex items-center gap-2 text-gold-primary font-semibold text-sm mt-6 hover:text-gold-light transition-colors group w-fit"
       >
         Get Started
         <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
-      </a>
+      </Link>
     </div>
   )
 
   const BenefitsCol = (
-    <div className="bg-card-black border border-white/10 rounded-card p-8">
-      <h3 className="font-heading font-semibold text-subheading text-white mb-6">Key Benefits</h3>
+    <div className={`rounded-card p-8 border ${isDark ? 'bg-card-black border-white/10' : 'bg-white border-gray-200 shadow-sm'}`}>
+      <h3 className={`font-heading font-semibold text-subheading mb-6 ${isDark ? 'text-white' : 'text-body-text'}`}>
+        Key Benefits
+      </h3>
       <ul className="flex flex-col gap-4">
         {service.benefits.map((benefit) => (
           <li key={benefit} className="flex items-start gap-3">
             <CheckCircle className="text-gold-primary flex-shrink-0 mt-0.5" size={20} />
-            <span className="font-body text-body-base text-body-text">{benefit}</span>
+            <span className={`font-body text-body-base ${isDark ? 'text-muted-text' : 'text-body-text/80'}`}>
+              {benefit}
+            </span>
           </li>
         ))}
       </ul>
@@ -97,19 +105,17 @@ function ServiceBlock({ service, index }: { service: typeof services[0]; index: 
   )
 
   return (
-    <div id={service.id} className={`py-20 px-4 ${isEven ? 'bg-bg-dark' : 'bg-bg-alt'}`}>
-      <div className="container mx-auto max-w-6xl">
-        <motion.div
-          ref={ref}
-          variants={fadeUp}
-          initial="hidden"
-          animate={inView ? 'visible' : 'hidden'}
-          className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start"
-        >
-          {isEven ? <>{InfoCol}{BenefitsCol}</> : <>{BenefitsCol}{InfoCol}</>}
-        </motion.div>
-      </div>
-    </div>
+    <Section dark={isDark} alt={!isDark} id={service.id}>
+      <motion.div
+        ref={ref}
+        variants={fadeUp}
+        initial="hidden"
+        animate={inView ? 'visible' : 'hidden'}
+        className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start"
+      >
+        {isDark ? <>{InfoCol}{BenefitsCol}</> : <>{BenefitsCol}{InfoCol}</>}
+      </motion.div>
+    </Section>
   )
 }
 
@@ -126,9 +132,12 @@ export default function Services() {
         keywords="credit analysis, dispute filing, score monitoring, debt validation, creditor negotiation, identity theft protection, credit repair services, remove negative items, credit bureau disputes"
       />
 
+      {/* Hero */}
       <div className="bg-hero-gradient py-28 px-4 relative overflow-hidden">
-        <div className="absolute inset-0 opacity-10 pointer-events-none"
-          style={{ backgroundImage: 'radial-gradient(circle at 70% 50%, #C9A84C 0%, transparent 60%)' }} />
+        <div
+          className="absolute inset-0 opacity-10 pointer-events-none"
+          style={{ backgroundImage: 'radial-gradient(circle at 70% 50%, #C9A84C 0%, transparent 60%)' }}
+        />
         <div className="container mx-auto text-center relative z-10 max-w-3xl">
           <p className="text-gold-primary font-heading font-semibold text-sm tracking-widest uppercase mb-4">
             Full Service Suite
@@ -140,11 +149,12 @@ export default function Services() {
           <p className="text-muted-text font-body text-body-base max-w-xl mx-auto">
             Seven comprehensive services designed to repair, protect, and strengthen your credit — handled by certified specialists at every step.
           </p>
-          <p className="text-muted-text/60 text-caption mt-4">Home / Services</p>
+          <p className="text-muted-text/50 text-caption mt-5">Home / Services</p>
         </div>
       </div>
 
-      <div className="bg-bg-dark py-14 px-4 border-b border-white/10">
+      {/* Quick-nav overview */}
+      <div className="bg-near-black py-14 px-4 border-b border-white/10">
         <div className="container mx-auto max-w-6xl">
           <p className="text-center text-muted-text font-body text-sm mb-8 uppercase tracking-widest">
             Jump to a Service
@@ -165,12 +175,14 @@ export default function Services() {
         </div>
       </div>
 
+      {/* Service detail blocks */}
       {services.map((service, index) => (
         <ServiceBlock key={service.id} service={service} index={index} />
       ))}
 
-      <div className="bg-hero-gradient py-24 px-4">
-        <div className="container mx-auto max-w-3xl text-center">
+      {/* CTA footer */}
+      <Section dark>
+        <div className="text-center max-w-3xl mx-auto">
           <p className="text-gold-primary font-heading font-semibold text-sm tracking-widest uppercase mb-4">
             Ready to Start?
           </p>
@@ -184,7 +196,7 @@ export default function Services() {
             <Button size="lg">Get Your Free Consultation</Button>
           </Link>
         </div>
-      </div>
+      </Section>
     </PageWrapper>
   )
 }

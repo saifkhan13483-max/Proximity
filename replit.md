@@ -78,10 +78,11 @@ proximity/
 ## Authentication System
 - **Backend:** Express.js REST API on port 3001 (`backend/server.js`)
 - **Auth Routes:** `POST /api/auth/register`, `POST /api/auth/login`, `GET /api/auth/me`
-- **Contact Route:** `POST /api/contacts` — stores contact form submissions in `backend/contacts.json`
+- **Contact Route:** `POST /api/contacts` — stores contact form submissions in Firestore `contacts` collection
 - **Tokens:** JWT (7-day expiry), signed with `JWT_SECRET` env var, includes `role` claim
 - **Passwords:** bcryptjs (12 salt rounds)
-- **Storage:** JSON files — `backend/users.json` (users), `backend/contacts.json` (contact leads)
+- **Storage:** Google Cloud Firestore — `users` collection (users), `contacts` collection (contact leads)
+- **Firebase Module:** `backend/firebase.js` — initializes Firebase Admin SDK using `FIREBASE_PROJECT_ID`, `FIREBASE_CLIENT_EMAIL`, `FIREBASE_PRIVATE_KEY` secrets
 - **Frontend Store:** Zustand `authStore.ts` with `persist` middleware (localStorage)
 - **Protected Routes:** `ProtectedRoute` (user) and `AdminRoute` (admin only)
 - **User Pages:** `/login`, `/register`, `/dashboard` (protected)
@@ -137,6 +138,9 @@ Railway (backend)
 | `JWT_SECRET` | Long random string for signing JWTs — **required**, server refuses to start without it |
 | `PORT` | Assigned automatically by Railway |
 | `ALLOWED_ORIGINS` | Comma-separated list of allowed CORS origins (e.g. `https://your-app.vercel.app,http://localhost:5000`) |
+| `FIREBASE_PROJECT_ID` | Firebase project ID from service account JSON |
+| `FIREBASE_CLIENT_EMAIL` | Firebase client email from service account JSON |
+| `FIREBASE_PRIVATE_KEY` | Firebase private key from service account JSON (include full PEM block) |
 
 See `backend/.env.example` for a template.
 

@@ -8,6 +8,7 @@ export default {
   content: [
     join(__dirname, './index.html'),
     join(__dirname, './src/**/*.{js,ts,jsx,tsx}'),
+    join(__dirname, './src/components/ui/**/*.{ts,tsx}'),
   ],
   theme: {
     container: {
@@ -19,6 +20,7 @@ export default {
     },
     extend: {
       colors: {
+        // ── Brand colors (preserved) ──────────────────────────────────
         gold: {
           primary: '#B8924A',
           light: '#D4AF72',
@@ -36,6 +38,44 @@ export default {
           charcoal: '#1A1A1A',
         },
         muted: '#6B6B6B',
+        // ── shadcn/ui CSS variable tokens ─────────────────────────────
+        border: 'hsl(var(--border))',
+        input: 'hsl(var(--input))',
+        ring: 'hsl(var(--ring))',
+        background: 'hsl(var(--background))',
+        foreground: 'hsl(var(--foreground))',
+        primary: {
+          DEFAULT: 'hsl(var(--primary))',
+          foreground: 'hsl(var(--primary-foreground))',
+        },
+        secondary: {
+          DEFAULT: 'hsl(var(--secondary))',
+          foreground: 'hsl(var(--secondary-foreground))',
+        },
+        destructive: {
+          DEFAULT: 'hsl(var(--destructive))',
+          foreground: 'hsl(var(--destructive-foreground))',
+        },
+        accent: {
+          DEFAULT: 'hsl(var(--accent))',
+          foreground: 'hsl(var(--accent-foreground))',
+        },
+        popover: {
+          DEFAULT: 'hsl(var(--popover))',
+          foreground: 'hsl(var(--popover-foreground))',
+        },
+        card: {
+          DEFAULT: 'hsl(var(--card))',
+          foreground: 'hsl(var(--card-foreground))',
+        },
+      },
+      borderRadius: {
+        lg: 'var(--radius)',
+        md: 'calc(var(--radius) - 2px)',
+        sm: 'calc(var(--radius) - 4px)',
+        // Brand radii (preserved)
+        card: '16px',
+        pill: '9999px',
       },
       fontFamily: {
         heading: ['Montserrat', 'sans-serif'],
@@ -52,10 +92,6 @@ export default {
         caption: ['14px', { lineHeight: '1.6' }],
         label: ['13px', { lineHeight: '1.5' }],
       },
-      borderRadius: {
-        card: '16px',
-        pill: '9999px',
-      },
       backgroundImage: {
         'gold-gradient': 'linear-gradient(135deg, #B8924A 0%, #D4AF72 50%, #8B6A2E 100%)',
         'hero-gradient': 'linear-gradient(160deg, #0A0A0A 0%, #1a1308 100%)',
@@ -70,6 +106,8 @@ export default {
       animation: {
         float: 'float 6s ease-in-out infinite',
         'pulse-gold': 'pulse-gold 2s ease-in-out infinite',
+        'in': 'in 0.2s ease-out',
+        'out': 'out 0.2s ease-in',
       },
       keyframes: {
         float: {
@@ -79,6 +117,14 @@ export default {
         'pulse-gold': {
           '0%, 100%': { boxShadow: '0 0 0 0 rgba(184,146,74,0.4)' },
           '50%': { boxShadow: '0 0 0 10px rgba(184,146,74,0)' },
+        },
+        'in': {
+          '0%': { opacity: '0', transform: 'scale(0.95)' },
+          '100%': { opacity: '1', transform: 'scale(1)' },
+        },
+        'out': {
+          '0%': { opacity: '1', transform: 'scale(1)' },
+          '100%': { opacity: '0', transform: 'scale(0.95)' },
         },
       },
     },

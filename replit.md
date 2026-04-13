@@ -5,9 +5,12 @@ A high-end, premium marketing website for Proximity Credit Repair with a full au
 
 ## Tech Stack
 - **Frontend:** React 18 + Vite 5 (TypeScript)
-- **Styling:** Tailwind CSS v3 with custom design tokens
+- **Styling:** Tailwind CSS v3 with custom design tokens + shadcn/ui (Slate base, CSS variables)
+- **UI Primitives:** shadcn/ui — Dialog, Label via Radix UI; Button uses class-variance-authority
 - **Animations:** Framer Motion v10
 - **Routing:** React Router v6 (lazy-loaded routes + `v7_startTransition` future flag)
+- **Images:** Cloudinary CDN via `src/lib/cloudinary.ts` (`VITE_CLOUDINARY_CLOUD_NAME` env var)
+- **Database:** Firestore with offline IndexedDB persistence enabled
 - **State/Forms:** Zustand, React Hook Form + Zod validation
 - **Data Fetching:** TanStack Query (React Query)
 - **Icons:** Lucide React

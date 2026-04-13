@@ -1,4 +1,5 @@
 export { default as Button } from './Button'
+export { buttonVariants } from './Button'
 export { default as Card } from './Card'
 export { default as Badge } from './Badge'
 export { default as Input } from './Input'
@@ -12,3 +13,14 @@ export { default as BackToTopButton } from './BackToTopButton'
 export { default as SectionDivider } from './SectionDivider'
 export { default as SectionLabel } from './SectionLabel'
 export { default as OptimizedImage } from './OptimizedImage'
+export {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogFooter,
+  DialogTitle,
+  DialogDescription,
+  DialogTrigger,
+  DialogClose,
+} from './dialog'
+export { Label } from './label'

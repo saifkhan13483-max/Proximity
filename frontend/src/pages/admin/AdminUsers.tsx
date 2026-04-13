@@ -1,8 +1,14 @@
 import { useEffect, useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Search, Trash2, AlertCircle, RefreshCw, ChevronDown, X, CreditCard, Check } from 'lucide-react'
+import { Search, Trash2, AlertCircle, RefreshCw, ChevronDown, CreditCard, Check } from 'lucide-react'
 import AdminLayout from '@components/admin/AdminLayout'
 import { fetchAdminUsers, updateUser, deleteUser, type AdminUser } from '@services/adminService'
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from '@components/ui/dialog'
 
 const PLANS = [
   { name: 'Free Consultation', price: 'Free', color: 'text-white/50', border: 'border-white/10', bg: 'bg-white/5', dot: 'bg-white/30' },
@@ -28,59 +34,48 @@ function PlanBadge({ plan }: { plan: string }) {
 
 function ChangePlanModal({
   user,
+  isOpen,
   onClose,
   onSave,
 }: {
-  user: AdminUser
+  user: AdminUser | null
+  isOpen: boolean
   onClose: () => void
   onSave: (plan: string) => Promise<void>
 }) {
-  const [selected, setSelected] = useState(user.plan)
+  const [selected, setSelected] = useState(user?.plan ?? '')
   const [saving, setSaving] = useState(false)
 
+  useEffect(() => {
+    if (user) setSelected(user.plan)
+  }, [user])
+
   async function handleConfirm() {
-    if (selected === user.plan) { onClose(); return }
+    if (!user || selected === user.plan) { onClose(); return }
     setSaving(true)
     await onSave(selected)
     setSaving(false)
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        exit={{ opacity: 0 }}
-        className="absolute inset-0 bg-black/70 backdrop-blur-sm"
-        onClick={onClose}
-      />
-      <motion.div
-        initial={{ opacity: 0, scale: 0.95, y: 10 }}
-        animate={{ opacity: 1, scale: 1, y: 0 }}
-        exit={{ opacity: 0, scale: 0.95, y: 10 }}
-        className="relative w-full max-w-md bg-[#111] border border-white/10 rounded-2xl p-6 shadow-2xl z-10"
-      >
-        <button
-          onClick={onClose}
-          className="absolute top-4 right-4 w-7 h-7 rounded-lg bg-white/5 hover:bg-white/10 text-white/40 hover:text-white flex items-center justify-center transition-colors"
-        >
-          <X size={14} />
-        </button>
-
-        <div className="flex items-center gap-3 mb-5">
-          <div className="w-9 h-9 rounded-xl bg-gold-primary/15 flex items-center justify-center">
-            <CreditCard size={16} className="text-gold-primary" />
+    <Dialog open={isOpen} onOpenChange={(open) => { if (!open) onClose() }}>
+      <DialogContent className="bg-[#111] border border-white/10 max-w-md p-6">
+        <DialogHeader>
+          <div className="flex items-center gap-3">
+            <div className="w-9 h-9 rounded-xl bg-gold-primary/15 flex items-center justify-center">
+              <CreditCard size={16} className="text-gold-primary" />
+            </div>
+            <div>
+              <DialogTitle className="text-base">Change Plan</DialogTitle>
+              <p className="font-body text-white/40 text-xs mt-0.5">{user?.name} · {user?.email}</p>
+            </div>
           </div>
-          <div>
-            <h3 className="font-heading font-bold text-white text-base">Change Plan</h3>
-            <p className="font-body text-white/40 text-xs">{user.name} · {user.email}</p>
-          </div>
-        </div>
+        </DialogHeader>
 
-        <div className="space-y-2 mb-5">
+        <div className="space-y-2">
           {PLANS.map((plan) => {
             const isSelected = selected === plan.name
-            const isCurrent = user.plan === plan.name
+            const isCurrent = user?.plan === plan.name
             return (
               <button
                 key={plan.name}
@@ -88,7 +83,7 @@ function ChangePlanModal({
                 className={`w-full flex items-center justify-between px-4 py-3 rounded-xl border transition-all text-left ${
                   isSelected
                     ? `${plan.bg} ${plan.border}`
-                    : 'bg-white/3 border-white/6 hover:bg-white/6'
+                    : 'bg-white/[0.03] border-white/[0.06] hover:bg-white/[0.06]'
                 }`}
               >
                 <div className="flex items-center gap-3">
@@ -115,16 +110,16 @@ function ChangePlanModal({
           })}
         </div>
 
-        <div className="flex gap-2">
+        <div className="flex gap-2 pt-1">
           <button
             onClick={onClose}
-            className="flex-1 py-2.5 rounded-xl bg-white/5 border border-white/8 font-body text-sm text-white/50 hover:text-white hover:bg-white/10 transition-all"
+            className="flex-1 py-2.5 rounded-xl bg-white/5 border border-white/[0.08] font-body text-sm text-white/50 hover:text-white hover:bg-white/10 transition-all"
           >
             Cancel
           </button>
           <button
             onClick={handleConfirm}
-            disabled={saving || selected === user.plan}
+            disabled={saving || selected === user?.plan}
             className="flex-1 py-2.5 rounded-xl bg-gold-primary font-body text-sm font-semibold text-black transition-all hover:bg-gold-light disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center gap-2"
           >
             {saving ? (
@@ -133,8 +128,8 @@ function ChangePlanModal({
             {saving ? 'Saving…' : 'Confirm Change'}
           </button>
         </div>
-      </motion.div>
-    </div>
+      </DialogContent>
+    </Dialog>
   )
 }
 
@@ -358,15 +353,12 @@ export default function AdminUsers() {
         )}
       </div>
 
-      <AnimatePresence>
-        {changingPlanUser && (
-          <ChangePlanModal
-            user={changingPlanUser}
-            onClose={() => setChangingPlanUser(null)}
-            onSave={(plan) => handlePlanSave(changingPlanUser.id, plan)}
-          />
-        )}
-      </AnimatePresence>
+      <ChangePlanModal
+        user={changingPlanUser}
+        isOpen={changingPlanUser !== null}
+        onClose={() => setChangingPlanUser(null)}
+        onSave={(plan) => changingPlanUser ? handlePlanSave(changingPlanUser.id, plan) : Promise.resolve()}
+      />
     </AdminLayout>
   )
 }

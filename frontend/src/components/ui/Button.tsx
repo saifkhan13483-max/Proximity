@@ -1,3 +1,5 @@
+import { cva, type VariantProps } from 'class-variance-authority'
+import { Slot } from '@radix-ui/react-slot'
 import { motion } from 'framer-motion'
 import { Link } from 'react-router-dom'
 import { cn } from '@lib/utils'
@@ -5,23 +7,45 @@ import type { ButtonProps } from '@/types/component-props'
 
 const MotionLink = motion(Link)
 
-const variantClasses = {
-  primary:
-    'bg-gold-gradient text-white rounded-pill font-heading font-bold shadow-gold-sm hover:shadow-gold-md btn-glow-pulse',
-  secondary:
-    'bg-transparent border-2 border-gold-primary text-gold-primary rounded-pill font-heading font-bold hover:bg-gold-primary hover:text-white',
-  ghost: 'bg-transparent text-gold-primary hover:underline font-heading font-bold',
-}
+const buttonVariants = cva(
+  'inline-flex items-center justify-center gap-2 transition-all duration-200',
+  {
+    variants: {
+      variant: {
+        primary:
+          'bg-gold-gradient text-white rounded-pill font-heading font-bold shadow-gold-sm hover:shadow-gold-md btn-glow-pulse',
+        secondary:
+          'bg-transparent border-2 border-gold-primary text-gold-primary rounded-pill font-heading font-bold hover:bg-gold-primary hover:text-white',
+        ghost: 'bg-transparent text-gold-primary hover:underline font-heading font-bold',
+      },
+      size: {
+        sm: 'px-5 py-2 text-sm',
+        md: 'px-7 py-3 text-base',
+        lg: 'px-9 py-4 text-lg',
+      },
+    },
+    defaultVariants: {
+      variant: 'primary',
+      size: 'md',
+    },
+  }
+)
 
-const sizeClasses = {
-  sm: 'px-5 py-2 text-sm',
-  md: 'px-7 py-3 text-base',
-  lg: 'px-9 py-4 text-lg',
-}
+export { buttonVariants }
 
 const motionProps = {
   whileHover: { scale: 1.03 },
   whileTap: { scale: 0.97 },
+}
+
+interface ShadcnButtonProps extends VariantProps<typeof buttonVariants> {
+  asChild?: boolean
+  className?: string
+  children?: React.ReactNode
+  onClick?: React.MouseEventHandler<HTMLButtonElement>
+  disabled?: boolean
+  type?: 'button' | 'submit' | 'reset'
+  href?: string
 }
 
 export default function Button({
@@ -33,14 +57,21 @@ export default function Button({
   disabled = false,
   type = 'button',
   href,
-}: ButtonProps) {
+  asChild = false,
+}: ShadcnButtonProps) {
   const classes = cn(
-    'inline-flex items-center justify-center gap-2 transition-all duration-200',
-    variantClasses[variant],
-    sizeClasses[size],
+    buttonVariants({ variant, size }),
     disabled && 'opacity-50 cursor-not-allowed pointer-events-none',
     className
   )
+
+  if (asChild) {
+    return (
+      <Slot className={classes}>
+        {children}
+      </Slot>
+    )
+  }
 
   if (href) {
     const isExternal =
@@ -57,7 +88,7 @@ export default function Button({
           rel="noopener noreferrer"
           className={classes}
           aria-disabled={disabled}
-          onClick={onClick}
+          onClick={onClick as unknown as React.MouseEventHandler<HTMLAnchorElement>}
           {...motionProps}
         >
           {children}
@@ -66,7 +97,7 @@ export default function Button({
     }
 
     return (
-      <MotionLink to={href} className={classes} aria-disabled={disabled} onClick={onClick} {...motionProps}>
+      <MotionLink to={href} className={classes} aria-disabled={disabled} onClick={onClick as unknown as React.MouseEventHandler<HTMLAnchorElement>} {...motionProps}>
         {children}
       </MotionLink>
     )

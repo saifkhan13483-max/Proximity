@@ -24,11 +24,12 @@ const allowedOrigins = rawOrigins.split(',').map((o) => o.trim()).filter(Boolean
 app.use(
   cors({
     origin: (origin, callback) => {
-      if (!origin || allowedOrigins.includes(origin)) {
-        callback(null, true)
-      } else {
-        callback(new Error(`CORS: origin ${origin} is not allowed`))
-      }
+      // Allow requests with no origin (e.g. same-origin proxy, curl)
+      if (!origin) return callback(null, true)
+      // Allow any replit.dev subdomain for the dev preview
+      if (origin.endsWith('.replit.dev') || origin.endsWith('.repl.co')) return callback(null, true)
+      if (allowedOrigins.includes(origin)) return callback(null, true)
+      callback(new Error(`CORS: origin ${origin} is not allowed`))
     },
     credentials: true,
   })
@@ -44,6 +45,10 @@ const ADMIN_EMAIL = 'saifkhan13483@gmail.com'
 const ADMIN_PASSWORD = 'saifkhan13483@gmail.com'
 
 async function seedAdmin() {
+  if (!adminAuth || !db) {
+    console.warn('[seedAdmin] Skipping: Firebase Admin SDK not initialized.')
+    return
+  }
   let adminUser
   try {
     adminUser = await adminAuth.getUserByEmail(ADMIN_EMAIL.toLowerCase())
@@ -95,6 +100,7 @@ async function seedAdmin() {
 // ── Middleware ──────────────────────────────────────────────────────────────
 
 async function authenticateToken(req, res, next) {
+  if (!adminAuth) return res.status(503).json({ error: 'Firebase not configured. Set FIREBASE_PROJECT_ID, FIREBASE_CLIENT_EMAIL, and FIREBASE_PRIVATE_KEY.' })
   const authHeader = req.headers['authorization']
   const token = authHeader && authHeader.split(' ')[1]
   if (!token) return res.status(401).json({ error: 'Access token required' })
@@ -171,6 +177,7 @@ app.get('/api/auth/me', authenticateToken, async (req, res) => {
 // ── Contact Form Route ───────────────────────────────────────────────────────
 
 app.post('/api/contacts', async (req, res) => {
+  if (!db) return res.status(503).json({ error: 'Firebase not configured.' })
   try {
     const { fullName, email, phone, serviceOfInterest, message } = req.body
     if (!fullName || !email || !message)

@@ -1,0 +1,15 @@
+{
+  "name": "workspace",
+  "version": "1.0.0",
+  "description": "A high-end, full-stack marketing and client portal website for **Proximity Credit Repair**. Built with React 18 + Vite + TypeScript on the frontend and Express.js + Node.js on the backend. Features a gold-and-dark luxury design system, JWT-based authentication, a protected client dashboard, and a full admin panel.",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}

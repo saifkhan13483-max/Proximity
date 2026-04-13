@@ -293,15 +293,30 @@ app.post('/api/contacts', contactLimiter, async (req, res) => {
 
 app.get('/api/admin/stats', authenticateToken, requireAdmin, async (req, res) => {
   try {
-    const [usersSnap, contactsSnap] = await Promise.all([
+    const [usersSnap, contactsSnap, listResult] = await Promise.all([
       db.collection('users').get(),
       db.collection('contacts').get(),
+      adminAuth.listUsers(1000),
     ])
-    const users = usersSnap.docs.map((d) => d.data())
+    const firestoreUsers = usersSnap.docs.map((d) => d.data())
     const contacts = contactsSnap.docs.map((d) => d.data())
     const now = new Date()
     const thirtyDaysAgo = new Date(now - 30 * 24 * 60 * 60 * 1000)
-    const regularUsers = users.filter((u) => u.role !== 'admin')
+
+    const adminUids = new Set(
+      firestoreUsers.filter((u) => u.role === 'admin').map((u) => u.id)
+    )
+    const firestoreMap = {}
+    firestoreUsers.filter((u) => u.role !== 'admin').forEach((u) => { firestoreMap[u.id] = u })
+
+    const regularUsers = listResult.users
+      .filter((u) => !adminUids.has(u.uid) && !(u.customClaims && u.customClaims.role === 'admin'))
+      .map((u) => firestoreMap[u.uid] || {
+        id: u.uid,
+        plan: 'Free Consultation',
+        createdAt: u.metadata.creationTime || new Date().toISOString(),
+      })
+
     res.json({
       totalUsers: regularUsers.length,
       newUsersThisMonth: regularUsers.filter((u) => new Date(u.createdAt) > thirtyDaysAgo).length,
@@ -321,12 +336,45 @@ app.get('/api/admin/stats', authenticateToken, requireAdmin, async (req, res) =>
 
 app.get('/api/admin/users', authenticateToken, requireAdmin, async (req, res) => {
   try {
-    const snapshot = await db.collection('users').get()
-    const safeUsers = snapshot.docs
-      .map((d) => d.data())
-      .filter((u) => u.role !== 'admin')
-      .map(({ passwordHash, ...u }) => u)
-    res.json(safeUsers)
+    const [snapshot, listResult] = await Promise.all([
+      db.collection('users').get(),
+      adminAuth.listUsers(1000),
+    ])
+
+    const firestoreMap = {}
+    snapshot.docs.forEach((d) => {
+      const data = d.data()
+      if (data.role !== 'admin') {
+        const { passwordHash, ...safe } = data
+        firestoreMap[d.id] = safe
+      }
+    })
+
+    const adminUids = new Set(
+      snapshot.docs.filter((d) => d.data().role === 'admin').map((d) => d.id)
+    )
+
+    const merged = []
+    for (const authUser of listResult.users) {
+      if (adminUids.has(authUser.uid)) continue
+      if (authUser.customClaims && authUser.customClaims.role === 'admin') continue
+
+      if (firestoreMap[authUser.uid]) {
+        merged.push(firestoreMap[authUser.uid])
+      } else {
+        merged.push({
+          id: authUser.uid,
+          name: authUser.displayName || authUser.email.split('@')[0],
+          email: authUser.email,
+          plan: 'Free Consultation',
+          role: 'user',
+          createdAt: authUser.metadata.creationTime || new Date().toISOString(),
+          creditScore: null,
+        })
+      }
+    }
+
+    res.json(merged)
   } catch (err) {
     console.error('Admin users error:', err)
     res.status(500).json({ error: 'Server error' })

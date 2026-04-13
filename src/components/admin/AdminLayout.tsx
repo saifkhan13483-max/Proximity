@@ -3,7 +3,7 @@ import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
   LayoutDashboard, Users, Mail, LogOut, Menu, X,
-  ShieldCheck, ChevronRight, ExternalLink,
+  ShieldCheck, ChevronRight, ExternalLink, Briefcase,
 } from 'lucide-react'
 import { useAuthStore } from '@store/authStore'
 import { cn } from '@lib/utils'
@@ -13,6 +13,7 @@ const NAV_ITEMS = [
   { label: 'Dashboard', href: '/admin', icon: LayoutDashboard },
   { label: 'Users', href: '/admin/users', icon: Users },
   { label: 'Contacts', href: '/admin/contacts', icon: Mail },
+  { label: 'Services', href: '/admin/services', icon: Briefcase },
 ]
 
 function SidebarContent({ onClose }: { onClose?: () => void }) {

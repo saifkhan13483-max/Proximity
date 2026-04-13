@@ -70,3 +70,29 @@ export async function updateContactStatus(id: string, status: AdminContact['stat
 export async function deleteContact(id: string): Promise<void> {
   return request(`${API_BASE}/api/admin/contacts/${id}`, { method: 'DELETE' })
 }
+
+export interface AdminService {
+  id: string
+  title: string
+  icon: string
+  shortDescription: string
+  description: string
+  benefits: string[]
+  order: number
+}
+
+export async function fetchAdminServices(): Promise<AdminService[]> {
+  return request(`${API_BASE}/api/admin/services`)
+}
+
+export async function createService(data: Omit<AdminService, 'id' | 'order'>): Promise<AdminService> {
+  return request(`${API_BASE}/api/admin/services`, { method: 'POST', body: JSON.stringify(data) })
+}
+
+export async function updateService(id: string, data: Partial<Omit<AdminService, 'id' | 'order'>>): Promise<AdminService> {
+  return request(`${API_BASE}/api/admin/services/${id}`, { method: 'PUT', body: JSON.stringify(data) })
+}
+
+export async function deleteService(id: string): Promise<void> {
+  return request(`${API_BASE}/api/admin/services/${id}`, { method: 'DELETE' })
+}

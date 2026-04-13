@@ -21,6 +21,7 @@ const AdminLogin = lazy(() => import('@pages/admin/AdminLogin'))
 const AdminDashboard = lazy(() => import('@pages/admin/AdminDashboard'))
 const AdminUsers = lazy(() => import('@pages/admin/AdminUsers'))
 const AdminContacts = lazy(() => import('@pages/admin/AdminContacts'))
+const AdminServices = lazy(() => import('@pages/admin/AdminServices'))
 
 function Wrap({ children }: { children: React.ReactNode }) {
   return <Suspense fallback={<LoadingScreen />}>{children}</Suspense>
@@ -68,6 +69,10 @@ const router = createBrowserRouter([
   {
     path: '/admin/contacts',
     element: <Wrap><AdminRoute><AdminContacts /></AdminRoute></Wrap>,
+  },
+  {
+    path: '/admin/services',
+    element: <Wrap><AdminRoute><AdminServices /></AdminRoute></Wrap>,
   },
   {
     path: '/admin/*',

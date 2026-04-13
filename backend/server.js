@@ -3,8 +3,7 @@ const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
 const cors = require('cors')
 const { v4: uuidv4 } = require('uuid')
-const fs = require('fs')
-const path = require('path')
+const db = require('./firebase')
 
 // ── Process-level error protection ───────────────────────────────────────────
 
@@ -48,33 +47,6 @@ app.use(
 app.set('trust proxy', 1)
 app.use(express.json())
 
-// ── Data Helpers ───────────────────────────────────────────────────────────────
-//
-// WARNING: Railway's filesystem is ephemeral — users.json and contacts.json
-// are wiped on every deploy. Migrate to Railway's PostgreSQL plugin for
-// durable storage before going to production with real user data.
-
-const USERS_FILE = path.join(__dirname, 'users.json')
-const CONTACTS_FILE = path.join(__dirname, 'contacts.json')
-
-function loadUsers() {
-  if (!fs.existsSync(USERS_FILE)) return []
-  try { return JSON.parse(fs.readFileSync(USERS_FILE, 'utf-8')) } catch { return [] }
-}
-
-function saveUsers(users) {
-  fs.writeFileSync(USERS_FILE, JSON.stringify(users, null, 2))
-}
-
-function loadContacts() {
-  if (!fs.existsSync(CONTACTS_FILE)) return []
-  try { return JSON.parse(fs.readFileSync(CONTACTS_FILE, 'utf-8')) } catch { return [] }
-}
-
-function saveContacts(contacts) {
-  fs.writeFileSync(CONTACTS_FILE, JSON.stringify(contacts, null, 2))
-}
-
 // ── Seed Admin User ─────────────────────────────────────────────────────────
 // Re-seeds on every startup so the admin account survives ephemeral redeploys.
 
@@ -82,31 +54,24 @@ const ADMIN_EMAIL = 'saifkhan13483@gmail.com'
 const ADMIN_PASSWORD = 'saifkhan13483@gmail.com'
 
 async function seedAdmin() {
-  let users = loadUsers()
-  const existingAdmin = users.find((u) => u.role === 'admin' && u.email.toLowerCase() === ADMIN_EMAIL.toLowerCase())
+  const snapshot = await db.collection('users')
+    .where('email', '==', ADMIN_EMAIL.toLowerCase())
+    .get()
 
-  if (existingAdmin) {
-    const duplicates = users.filter((u) => u.email.toLowerCase() === ADMIN_EMAIL.toLowerCase() && u.id !== existingAdmin.id)
-    if (duplicates.length > 0) {
-      users = users.filter((u) => !(u.email.toLowerCase() === ADMIN_EMAIL.toLowerCase() && u.id !== existingAdmin.id))
-      saveUsers(users)
-    }
-    return
-  }
+  if (!snapshot.empty) return
 
-  users = users.filter((u) => u.role === 'admin' ? false : u.email.toLowerCase() !== ADMIN_EMAIL.toLowerCase())
   const passwordHash = await bcrypt.hash(ADMIN_PASSWORD, 12)
-  users.push({
-    id: uuidv4(),
+  const id = uuidv4()
+  await db.collection('users').doc(id).set({
+    id,
     name: 'Saif Khan',
-    email: ADMIN_EMAIL,
+    email: ADMIN_EMAIL.toLowerCase(),
     passwordHash,
     createdAt: new Date().toISOString(),
     plan: 'Admin',
     role: 'admin',
     creditScore: null,
   })
-  saveUsers(users)
   console.log(`Admin account seeded: ${ADMIN_EMAIL}`)
 }
 
@@ -143,26 +108,28 @@ app.post('/api/auth/register', async (req, res) => {
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))
       return res.status(400).json({ error: 'Invalid email address' })
 
-    if (email.toLowerCase().trim() === ADMIN_EMAIL.toLowerCase())
+    const normalizedEmail = email.toLowerCase().trim()
+
+    if (normalizedEmail === ADMIN_EMAIL.toLowerCase())
       return res.status(409).json({ error: 'An account with this email already exists' })
 
-    const users = loadUsers()
-    if (users.find((u) => u.email.toLowerCase() === email.toLowerCase()))
+    const existing = await db.collection('users').where('email', '==', normalizedEmail).get()
+    if (!existing.empty)
       return res.status(409).json({ error: 'An account with this email already exists' })
 
     const passwordHash = await bcrypt.hash(password, 12)
+    const id = uuidv4()
     const user = {
-      id: uuidv4(),
+      id,
       name: name.trim(),
-      email: email.toLowerCase().trim(),
+      email: normalizedEmail,
       passwordHash,
       createdAt: new Date().toISOString(),
       plan: 'Free Consultation',
       role: 'user',
       creditScore: null,
     }
-    users.push(user)
-    saveUsers(users)
+    await db.collection('users').doc(id).set(user)
 
     const token = jwt.sign(
       { id: user.id, email: user.email, name: user.name, role: user.role },
@@ -185,12 +152,18 @@ app.post('/api/auth/login', async (req, res) => {
     if (!email || !password)
       return res.status(400).json({ error: 'Email and password are required' })
 
-    const users = loadUsers()
-    const user = users.find((u) => u.email.toLowerCase() === email.toLowerCase())
-    if (!user) return res.status(401).json({ error: 'Invalid email or password' })
+    const snapshot = await db.collection('users')
+      .where('email', '==', email.toLowerCase().trim())
+      .limit(1)
+      .get()
 
+    if (snapshot.empty)
+      return res.status(401).json({ error: 'Invalid email or password' })
+
+    const user = snapshot.docs[0].data()
     const valid = await bcrypt.compare(password, user.passwordHash)
-    if (!valid) return res.status(401).json({ error: 'Invalid email or password' })
+    if (!valid)
+      return res.status(401).json({ error: 'Invalid email or password' })
 
     const token = jwt.sign(
       { id: user.id, email: user.email, name: user.name, role: user.role || 'user' },
@@ -207,11 +180,16 @@ app.post('/api/auth/login', async (req, res) => {
   }
 })
 
-app.get('/api/auth/me', authenticateToken, (req, res) => {
-  const users = loadUsers()
-  const user = users.find((u) => u.id === req.user.id)
-  if (!user) return res.status(404).json({ error: 'User not found' })
-  res.json({ id: user.id, name: user.name, email: user.email, plan: user.plan, role: user.role || 'user', createdAt: user.createdAt })
+app.get('/api/auth/me', authenticateToken, async (req, res) => {
+  try {
+    const doc = await db.collection('users').doc(req.user.id).get()
+    if (!doc.exists) return res.status(404).json({ error: 'User not found' })
+    const user = doc.data()
+    res.json({ id: user.id, name: user.name, email: user.email, plan: user.plan, role: user.role || 'user', createdAt: user.createdAt, creditScore: user.creditScore ?? null })
+  } catch (err) {
+    console.error('Me error:', err)
+    res.status(500).json({ error: 'Server error' })
+  }
 })
 
 // ── Contact Form Route ───────────────────────────────────────────────────────
@@ -222,9 +200,9 @@ app.post('/api/contacts', async (req, res) => {
     if (!fullName || !email || !message)
       return res.status(400).json({ error: 'Name, email, and message are required' })
 
-    const contacts = loadContacts()
+    const id = uuidv4()
     const contact = {
-      id: uuidv4(),
+      id,
       fullName: fullName.trim(),
       email: email.toLowerCase().trim(),
       phone: phone || '',
@@ -233,10 +211,9 @@ app.post('/api/contacts', async (req, res) => {
       status: 'new',
       createdAt: new Date().toISOString(),
     }
-    contacts.push(contact)
-    saveContacts(contacts)
+    await db.collection('contacts').doc(id).set(contact)
 
-    res.status(201).json({ success: true, message: 'Your message has been received. We\'ll be in touch shortly!' })
+    res.status(201).json({ success: true, message: "Your message has been received. We'll be in touch shortly!" })
   } catch (err) {
     console.error('Contact submit error:', err)
     res.status(500).json({ error: 'Failed to submit contact form' })
@@ -245,88 +222,129 @@ app.post('/api/contacts', async (req, res) => {
 
 // ── Admin Routes ─────────────────────────────────────────────────────────────
 
-app.get('/api/admin/stats', authenticateToken, requireAdmin, (req, res) => {
-  const users = loadUsers()
-  const contacts = loadContacts()
-  const now = new Date()
-  const thirtyDaysAgo = new Date(now - 30 * 24 * 60 * 60 * 1000)
+app.get('/api/admin/stats', authenticateToken, requireAdmin, async (req, res) => {
+  try {
+    const [usersSnap, contactsSnap] = await Promise.all([
+      db.collection('users').get(),
+      db.collection('contacts').get(),
+    ])
 
-  const regularUsers = users.filter((u) => u.role !== 'admin')
-  const newUsersThisMonth = regularUsers.filter((u) => new Date(u.createdAt) > thirtyDaysAgo)
-  const newContactsThisMonth = contacts.filter((c) => new Date(c.createdAt) > thirtyDaysAgo)
-  const newContacts = contacts.filter((c) => c.status === 'new')
+    const users = usersSnap.docs.map((d) => d.data())
+    const contacts = contactsSnap.docs.map((d) => d.data())
 
-  res.json({
-    totalUsers: regularUsers.length,
-    newUsersThisMonth: newUsersThisMonth.length,
-    totalContacts: contacts.length,
-    newContactsThisMonth: newContactsThisMonth.length,
-    unreadContacts: newContacts.length,
-    plans: regularUsers.reduce((acc, u) => {
-      acc[u.plan] = (acc[u.plan] || 0) + 1
-      return acc
-    }, {}),
-  })
+    const now = new Date()
+    const thirtyDaysAgo = new Date(now - 30 * 24 * 60 * 60 * 1000)
+
+    const regularUsers = users.filter((u) => u.role !== 'admin')
+    const newUsersThisMonth = regularUsers.filter((u) => new Date(u.createdAt) > thirtyDaysAgo)
+    const newContactsThisMonth = contacts.filter((c) => new Date(c.createdAt) > thirtyDaysAgo)
+    const newContacts = contacts.filter((c) => c.status === 'new')
+
+    res.json({
+      totalUsers: regularUsers.length,
+      newUsersThisMonth: newUsersThisMonth.length,
+      totalContacts: contacts.length,
+      newContactsThisMonth: newContactsThisMonth.length,
+      unreadContacts: newContacts.length,
+      plans: regularUsers.reduce((acc, u) => {
+        acc[u.plan] = (acc[u.plan] || 0) + 1
+        return acc
+      }, {}),
+    })
+  } catch (err) {
+    console.error('Admin stats error:', err)
+    res.status(500).json({ error: 'Server error' })
+  }
 })
 
-app.get('/api/admin/users', authenticateToken, requireAdmin, (req, res) => {
-  const users = loadUsers()
-  const safeUsers = users
-    .filter((u) => u.role !== 'admin')
-    .map(({ passwordHash, ...u }) => u)
-  res.json(safeUsers)
+app.get('/api/admin/users', authenticateToken, requireAdmin, async (req, res) => {
+  try {
+    const snapshot = await db.collection('users').get()
+    const safeUsers = snapshot.docs
+      .map((d) => d.data())
+      .filter((u) => u.role !== 'admin')
+      .map(({ passwordHash, ...u }) => u)
+    res.json(safeUsers)
+  } catch (err) {
+    console.error('Admin users error:', err)
+    res.status(500).json({ error: 'Server error' })
+  }
 })
 
-app.patch('/api/admin/users/:id', authenticateToken, requireAdmin, (req, res) => {
-  const users = loadUsers()
-  const idx = users.findIndex((u) => u.id === req.params.id)
-  if (idx === -1) return res.status(404).json({ error: 'User not found' })
-  if (users[idx].role === 'admin') return res.status(403).json({ error: 'Cannot modify admin users' })
+app.patch('/api/admin/users/:id', authenticateToken, requireAdmin, async (req, res) => {
+  try {
+    const ref = db.collection('users').doc(req.params.id)
+    const doc = await ref.get()
+    if (!doc.exists) return res.status(404).json({ error: 'User not found' })
+    const user = doc.data()
+    if (user.role === 'admin') return res.status(403).json({ error: 'Cannot modify admin users' })
 
-  const { plan, creditScore } = req.body
-  if (plan !== undefined) users[idx].plan = plan
-  if (creditScore !== undefined) users[idx].creditScore = creditScore
+    const { plan, creditScore } = req.body
+    const updates = {}
+    if (plan !== undefined) updates.plan = plan
+    if (creditScore !== undefined) updates.creditScore = creditScore
 
-  saveUsers(users)
-  const { passwordHash, ...safe } = users[idx]
-  res.json(safe)
+    await ref.update(updates)
+    const updated = (await ref.get()).data()
+    const { passwordHash, ...safe } = updated
+    res.json(safe)
+  } catch (err) {
+    console.error('Admin patch user error:', err)
+    res.status(500).json({ error: 'Server error' })
+  }
 })
 
-app.delete('/api/admin/users/:id', authenticateToken, requireAdmin, (req, res) => {
-  const users = loadUsers()
-  const idx = users.findIndex((u) => u.id === req.params.id)
-  if (idx === -1) return res.status(404).json({ error: 'User not found' })
-  if (users[idx].role === 'admin') return res.status(403).json({ error: 'Cannot delete admin users' })
-
-  users.splice(idx, 1)
-  saveUsers(users)
-  res.json({ success: true })
+app.delete('/api/admin/users/:id', authenticateToken, requireAdmin, async (req, res) => {
+  try {
+    const doc = await db.collection('users').doc(req.params.id).get()
+    if (!doc.exists) return res.status(404).json({ error: 'User not found' })
+    if (doc.data().role === 'admin') return res.status(403).json({ error: 'Cannot delete admin users' })
+    await db.collection('users').doc(req.params.id).delete()
+    res.json({ success: true })
+  } catch (err) {
+    console.error('Admin delete user error:', err)
+    res.status(500).json({ error: 'Server error' })
+  }
 })
 
-app.get('/api/admin/contacts', authenticateToken, requireAdmin, (req, res) => {
-  const contacts = loadContacts()
-  res.json(contacts.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)))
+app.get('/api/admin/contacts', authenticateToken, requireAdmin, async (req, res) => {
+  try {
+    const snapshot = await db.collection('contacts').get()
+    const contacts = snapshot.docs
+      .map((d) => d.data())
+      .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+    res.json(contacts)
+  } catch (err) {
+    console.error('Admin contacts error:', err)
+    res.status(500).json({ error: 'Server error' })
+  }
 })
 
-app.patch('/api/admin/contacts/:id', authenticateToken, requireAdmin, (req, res) => {
-  const contacts = loadContacts()
-  const idx = contacts.findIndex((c) => c.id === req.params.id)
-  if (idx === -1) return res.status(404).json({ error: 'Contact not found' })
-
-  const { status } = req.body
-  if (status) contacts[idx].status = status
-  saveContacts(contacts)
-  res.json(contacts[idx])
+app.patch('/api/admin/contacts/:id', authenticateToken, requireAdmin, async (req, res) => {
+  try {
+    const ref = db.collection('contacts').doc(req.params.id)
+    const doc = await ref.get()
+    if (!doc.exists) return res.status(404).json({ error: 'Contact not found' })
+    const { status } = req.body
+    if (status) await ref.update({ status })
+    const updated = (await ref.get()).data()
+    res.json(updated)
+  } catch (err) {
+    console.error('Admin patch contact error:', err)
+    res.status(500).json({ error: 'Server error' })
+  }
 })
 
-app.delete('/api/admin/contacts/:id', authenticateToken, requireAdmin, (req, res) => {
-  const contacts = loadContacts()
-  const idx = contacts.findIndex((c) => c.id === req.params.id)
-  if (idx === -1) return res.status(404).json({ error: 'Contact not found' })
-
-  contacts.splice(idx, 1)
-  saveContacts(contacts)
-  res.json({ success: true })
+app.delete('/api/admin/contacts/:id', authenticateToken, requireAdmin, async (req, res) => {
+  try {
+    const doc = await db.collection('contacts').doc(req.params.id).get()
+    if (!doc.exists) return res.status(404).json({ error: 'Contact not found' })
+    await db.collection('contacts').doc(req.params.id).delete()
+    res.json({ success: true })
+  } catch (err) {
+    console.error('Admin delete contact error:', err)
+    res.status(500).json({ error: 'Server error' })
+  }
 })
 
 // ── User Plan Selection ──────────────────────────────────────────────────────
@@ -338,19 +356,23 @@ const VALID_PLANS = {
   vip: 'VIP Plan',
 }
 
-app.post('/api/users/plan', authenticateToken, (req, res) => {
-  const { planId } = req.body
-  if (!planId || !VALID_PLANS[planId]) {
-    return res.status(400).json({ error: 'Invalid plan selected' })
-  }
-  const users = loadUsers()
-  const idx = users.findIndex((u) => u.id === req.user.id)
-  if (idx === -1) return res.status(404).json({ error: 'User not found' })
-  if (users[idx].role === 'admin') return res.status(403).json({ error: 'Admin accounts cannot select plans' })
+app.post('/api/users/plan', authenticateToken, async (req, res) => {
+  try {
+    const { planId } = req.body
+    if (!planId || !VALID_PLANS[planId]) {
+      return res.status(400).json({ error: 'Invalid plan selected' })
+    }
+    const ref = db.collection('users').doc(req.user.id)
+    const doc = await ref.get()
+    if (!doc.exists) return res.status(404).json({ error: 'User not found' })
+    if (doc.data().role === 'admin') return res.status(403).json({ error: 'Admin accounts cannot select plans' })
 
-  users[idx].plan = VALID_PLANS[planId]
-  saveUsers(users)
-  res.json({ plan: users[idx].plan })
+    await ref.update({ plan: VALID_PLANS[planId] })
+    res.json({ plan: VALID_PLANS[planId] })
+  } catch (err) {
+    console.error('Plan selection error:', err)
+    res.status(500).json({ error: 'Server error' })
+  }
 })
 
 // ── Health ───────────────────────────────────────────────────────────────────

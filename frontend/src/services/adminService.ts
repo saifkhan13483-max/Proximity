@@ -1,5 +1,5 @@
 import { useAuthStore } from '@store/authStore'
-import { API_BASE } from './api'
+import { API_BASE, apiRequest } from './api'
 
 export interface AdminUser {
   id: string
@@ -39,11 +39,8 @@ function getHeaders() {
   }
 }
 
-async function request<T>(url: string, options: RequestInit = {}): Promise<T> {
-  const res = await fetch(url, { ...options, headers: { ...getHeaders(), ...(options.headers || {}) } })
-  const data = await res.json()
-  if (!res.ok) throw new Error(data.error || 'Request failed')
-  return data as T
+function request<T>(url: string, options: RequestInit = {}): Promise<T> {
+  return apiRequest<T>(url, { ...options, headers: { ...getHeaders(), ...(options.headers || {}) } })
 }
 
 export async function fetchAdminStats(): Promise<AdminStats> {

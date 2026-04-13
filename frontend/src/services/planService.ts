@@ -1,9 +1,9 @@
 import { useAuthStore } from '@store/authStore'
-import { API_BASE } from './api'
+import { API_BASE, apiRequest } from './api'
 
 export async function selectPlan(planId: string): Promise<{ plan: string }> {
   const token = useAuthStore.getState().token
-  const res = await fetch(`${API_BASE}/api/users/plan`, {
+  return apiRequest<{ plan: string }>(`${API_BASE}/api/users/plan`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -11,7 +11,4 @@ export async function selectPlan(planId: string): Promise<{ plan: string }> {
     },
     body: JSON.stringify({ planId }),
   })
-  const data = await res.json()
-  if (!res.ok) throw new Error(data.error || 'Failed to update plan')
-  return data
 }

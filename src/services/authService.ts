@@ -33,7 +33,8 @@ function firebaseErrorMessage(error: unknown): string {
       case 'auth/too-many-requests': return 'Too many attempts. Please try again later'
       case 'auth/network-request-failed': return 'Network error. Please check your connection'
       case 'auth/operation-not-allowed': return 'Email/password sign-in is not enabled. Please contact the administrator.'
-      case 'auth/invalid-api-key': return 'Firebase configuration error. Please contact the administrator.'
+      case 'auth/invalid-api-key':
+      case 'auth/api-key-not-valid.-please-pass-a-valid-api-key.': return 'Firebase API key is invalid. Please check the VITE_FIREBASE_API_KEY configuration.'
       case 'auth/app-not-authorized': return 'This app is not authorized to use Firebase Authentication.'
       default: return `Authentication error (${code}). Please try again.`
     }

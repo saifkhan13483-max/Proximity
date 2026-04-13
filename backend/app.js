@@ -384,8 +384,30 @@ app.get('/api/admin/users', authenticateToken, requireAdmin, async (req, res) =>
 app.patch('/api/admin/users/:id', authenticateToken, requireAdmin, async (req, res) => {
   try {
     const ref = db.collection('users').doc(req.params.id)
-    const doc = await ref.get()
-    if (!doc.exists) return res.status(404).json({ error: 'User not found' })
+    let doc = await ref.get()
+
+    if (!doc.exists) {
+      let authUser
+      try {
+        authUser = await adminAuth.getUser(req.params.id)
+      } catch {
+        return res.status(404).json({ error: 'User not found' })
+      }
+      if (authUser.customClaims && authUser.customClaims.role === 'admin') {
+        return res.status(403).json({ error: 'Cannot modify admin users' })
+      }
+      await ref.set({
+        id: authUser.uid,
+        name: authUser.displayName || authUser.email.split('@')[0],
+        email: authUser.email,
+        plan: 'Free Consultation',
+        role: 'user',
+        createdAt: authUser.metadata.creationTime || new Date().toISOString(),
+        creditScore: null,
+      })
+      doc = await ref.get()
+    }
+
     if (doc.data().role === 'admin') return res.status(403).json({ error: 'Cannot modify admin users' })
     const { plan, creditScore } = req.body
     const updates = {}

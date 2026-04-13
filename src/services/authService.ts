@@ -21,7 +21,9 @@ function authHeaders(token: string) {
 
 function firebaseErrorMessage(error: unknown): string {
   if (error && typeof error === 'object' && 'code' in error) {
-    switch ((error as { code: string }).code) {
+    const code = (error as { code: string }).code
+    console.error('[auth] Firebase error code:', code, error)
+    switch (code) {
       case 'auth/email-already-in-use': return 'An account with this email already exists'
       case 'auth/invalid-email': return 'Invalid email address'
       case 'auth/weak-password': return 'Password must be at least 6 characters'
@@ -30,9 +32,13 @@ function firebaseErrorMessage(error: unknown): string {
       case 'auth/invalid-credential': return 'Invalid email or password'
       case 'auth/too-many-requests': return 'Too many attempts. Please try again later'
       case 'auth/network-request-failed': return 'Network error. Please check your connection'
-      default: return 'Authentication failed. Please try again'
+      case 'auth/operation-not-allowed': return 'Email/password sign-in is not enabled. Please contact the administrator.'
+      case 'auth/invalid-api-key': return 'Firebase configuration error. Please contact the administrator.'
+      case 'auth/app-not-authorized': return 'This app is not authorized to use Firebase Authentication.'
+      default: return `Authentication error (${code}). Please try again.`
     }
   }
+  console.error('[auth] Non-Firebase error:', error)
   return error instanceof Error ? error.message : 'Authentication failed'
 }
 

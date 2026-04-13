@@ -13,10 +13,22 @@ interface ApiError {
 }
 
 async function request<T>(url: string, options: RequestInit): Promise<T> {
-  const res = await fetch(url, options)
-  const data = await res.json()
+  let res: Response
+  try {
+    res = await fetch(url, options)
+  } catch {
+    throw new Error('Unable to connect to server. Please check your connection and try again.')
+  }
+
+  let data: unknown
+  try {
+    data = await res.json()
+  } catch {
+    throw new Error(res.ok ? 'Unexpected server response. Please try again.' : `Server error (${res.status}). Please try again.`)
+  }
+
   if (!res.ok) {
-    throw new Error((data as ApiError).error || 'An unexpected error occurred')
+    throw new Error((data as ApiError).error || `Request failed (${res.status}). Please try again.`)
   }
   return data as T
 }

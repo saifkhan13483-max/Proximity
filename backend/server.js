@@ -6,6 +6,16 @@ const { v4: uuidv4 } = require('uuid')
 const fs = require('fs')
 const path = require('path')
 
+// ── Process-level error protection ───────────────────────────────────────────
+
+process.on('uncaughtException', (err) => {
+  console.error('[uncaughtException] Server will continue:', err.message)
+})
+
+process.on('unhandledRejection', (reason) => {
+  console.error('[unhandledRejection] Server will continue:', reason)
+})
+
 // ── Startup validation ────────────────────────────────────────────────────────
 
 if (!process.env.JWT_SECRET) {

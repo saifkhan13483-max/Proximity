@@ -9,7 +9,6 @@ import { fadeUp, staggerContainer } from '@lib/animations'
 import { services } from '@data/services'
 
 const iconMap: Record<string, LucideIcon> = { BarChart2, FileText, TrendingUp, Shield, Handshake, BookOpen, ShieldCheck }
-const CORE_SERVICE_IDS = ['credit-analysis', 'dispute-filing', 'score-monitoring', 'debt-validation']
 
 export default function ServicesPreview() {
   const { ref, inView } = useInView({ triggerOnce: true, threshold: 0.1 })
@@ -27,9 +26,9 @@ export default function ServicesPreview() {
         variants={staggerContainer}
         initial="hidden"
         animate={inView ? 'visible' : 'hidden'}
-        className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6"
+        className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
       >
-        {services.filter(s => CORE_SERVICE_IDS.includes(s.id)).map((service) => {
+        {services.map((service) => {
           const Icon = iconMap[service.icon]
           return (
             <motion.div

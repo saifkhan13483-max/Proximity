@@ -1,3 +1,4 @@
+import { useEffect } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import {
@@ -8,6 +9,7 @@ import {
   AlertCircle, Info,
 } from 'lucide-react'
 import { useAuthStore } from '@store/authStore'
+import { fetchCurrentUser } from '@services/authService'
 import { plans } from '@data/plans'
 import ProximityLogo from '@components/ui/ProximityLogo'
 
@@ -151,8 +153,15 @@ const ACTIVITY = [
 ]
 
 export default function Dashboard() {
-  const { user, logout } = useAuthStore()
+  const { user, token, logout, updateUser } = useAuthStore()
   const navigate = useNavigate()
+
+  useEffect(() => {
+    if (!token) return
+    fetchCurrentUser(token)
+      .then((freshUser) => updateUser(freshUser))
+      .catch(() => {})
+  }, [token])
 
   function handleLogout() {
     logout()

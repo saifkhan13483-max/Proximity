@@ -17,6 +17,7 @@ interface AuthStore {
   isLoading: boolean
   setAuth: (user: AuthUser, token: string) => void
   setLoading: (loading: boolean) => void
+  updateUser: (user: AuthUser) => void
   logout: () => void
   isAuthenticated: () => boolean
   isAdmin: () => boolean
@@ -30,6 +31,7 @@ export const useAuthStore = create<AuthStore>()(
       isLoading: false,
       setAuth: (user, token) => set({ user, token }),
       setLoading: (isLoading) => set({ isLoading }),
+      updateUser: (user) => set({ user }),
       logout: () => set({ user: null, token: null }),
       isAuthenticated: () => !!get().token && !!get().user,
       isAdmin: () => get().user?.role === 'admin',

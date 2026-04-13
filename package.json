@@ -1,21 +1,51 @@
 {
   "name": "proximity-credit-repair",
-  "version": "1.0.0",
-  "description": "Proximity Credit Repair — full-stack app (React + Vite frontend, Express backend as Vercel serverless functions)",
-  "main": "index.js",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
   "scripts": {
-    "build": "npm run build --prefix frontend",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview",
+    "lint": "eslint src/ --ext .ts,.tsx",
+    "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "bcryptjs": "^3.0.3",
-    "cors": "^2.8.6",
-    "express": "^5.2.1",
-    "firebase-admin": "^13.8.0",
-    "jsonwebtoken": "^9.0.3",
-    "uuid": "^7.0.0"
+    "@hookform/resolvers": "^3.10.0",
+    "@radix-ui/react-dialog": "^1.1.15",
+    "@radix-ui/react-label": "^2.1.8",
+    "@radix-ui/react-select": "^2.2.6",
+    "@radix-ui/react-slot": "^1.2.4",
+    "@tanstack/react-query": "^5.99.0",
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
+    "eslint": "^9.39.4",
+    "eslint-plugin-react": "^7.37.5",
+    "eslint-plugin-react-hooks": "^7.0.1",
+    "firebase": "^12.12.0",
+    "framer-motion": "^10.18.0",
+    "lucide-react": "^0.363.0",
+    "prettier": "^3.8.2",
+    "react": "^18.3.1",
+    "react-countup": "^6.5.3",
+    "react-dom": "^18.3.1",
+    "react-hook-form": "^7.72.1",
+    "react-intersection-observer": "^9.16.0",
+    "react-router-dom": "^6.30.3",
+    "tailwind-merge": "^3.5.0",
+    "vite-bundle-visualizer": "^1.2.1",
+    "zod": "^3.25.76",
+    "zustand": "^4.5.7"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC"
+  "devDependencies": {
+    "@types/react": "^18.3.28",
+    "@types/react-dom": "^18.3.7",
+    "@vitejs/plugin-react": "^4.7.0",
+    "autoprefixer": "^10.4.27",
+    "postcss": "^8.5.9",
+    "tailwindcss": "^3.4.19",
+    "typescript": "^5.9.3",
+    "typescript-eslint": "^8.58.1",
+    "vite": "^5.4.21"
+  }
 }

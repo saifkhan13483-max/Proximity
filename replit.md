@@ -18,101 +18,107 @@ A high-end, premium marketing website for Proximity Credit Repair with a full au
 
 ## Project Structure
 ```
-proximity/
+proximity/  (root = frontend)
+├── src/
+│   ├── main.tsx               # App entry point
+│   ├── App.tsx                # Router setup, lazy-loaded routes
+│   ├── components/
+│   │   ├── admin/
+│   │   │   └── AdminLayout.tsx
+│   │   ├── auth/
+│   │   │   ├── ProtectedRoute.tsx   # Redirects unauthenticated users
+│   │   │   └── AdminRoute.tsx       # Redirects non-admin users
+│   │   ├── layout/
+│   │   │   ├── AppLayout.tsx        # Root layout with Navbar + Footer
+│   │   │   ├── Navbar.tsx
+│   │   │   ├── Footer.tsx
+│   │   │   ├── PageWrapper.tsx
+│   │   │   ├── Section.tsx
+│   │   │   └── SEOHead.tsx
+│   │   ├── sections/
+│   │   │   ├── HeroSection.tsx
+│   │   │   ├── ServicesPreview.tsx
+│   │   │   ├── HowItWorksStrip.tsx
+│   │   │   ├── TestimonialsSlider.tsx
+│   │   │   └── FinalCTABand.tsx
+│   │   └── ui/
+│   │       ├── Button.tsx, Card.tsx, Badge.tsx, Input.tsx
+│   │       ├── Select.tsx, Textarea.tsx, Modal.tsx, dialog.tsx
+│   │       ├── Toast.tsx, ToastContainer.tsx, label.tsx
+│   │       ├── LoadingScreen.tsx, BackToTopButton.tsx
+│   │       ├── OptimizedImage.tsx, ProximityLogo.tsx
+│   │       ├── SectionDivider.tsx, SectionLabel.tsx
+│   │       └── index.ts
+│   ├── pages/
+│   │   ├── Home.tsx, About.tsx, Services.tsx
+│   │   ├── HowItWorks.tsx, Testimonials.tsx, FAQ.tsx
+│   │   ├── Contact.tsx, Pricing.tsx, NotFound.tsx
+│   │   ├── Login.tsx          # Firebase Auth sign-in (uses shadcn Label + Button)
+│   │   ├── Register.tsx       # Firebase Auth registration (uses shadcn Label + Button)
+│   │   ├── Dashboard.tsx      # Protected client portal
+│   │   └── admin/
+│   │       ├── AdminLogin.tsx
+│   │       ├── AdminDashboard.tsx
+│   │       ├── AdminUsers.tsx
+│   │       └── AdminContacts.tsx
+│   ├── services/
+│   │   ├── authService.ts     # Firebase Auth SDK — register, login, logout, fetchCurrentUser
+│   │   ├── adminService.ts    # Admin API calls — users, contacts, stats
+│   │   ├── contactService.ts  # Contact form submission
+│   │   ├── planService.ts     # Plan selection API call
+│   │   ├── api.ts             # Base apiRequest helper + API_BASE constant
+│   │   └── index.ts
+│   ├── store/
+│   │   ├── authStore.ts       # Zustand auth state (user, token) — persisted to localStorage
+│   │   ├── uiStore.ts
+│   │   ├── formStore.ts
+│   │   └── index.ts
+│   ├── lib/
+│   │   ├── firebase.ts        # Firebase web SDK init — exports auth + db; offline persistence enabled
+│   │   ├── cloudinary.ts      # getImageUrl() — builds Cloudinary CDN URLs
+│   │   ├── animations.ts
+│   │   ├── utils.ts           # cn() (clsx + twMerge), formatPhone, truncate
+│   │   └── validators.ts
+│   ├── config/
+│   │   ├── siteMetadata.ts    # SEO metadata + siteUrl
+│   │   ├── navigation.ts      # navLinks + footerServiceLinks
+│   │   └── site.ts            # siteConfig (phone, email, address)
+│   ├── data/
+│   │   ├── services.ts, testimonials.ts, faqs.ts
+│   │   ├── stats.ts, team.ts, plans.ts
+│   │   └── index.ts
+│   ├── hooks/
+│   │   ├── useCountUp.ts, useMediaQuery.ts
+│   │   └── index.ts
+│   ├── types/
+│   │   └── index.ts, component-props.ts
+│   └── styles/
+│       └── globals.css        # Tailwind base + shadcn CSS vars + brand vars
+├── public/
+│   ├── favicon.svg, og-image.png, robots.txt, sitemap.xml
 ├── backend/
 │   ├── server.js              # Express API — all routes, middleware, admin seed
 │   ├── firebase.js            # Firebase Admin SDK init — exports db + adminAuth
 │   └── package.json
-├── frontend/
-│   ├── src/
-│   │   ├── main.tsx           # App entry point
-│   │   ├── App.tsx            # Router setup, lazy-loaded routes
-│   │   ├── components/
-│   │   │   ├── admin/
-│   │   │   │   └── AdminLayout.tsx
-│   │   │   ├── auth/
-│   │   │   │   ├── ProtectedRoute.tsx   # Redirects unauthenticated users
-│   │   │   │   └── AdminRoute.tsx       # Redirects non-admin users
-│   │   │   ├── layout/
-│   │   │   │   ├── AppLayout.tsx        # Root layout with Navbar + Footer
-│   │   │   │   ├── Navbar.tsx
-│   │   │   │   ├── Footer.tsx
-│   │   │   │   ├── PageWrapper.tsx
-│   │   │   │   ├── Section.tsx
-│   │   │   │   └── SEOHead.tsx
-│   │   │   ├── sections/
-│   │   │   │   ├── HeroSection.tsx
-│   │   │   │   ├── ServicesPreview.tsx
-│   │   │   │   ├── HowItWorksStrip.tsx
-│   │   │   │   ├── TestimonialsSlider.tsx
-│   │   │   │   └── FinalCTABand.tsx
-│   │   │   └── ui/
-│   │   │       ├── Button.tsx, Card.tsx, Badge.tsx, Input.tsx
-│   │   │       ├── Select.tsx, Textarea.tsx, Modal.tsx
-│   │   │       ├── Toast.tsx, ToastContainer.tsx
-│   │   │       ├── LoadingScreen.tsx, BackToTopButton.tsx
-│   │   │       ├── OptimizedImage.tsx, ProximityLogo.tsx
-│   │   │       ├── SectionDivider.tsx, SectionLabel.tsx, SectionWrapper.tsx
-│   │   │       └── index.ts
-│   │   ├── pages/
-│   │   │   ├── Home.tsx, About.tsx, Services.tsx
-│   │   │   ├── HowItWorks.tsx, Testimonials.tsx, FAQ.tsx
-│   │   │   ├── Contact.tsx, Pricing.tsx, NotFound.tsx
-│   │   │   ├── Login.tsx          # Firebase Auth sign-in
-│   │   │   ├── Register.tsx       # Firebase Auth registration
-│   │   │   ├── Dashboard.tsx      # Protected client portal
-│   │   │   └── admin/
-│   │   │       ├── AdminLogin.tsx
-│   │   │       ├── AdminDashboard.tsx
-│   │   │       ├── AdminUsers.tsx
-│   │   │       └── AdminContacts.tsx
-│   │   ├── services/
-│   │   │   ├── authService.ts     # Firebase Auth SDK — register, login, logout, fetchCurrentUser
-│   │   │   ├── adminService.ts    # Admin API calls — users, contacts, stats
-│   │   │   ├── contactService.ts  # Contact form submission
-│   │   │   ├── planService.ts     # Plan selection API call
-│   │   │   ├── analyticsService.ts
-│   │   │   ├── api.ts             # Base apiRequest helper + API_BASE constant
-│   │   │   └── index.ts
-│   │   ├── store/
-│   │   │   ├── authStore.ts       # Zustand auth state (user, token) — persisted to localStorage
-│   │   │   ├── uiStore.ts
-│   │   │   ├── formStore.ts
-│   │   │   └── index.ts
-│   │   ├── lib/
-│   │   │   ├── firebase.ts        # Firebase web SDK init — exports auth instance
-│   │   │   ├── animations.ts
-│   │   │   ├── cn.ts
-│   │   │   ├── utils.ts
-│   │   │   └── validators.ts
-│   │   ├── config/
-│   │   │   ├── siteMetadata.ts, navigation.ts, theme.ts, site.ts
-│   │   │   └── index.ts
-│   │   ├── data/
-│   │   │   ├── services.ts, testimonials.ts, faqs.ts
-│   │   │   ├── stats.ts, team.ts, plans.ts
-│   │   │   └── index.ts
-│   │   ├── hooks/
-│   │   │   ├── useCountUp.ts, useMediaQuery.ts, useScrollPosition.ts
-│   │   │   └── index.ts
-│   │   ├── types/
-│   │   │   └── index.ts, component-props.ts
-│   │   └── styles/
-│   │       └── globals.css
-│   ├── index.html
-│   ├── vite.config.ts             # Vite config — maps Replit secrets to FB constants via define
-│   ├── tailwind.config.js
-│   ├── postcss.config.js
-│   ├── eslint.config.js
-│   ├── tsconfig.json
-│   └── tsconfig.node.json
+├── api/
+│   └── index.js               # Vercel serverless entry — wraps backend/app
 ├── docs/
-│   ├── DEPLOYMENT.md              # Deployment guide and environment setup
-│   ├── FIRESTORE_MIGRATION.md     # Firestore migration reference
-│   ├── PRD.md                     # Product requirements document
-│   └── AI_BUILD_PROMPT.md         # Original AI build specification
-├── .env.example
+│   ├── DEPLOYMENT.md
+│   ├── FIRESTORE_MIGRATION.md
+│   ├── PRD.md
+│   └── AI_BUILD_PROMPT.md
+├── index.html
+├── vite.config.ts             # Vite config — proxy /api → :3001, FB env vars via define
+├── tailwind.config.js
+├── postcss.config.js
+├── eslint.config.js
+├── tsconfig.json
+├── tsconfig.node.json
+├── components.json            # shadcn/ui config
+├── package.json               # Frontend deps (React, Vite, Tailwind, etc.)
 ├── vercel.json
+├── firebase.json
+├── firestore.rules
 ├── .gitignore
 ├── README.md
 └── replit.md

@@ -1,0 +1,36 @@
+🧱 Core Frontend & Build
+Technology	Purpose (1 line)
+React 18	Main UI library for building interactive, component-based frontend views.
+Vite	Fast dev server and build tool to bundle and optimize the React app.
+TypeScript	Adds static typing to JavaScript for safer, more maintainable code.
+🎨 Styling & UI Components
+Technology	Purpose (1 line)
+Tailwind CSS	Utility-first CSS framework for rapidly styling the UI with predefined classes.
+shadcn/ui	Prebuilt, accessible React components styled with Tailwind for consistent UI.
+Radix UI (primitives)	Low-level, accessible UI primitives that shadcn/ui builds on for advanced interactions.
+🗄️ Backend-as-a-Service (BaaS)
+Technology	Purpose (1 line)
+Firebase Firestore	NoSQL cloud database to store products, categories, orders, and cart data.
+Firebase Auth	Manages user authentication, sessions, and roles (e.g., customers vs admins).
+Firebase Web SDK	Client-side SDK used to interact with Firestore and Auth directly from the frontend.
+Firestore Security Rules	Rule system that secures Firestore reads/writes based on user permissions.
+Firestore Offline Persistence	Built-in Firestore feature allowing the app to work during intermittent connectivity.
+📸 Media & Assets
+Technology	Purpose (1 line)
+Cloudinary	Hosts, optimizes, and transforms product images with automatic format and quality tuning.
+🔁 State & Data Management
+Technology	Purpose (1 line)
+TanStack Query v5	Manages server state: caching, syncing, and paginated Firestore queries.
+Zustand	Handles global UI/client state like auth info and a persistent shopping cart.
+🧭 Routing
+Technology	Purpose (1 line)
+wouter	Lightweight routing library to handle client-side navigation between pages.
+☁️ Hosting & Deployment
+Technology	Purpose (1 line)
+Vercel	Static hosting platform to deploy the built SPA (dist/ directory).
+Replit Autoscale	Alternative hosting option that serves the static build with automatic scaling.
+⚙️ Dev & Configuration
+Technology / Concept	Purpose (1 line)
+Environment Variables (VITE_FIREBASE_, VITE_CLOUDINARY_)	Securely store Firebase and Cloudinary keys needed at build/runtime.
+npm (npm run dev)	Package manager and script runner; starts the Vite dev server for local development.
+Firestore Console	Web UI to manually inspect and edit Firestore data and set security rules.

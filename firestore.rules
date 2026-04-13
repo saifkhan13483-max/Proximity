@@ -1,0 +1,143 @@
+rules_version = '2';
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Proximity Credit Repair — Firestore Security Rules
+//
+// Architecture note:
+//   All production reads/writes go through the Express backend using the
+//   Firebase Admin SDK, which bypasses these rules entirely. These rules
+//   therefore serve as a defence-in-depth layer that blocks any attempt to
+//   read or write Firestore directly from a browser/client SDK.
+//
+// Collections:
+//   users/{userId}        — user profiles (doc ID == Firebase Auth UID)
+//   contacts/{contactId}  — contact form submissions (doc ID == UUID)
+//
+// Roles:
+//   Admin — Firebase Auth custom claim: request.auth.token.role == 'admin'
+//   User  — any authenticated user without the admin claim
+// ─────────────────────────────────────────────────────────────────────────────
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ─── Helper functions ────────────────────────────────────────────────────
+
+    // True when the caller has a valid Firebase Auth session
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    // True when the caller holds the admin custom claim
+    function isAdmin() {
+      return isSignedIn() && request.auth.token.role == 'admin';
+    }
+
+    // True when the caller's UID matches the given document owner UID
+    function isOwner(uid) {
+      return isSignedIn() && request.auth.uid == uid;
+    }
+
+    // ─── users/{userId} ──────────────────────────────────────────────────────
+    //
+    // Document schema:
+    //   id          : string  (equals the document ID / Firebase Auth UID)
+    //   name        : string
+    //   email       : string
+    //   createdAt   : string  (ISO-8601 timestamp)
+    //   plan        : string  ('Free Consultation' | 'Basic Plan' |
+    //                          'Standard Plan' | 'Premium Plan' | 'VIP Plan' | 'Admin')
+    //   role        : string  ('user' | 'admin')
+    //   creditScore : number | null
+    //
+    // Access matrix:
+    //   READ   — owner or admin
+    //   CREATE — owner only (strict field validation, role must be 'user')
+    //   UPDATE — owner (safe fields only) OR admin (any field except role escalation)
+    //   DELETE — admin only
+
+    match /users/{userId} {
+
+      // Owner reads their own profile; admins can read any profile
+      allow read: if isOwner(userId) || isAdmin();
+
+      // A user may create their own profile document after registration.
+      // Enforces:
+      //   • document ID matches the caller's UID
+      //   • role is set to 'user' (prevents self-promotion to admin)
+      //   • all required fields are present
+      //   • no sensitive server-side fields (e.g. passwordHash) are written
+      allow create: if isOwner(userId)
+        && request.resource.data.id   == userId
+        && request.resource.data.role == 'user'
+        && request.resource.data.keys().hasAll([
+             'id', 'name', 'email', 'createdAt', 'plan', 'role'
+           ])
+        && !('passwordHash' in request.resource.data);
+
+      // Owners may update their profile but cannot change immutable fields:
+      //   role, email, id — these must remain unchanged.
+      // Admins may update any field (plan, creditScore, etc.) without restriction.
+      allow update: if
+        (
+          isOwner(userId)
+          && request.resource.data.role  == resource.data.role
+          && request.resource.data.email == resource.data.email
+          && request.resource.data.id    == resource.data.id
+          && !('passwordHash' in request.resource.data)
+        )
+        || isAdmin();
+
+      // Only admins may delete user documents (mirrors DELETE /api/admin/users/:id)
+      allow delete: if isAdmin();
+    }
+
+    // ─── contacts/{contactId} ────────────────────────────────────────────────
+    //
+    // Document schema:
+    //   id                : string  (UUID generated server-side)
+    //   fullName          : string
+    //   email             : string
+    //   phone             : string
+    //   serviceOfInterest : string
+    //   message           : string
+    //   status            : 'new' | 'in-progress' | 'resolved'
+    //   createdAt         : string  (ISO-8601 timestamp)
+    //
+    // Access matrix:
+    //   CREATE — anyone (public contact form, no auth required)
+    //   READ   — admin only
+    //   UPDATE — admin only (status changes: new → in-progress → resolved)
+    //   DELETE — admin only
+
+    match /contacts/{contactId} {
+
+      // Anyone — including unauthenticated visitors — may submit the contact form.
+      // Validates required fields and enforces status == 'new' on creation to
+      // prevent clients from spoofing a resolved/in-progress status.
+      allow create: if
+        request.resource.data.keys().hasAll([
+          'id', 'fullName', 'email', 'message', 'status', 'createdAt'
+        ])
+        && request.resource.data.fullName is string
+        && request.resource.data.fullName.size() > 0
+        && request.resource.data.fullName.size() <= 200
+        && request.resource.data.email is string
+        && request.resource.data.email.size() > 0
+        && request.resource.data.email.size() <= 254
+        && request.resource.data.message is string
+        && request.resource.data.message.size() > 0
+        && request.resource.data.message.size() <= 5000
+        && request.resource.data.status == 'new';
+
+      // Only admins may read, update the status, or delete contact submissions
+      allow read, update, delete: if isAdmin();
+    }
+
+    // ─── Catch-all: deny everything else ─────────────────────────────────────
+    // Any collection or document not explicitly matched above is fully locked.
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

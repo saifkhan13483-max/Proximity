@@ -35,7 +35,7 @@ export const useAuthStore = create<AuthStore>()(
       setLoading: (isLoading) => set({ isLoading }),
       updateUser: (user) => set({ user }),
       logout: () => {
-        signOut(auth).catch(() => {})
+        if (auth) signOut(auth).catch(() => {})
         set({ user: null, token: null })
       },
       isAuthenticated: () => !!get().token && !!get().user,

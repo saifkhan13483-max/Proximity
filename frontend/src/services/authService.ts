@@ -37,6 +37,7 @@ function firebaseErrorMessage(error: unknown): string {
 }
 
 export async function registerUser(name: string, email: string, password: string): Promise<AuthResponse> {
+  if (!auth) throw new Error('Authentication is not configured. Please contact the site administrator.')
   try {
     const credential = await createUserWithEmailAndPassword(auth, email, password)
     await updateProfile(credential.user, { displayName: name })
@@ -53,6 +54,7 @@ export async function registerUser(name: string, email: string, password: string
 }
 
 export async function loginUser(email: string, password: string): Promise<AuthResponse> {
+  if (!auth) throw new Error('Authentication is not configured. Please contact the site administrator.')
   try {
     const credential = await signInWithEmailAndPassword(auth, email, password)
     const token = await credential.user.getIdToken()
@@ -67,7 +69,7 @@ export async function loginUser(email: string, password: string): Promise<AuthRe
 }
 
 export async function fetchCurrentUser(storedToken: string): Promise<AuthUser> {
-  const token = auth.currentUser ? await auth.currentUser.getIdToken() : storedToken
+  const token = auth?.currentUser ? await auth.currentUser.getIdToken() : storedToken
   return apiRequest<AuthUser>(`${BASE}/me`, {
     method: 'GET',
     headers: authHeaders(token),
@@ -75,5 +77,5 @@ export async function fetchCurrentUser(storedToken: string): Promise<AuthUser> {
 }
 
 export async function logoutUser(): Promise<void> {
-  await signOut(auth)
+  if (auth) await signOut(auth)
 }

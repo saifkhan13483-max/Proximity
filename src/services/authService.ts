@@ -79,24 +79,11 @@ export async function loginUser(email: string, password: string): Promise<AuthRe
     const credential = await signInWithEmailAndPassword(auth, email, password)
     // Force-refresh the token so any custom claims (e.g. role: admin) set server-side are included
     const token = await credential.user.getIdToken(true)
-
-    try {
-      const user = await apiRequest<AuthUser>(`${BASE}/me`, {
-        method: 'GET',
-        headers: authHeaders(token),
-      })
-      return { token, user }
-    } catch {
-      const fbUser = credential.user
-      return {
-        token,
-        user: buildFallbackUser(
-          fbUser.uid,
-          fbUser.email ?? email,
-          fbUser.displayName ?? email.split('@')[0],
-        ),
-      }
-    }
+    const user = await apiRequest<AuthUser>(`${BASE}/me`, {
+      method: 'GET',
+      headers: authHeaders(token),
+    })
+    return { token, user }
   } catch (err) {
     if (err && typeof err === 'object' && 'code' in err) {
       throw new Error(firebaseErrorMessage(err))

@@ -69,7 +69,7 @@ export default function AdminLogin() {
                   onChange={(e) => setEmail(e.target.value)}
                   required
                   autoComplete="email"
-                  placeholder="admin@proximity.com"
+                  placeholder="saifkhan13483@gmail.com"
                   className="w-full bg-[#1a1a1a] border border-white/8 rounded-xl pl-10 pr-4 py-3 font-body text-sm text-white placeholder-white/20 focus:outline-none focus:border-gold-primary/40 focus:ring-1 focus:ring-gold-primary/20 transition-all"
                 />
               </div>
@@ -123,9 +123,6 @@ export default function AdminLogin() {
           </form>
         </div>
 
-        <p className="text-center mt-5 font-body text-xs text-white/15">
-          Default: admin@proximity.com · Admin@2026!
-        </p>
       </motion.div>
     </div>
   )

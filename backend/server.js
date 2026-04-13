@@ -78,24 +78,31 @@ function saveContacts(contacts) {
 // ── Seed Admin User ─────────────────────────────────────────────────────────
 // Re-seeds on every startup so the admin account survives ephemeral redeploys.
 
+const ADMIN_EMAIL = 'saifkhan13483@gmail.com'
+const ADMIN_PASSWORD = 'saifkhan13483@gmail.com'
+
 async function seedAdmin() {
-  const users = loadUsers()
-  const adminExists = users.find((u) => u.role === 'admin')
-  if (!adminExists) {
-    const passwordHash = await bcrypt.hash('Admin@2026!', 12)
-    users.push({
-      id: uuidv4(),
-      name: 'Admin',
-      email: 'admin@proximity.com',
-      passwordHash,
-      createdAt: new Date().toISOString(),
-      plan: 'Admin',
-      role: 'admin',
-      creditScore: null,
-    })
-    saveUsers(users)
-    console.log('Admin account seeded: admin@proximity.com / Admin@2026!')
+  let users = loadUsers()
+  const existingAdmin = users.find((u) => u.role === 'admin')
+
+  if (existingAdmin && existingAdmin.email.toLowerCase() === ADMIN_EMAIL.toLowerCase()) {
+    return
   }
+
+  users = users.filter((u) => u.role !== 'admin')
+  const passwordHash = await bcrypt.hash(ADMIN_PASSWORD, 12)
+  users.push({
+    id: uuidv4(),
+    name: 'Saif Khan',
+    email: ADMIN_EMAIL,
+    passwordHash,
+    createdAt: new Date().toISOString(),
+    plan: 'Admin',
+    role: 'admin',
+    creditScore: null,
+  })
+  saveUsers(users)
+  console.log(`Admin account seeded: ${ADMIN_EMAIL}`)
 }
 
 // ── Middleware ──────────────────────────────────────────────────────────────

@@ -18,16 +18,6 @@
     "creditScore": null
   },
   {
-    "id": "97b853c2-5e1b-43fe-a0bd-5c4d8a7dba4e",
-    "name": "Admin",
-    "email": "admin@proximity.com",
-    "passwordHash": "$2b$12$NX56o0eVgjs0BJAZkPoVRefvBArJaDdVC4k5UCInyACVnxPPIXQ92",
-    "createdAt": "2026-04-12T06:59:03.575Z",
-    "plan": "Admin",
-    "role": "admin",
-    "creditScore": null
-  },
-  {
     "id": "5d2a024f-00b8-4d05-adf6-e46c08d95151",
     "name": "saif khan",
     "email": "saifkhan13483@gmail.com",
@@ -45,6 +35,16 @@
     "createdAt": "2026-04-12T07:34:40.312Z",
     "plan": "Free Consultation",
     "role": "user",
+    "creditScore": null
+  },
+  {
+    "id": "6010390d-2485-4f46-83a5-2da6b4b4e9f7",
+    "name": "Saif Khan",
+    "email": "saifkhan13483@gmail.com",
+    "passwordHash": "$2b$12$2MxOOSCZnP98khIg1nYMgenMiJr5fFl48MDFr9tHLyuIa9i0U/ZpW",
+    "createdAt": "2026-04-13T04:07:42.299Z",
+    "plan": "Admin",
+    "role": "admin",
     "creditScore": null
   }
 ]

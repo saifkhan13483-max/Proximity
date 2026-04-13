@@ -5,8 +5,13 @@ let adminAuth = null
 
 function buildCredential() {
   // Preferred: full service account JSON as a single secret (avoids private key formatting issues)
-  const fullJson = process.env.FIREBASE_SERVICE_ACCOUNT_JSON
+  let fullJson = process.env.FIREBASE_SERVICE_ACCOUNT_JSON
   if (fullJson) {
+    // Strip accidental "KEY_NAME=..." prefix (Replit sometimes stores it that way)
+    const eqIdx = fullJson.indexOf('={')
+    if (eqIdx !== -1) fullJson = fullJson.slice(eqIdx + 1)
+    const plainIdx = fullJson.indexOf('{')
+    if (plainIdx > 0 && !fullJson.slice(0, plainIdx).includes('\n')) fullJson = fullJson.slice(plainIdx)
     try {
       const sa = JSON.parse(fullJson)
       console.log(`[firebase] Using FIREBASE_SERVICE_ACCOUNT_JSON. project=${sa.project_id}, account=${sa.client_email}`)

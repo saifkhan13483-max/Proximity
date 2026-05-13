@@ -24,3 +24,4 @@ export {
   DialogClose,
 } from './dialog'
 export { Label } from './label'
+export { default as AIChatWidget } from './AIChatWidget'

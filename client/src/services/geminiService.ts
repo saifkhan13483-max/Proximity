@@ -1,6 +1,109 @@
 const GEMINI_API_KEY = import.meta.env.VITE_GEMINI_API_KEY
 const GEMINI_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${GEMINI_API_KEY}`
 
+export interface ChatMessage {
+  role: 'user' | 'model'
+  text: string
+}
+
+const CREDIT_ADVISOR_SYSTEM = `You are an expert credit repair advisor at Proximity Credit Repair — a premium credit restoration firm. You help clients understand their credit reports, dispute strategies, score improvement tactics, and debt management.
+
+Rules:
+- Be warm, professional, and encouraging
+- Give specific, actionable credit advice
+- Reference FCRA rights when relevant
+- Keep answers concise (2-4 paragraphs max)
+- If asked about pricing or to sign up, direct them to the Contact page at /contact
+- Never give legal advice, always recommend consulting a professional for complex legal matters
+- You specialize in: credit disputes, score improvement, negative item removal, debt validation, collections, charge-offs, bankruptcies, and credit building`
+
+export async function sendChatMessage(messages: ChatMessage[]): Promise<string> {
+  if (!GEMINI_API_KEY) throw new Error('Gemini API key is not configured.')
+
+  const contents = [
+    { role: 'user', parts: [{ text: CREDIT_ADVISOR_SYSTEM }] },
+    { role: 'model', parts: [{ text: "Understood. I'm ready to assist as a credit repair advisor." }] },
+    ...messages.map(m => ({ role: m.role, parts: [{ text: m.text }] })),
+  ]
+
+  const response = await fetch(GEMINI_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      contents,
+      generationConfig: { temperature: 0.7, maxOutputTokens: 512 },
+    }),
+  })
+
+  if (!response.ok) {
+    const err = await response.json().catch(() => ({}))
+    throw new Error(err?.error?.message || `Gemini error: ${response.status}`)
+  }
+
+  const data = await response.json()
+  return data?.candidates?.[0]?.content?.parts?.[0]?.text ?? 'Sorry, I could not generate a response.'
+}
+
+export interface DisputeLetterInput {
+  yourName: string
+  yourAddress: string
+  yourCity: string
+  yourState: string
+  yourZip: string
+  bureauName: string
+  creditorName: string
+  accountNumber: string
+  disputeReason: string
+  additionalDetails: string
+}
+
+export async function generateDisputeLetter(input: DisputeLetterInput): Promise<string> {
+  if (!GEMINI_API_KEY) throw new Error('Gemini API key is not configured.')
+
+  const prompt = `Generate a professional, legally-worded FCRA credit dispute letter with the following details:
+
+Consumer Information:
+- Name: ${input.yourName}
+- Address: ${input.yourAddress}, ${input.yourCity}, ${input.yourState} ${input.yourZip}
+
+Dispute Target:
+- Credit Bureau: ${input.bureauName}
+- Creditor/Collection Agency: ${input.creditorName}
+- Account Number: ${input.accountNumber}
+- Reason for Dispute: ${input.disputeReason}
+- Additional Details: ${input.additionalDetails || 'None'}
+
+Write a complete, formal dispute letter that:
+1. References the Fair Credit Reporting Act (FCRA) Section 611
+2. Clearly states what is being disputed and why
+3. Demands investigation and removal/correction within 30 days
+4. Requests written notification of the results
+5. Includes placeholder brackets like [DATE], [SIGNATURE] where needed
+6. Is professional, firm, and legally precise
+7. Includes a section listing what documents to enclose (ID, proof of address, etc.)
+
+Format it as a complete letter ready to print and mail. Use proper letter formatting with date, addresses, salutation, body paragraphs, and closing.`
+
+  const response = await fetch(GEMINI_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      contents: [{ parts: [{ text: prompt }] }],
+      generationConfig: { temperature: 0.4, maxOutputTokens: 1500 },
+    }),
+  })
+
+  if (!response.ok) {
+    const err = await response.json().catch(() => ({}))
+    throw new Error(err?.error?.message || `Gemini error: ${response.status}`)
+  }
+
+  const data = await response.json()
+  const text = data?.candidates?.[0]?.content?.parts?.[0]?.text
+  if (!text) throw new Error('No response from Gemini.')
+  return text
+}
+
 export interface CreditReviewInput {
   firstName: string
   currentScore: string

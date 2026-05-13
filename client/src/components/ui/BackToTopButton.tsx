@@ -27,7 +27,7 @@ export default function BackToTopButton() {
           whileTap={{ scale: 0.9 }}
           onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
           aria-label="Back to top"
-          className="fixed bottom-6 right-6 z-40 w-12 h-12 rounded-full bg-gold-gradient flex items-center justify-center shadow-gold-md"
+          className="fixed bottom-24 right-6 z-40 w-10 h-10 rounded-full bg-gold-gradient flex items-center justify-center shadow-gold-md"
         >
           <ChevronUp size={20} className="text-white" />
         </motion.button>

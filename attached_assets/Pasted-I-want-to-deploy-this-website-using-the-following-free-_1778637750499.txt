@@ -1,0 +1,45 @@
+I want to deploy this website using the following free-tier stack:
+
+Frontend: Vercel (static hosting)
+Backend / API server: Railway (Node.js web service)
+Database: Neon (serverless PostgreSQL)
+This is a newly created project that does not yet contain any Vercel, Railway, or Neon configuration files. I need you to set everything up from scratch so the site is fully deployment-ready for this stack.
+
+Please do the following:
+
+Audit the current project structure and tell me what you find (frontend framework, backend framework, current database, env vars in use, etc.) before making changes.
+
+Restructure the project if needed so the frontend and backend are cleanly separated (e.g. /client and /server, or a monorepo layout) — whatever works best for independent deployment to Vercel and Railway.
+
+Database (Neon):
+
+Add a PostgreSQL client (e.g. pg, Prisma, or Drizzle — recommend the best fit for this project).
+Create the schema / migration files.
+Use a DATABASE_URL environment variable with SSL enabled (Neon requires sslmode=require).
+Include a seed script if useful.
+Backend (Railway):
+
+Make sure the server reads PORT from process.env.PORT (Railway assigns it dynamically).
+Bind to 0.0.0.0, not localhost.
+Add a railway.json (or railway.toml) and a proper start script in package.json.
+Add a /health endpoint for Railway health checks.
+Configure CORS to allow requests only from the Vercel frontend domain (use an env var like FRONTEND_URL).
+List all required env vars (DATABASE_URL, FRONTEND_URL, NODE_ENV, any API keys, etc.).
+Frontend (Vercel):
+
+Add a vercel.json if needed.
+Replace any hardcoded API URLs with an env var like VITE_API_URL / NEXT_PUBLIC_API_URL that points to the Railway backend.
+Ensure the build command and output directory are correct for Vercel auto-detection.
+Environment variables:
+
+Create a .env.example for both frontend and backend listing every required variable with placeholder values and short comments.
+Add .env, .env.local, etc. to .gitignore.
+Documentation:
+
+Add a DEPLOYMENT.md with clear step-by-step instructions: a. How to create the Neon database and copy the connection string. b. How to deploy the backend to Railway (connect repo, set root directory to /server, add env vars). c. How to deploy the frontend to Vercel (set root directory to /client, add VITE_API_URL pointing to the Railway URL). d. How to run migrations against Neon from local machine. e. How to test locally before deploying.
+Local development:
+
+Make sure npm run dev (or equivalent) still works for both frontend and backend locally, ideally with one command (e.g. using concurrently).
+After you finish, give me a summary of every file you created or modified, plus a short checklist of manual steps I need to do on neon.tech, railway.com, and vercel.com to go live.
+
+Do not skip any of the above. If something in my project conflicts with this stack (e.g. file-system writes, long-running processes, in-memory sessions), flag it and suggest a fix.

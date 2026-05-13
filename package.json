@@ -3,7 +3,7 @@
   "private": true,
   "version": "1.0.0",
   "type": "module",
-  "description": "Proximity Credit Repair — React + Vite frontend with Express API proxy for Gemini, Firebase Client SDK for auth and database.",
+  "description": "Proximity Credit Repair — React + Vite frontend with Firebase Auth, Firestore, and Google Gemini AI.",
   "scripts": {
     "dev": "npm run dev --prefix client",
     "build": "npm run build --prefix client",
@@ -14,13 +14,5 @@
   },
   "engines": {
     "node": ">=20.0.0"
-  },
-  "dependencies": {
-    "express": "^4.19.2",
-    "vite": "^5.4.21",
-    "@vitejs/plugin-react": "^4.7.0"
-  },
-  "devDependencies": {
-    "firebase-tools": "^13.0.0"
   }
 }

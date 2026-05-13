@@ -232,6 +232,12 @@ See **[DEPLOYMENT.md](./DEPLOYMENT.md)** for the full step-by-step guide coverin
 
 ---
 
+## Author
+
+**Saif Khan**
+
+---
+
 ## License
 
 Private — all rights reserved. This codebase is proprietary to Proximity Credit Repair.

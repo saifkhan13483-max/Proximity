@@ -1,5 +1,4 @@
-const GEMINI_API_KEY = import.meta.env.VITE_GEMINI_API_KEY
-const GEMINI_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${GEMINI_API_KEY}`
+const GEMINI_PROXY = '/api/gemini'
 
 export interface ChatMessage {
   role: 'user' | 'model'
@@ -17,27 +16,30 @@ Rules:
 - Never give legal advice, always recommend consulting a professional for complex legal matters
 - You specialize in: credit disputes, score improvement, negative item removal, debt validation, collections, charge-offs, bankruptcies, and credit building`
 
-export async function sendChatMessage(messages: ChatMessage[]): Promise<string> {
-  if (!GEMINI_API_KEY) throw new Error('Gemini API key is not configured.')
+async function callGemini(body: object): Promise<Response> {
+  const res = await fetch(GEMINI_PROXY, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(body),
+  })
+  return res
+}
 
+export async function sendChatMessage(messages: ChatMessage[]): Promise<string> {
   const contents = [
     { role: 'user', parts: [{ text: CREDIT_ADVISOR_SYSTEM }] },
     { role: 'model', parts: [{ text: "Understood. I'm ready to assist as a credit repair advisor." }] },
     ...messages.map(m => ({ role: m.role, parts: [{ text: m.text }] })),
   ]
 
-  const response = await fetch(GEMINI_URL, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      contents,
-      generationConfig: { temperature: 0.7, maxOutputTokens: 512 },
-    }),
+  const response = await callGemini({
+    contents,
+    generationConfig: { temperature: 0.7, maxOutputTokens: 512 },
   })
 
   if (!response.ok) {
     const err = await response.json().catch(() => ({}))
-    throw new Error(err?.error?.message || `Gemini error: ${response.status}`)
+    throw new Error(err?.error || `Gemini error: ${response.status}`)
   }
 
   const data = await response.json()
@@ -58,8 +60,6 @@ export interface DisputeLetterInput {
 }
 
 export async function generateDisputeLetter(input: DisputeLetterInput): Promise<string> {
-  if (!GEMINI_API_KEY) throw new Error('Gemini API key is not configured.')
-
   const prompt = `Generate a professional, legally-worded FCRA credit dispute letter with the following details:
 
 Consumer Information:
@@ -84,18 +84,14 @@ Write a complete, formal dispute letter that:
 
 Format it as a complete letter ready to print and mail. Use proper letter formatting with date, addresses, salutation, body paragraphs, and closing.`
 
-  const response = await fetch(GEMINI_URL, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      contents: [{ parts: [{ text: prompt }] }],
-      generationConfig: { temperature: 0.4, maxOutputTokens: 1500 },
-    }),
+  const response = await callGemini({
+    contents: [{ parts: [{ text: prompt }] }],
+    generationConfig: { temperature: 0.4, maxOutputTokens: 1500 },
   })
 
   if (!response.ok) {
     const err = await response.json().catch(() => ({}))
-    throw new Error(err?.error?.message || `Gemini error: ${response.status}`)
+    throw new Error(err?.error || `Gemini error: ${response.status}`)
   }
 
   const data = await response.json()
@@ -173,8 +169,6 @@ async function generateSingleLetter(
   bureau: string,
   id: string
 ): Promise<GeneratedLetter> {
-  if (!GEMINI_API_KEY) throw new Error('Gemini API key is not configured.')
-
   const prompt = `Generate a professional, legally-worded FCRA Section 611 credit dispute letter.
 
 Consumer Information:
@@ -198,18 +192,14 @@ Write a complete, formal dispute letter that:
 
 Output ONLY the full letter text. Use proper letter formatting with date, addresses, salutation, body, and closing. No preamble or explanation outside the letter itself.`
 
-  const response = await fetch(GEMINI_URL, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      contents: [{ parts: [{ text: prompt }] }],
-      generationConfig: { temperature: 0.3, maxOutputTokens: 1200 },
-    }),
+  const response = await callGemini({
+    contents: [{ parts: [{ text: prompt }] }],
+    generationConfig: { temperature: 0.3, maxOutputTokens: 1200 },
   })
 
   if (!response.ok) {
     const err = await response.json().catch(() => ({}))
-    throw new Error(err?.error?.message || `Gemini error: ${response.status}`)
+    throw new Error(err?.error || `Gemini error: ${response.status}`)
   }
 
   const data = await response.json()
@@ -243,10 +233,6 @@ export async function generateDisputePackage(input: DisputePackageInput): Promis
 }
 
 export async function generateCreditReview(input: CreditReviewInput): Promise<CreditReviewResult> {
-  if (!GEMINI_API_KEY) {
-    throw new Error('Gemini API key is not configured.')
-  }
-
   const prompt = `You are an expert credit repair specialist with 20+ years of experience. Analyze the following client credit profile and provide a comprehensive, personalized credit review.
 
 CLIENT PROFILE:
@@ -284,21 +270,17 @@ Provide a detailed credit review in the following JSON format (respond ONLY with
 
 Make the advice specific, actionable, and encouraging. Include at least 4-6 action steps. Be realistic but optimistic.`
 
-  const response = await fetch(GEMINI_URL, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      contents: [{ parts: [{ text: prompt }] }],
-      generationConfig: {
-        temperature: 0.7,
-        maxOutputTokens: 2048,
-      },
-    }),
+  const response = await callGemini({
+    contents: [{ parts: [{ text: prompt }] }],
+    generationConfig: {
+      temperature: 0.7,
+      maxOutputTokens: 2048,
+    },
   })
 
   if (!response.ok) {
     const errorData = await response.json().catch(() => ({}))
-    throw new Error(errorData?.error?.message || `Gemini API error: ${response.status}`)
+    throw new Error(errorData?.error || `Gemini API error: ${response.status}`)
   }
 
   const data = await response.json()

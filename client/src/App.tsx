@@ -22,6 +22,7 @@ const AdminDashboard = lazy(() => import('@pages/admin/AdminDashboard'))
 const AdminUsers = lazy(() => import('@pages/admin/AdminUsers'))
 const AdminContacts = lazy(() => import('@pages/admin/AdminContacts'))
 const AdminServices = lazy(() => import('@pages/admin/AdminServices'))
+const CreditReviewer = lazy(() => import('@pages/CreditReviewer'))
 
 function Wrap({ children }: { children: React.ReactNode }) {
   return <Suspense fallback={<LoadingScreen />}>{children}</Suspense>
@@ -39,6 +40,7 @@ const router = createBrowserRouter([
       { path: '/testimonials', element: <Testimonials /> },
       { path: '/faq', element: <FAQ /> },
       { path: '/contact', element: <Contact /> },
+      { path: '/ai-credit-reviewer', element: <Wrap><CreditReviewer /></Wrap> },
       { path: '*', element: <NotFound /> },
     ],
   },

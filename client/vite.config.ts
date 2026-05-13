@@ -18,6 +18,7 @@ export default defineConfig({
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url)),
       '@components': fileURLToPath(new URL('./src/components', import.meta.url)),
+      '@common': fileURLToPath(new URL('./src/components/common', import.meta.url)),
       '@pages': fileURLToPath(new URL('./src/pages', import.meta.url)),
       '@data': fileURLToPath(new URL('./src/data', import.meta.url)),
       '@store': fileURLToPath(new URL('./src/store', import.meta.url)),
@@ -26,6 +27,8 @@ export default defineConfig({
       '@lib': fileURLToPath(new URL('./src/lib', import.meta.url)),
       '@types': fileURLToPath(new URL('./src/types', import.meta.url)),
       '@config': fileURLToPath(new URL('./src/config', import.meta.url)),
+      '@styles': fileURLToPath(new URL('./src/styles', import.meta.url)),
+      '@providers': fileURLToPath(new URL('./src/providers', import.meta.url)),
     },
   },
   build: {

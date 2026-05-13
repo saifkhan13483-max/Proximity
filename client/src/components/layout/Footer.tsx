@@ -4,7 +4,7 @@ import { Phone, Mail, MapPin, Facebook, Instagram, Twitter, Linkedin } from 'luc
 import { navLinks, footerServiceLinks } from '@config/navigation'
 import { siteConfig } from '@config/site'
 import { SectionDivider } from '@components/ui'
-import ProximityLogo from '@components/ui/ProximityLogo'
+import ProximityLogo from '@common/ProximityLogo'
 
 const socialLinks = [
   { icon: Facebook, label: 'Facebook', href: siteConfig.social.facebook },

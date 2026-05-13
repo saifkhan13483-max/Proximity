@@ -4,7 +4,7 @@ import { motion } from 'framer-motion'
 import { Mail, Lock, Eye, EyeOff, ArrowRight } from 'lucide-react'
 import { useAuthStore } from '@store/authStore'
 import { loginUser } from '@services/authService'
-import ProximityLogo from '@components/ui/ProximityLogo'
+import ProximityLogo from '@common/ProximityLogo'
 import { Button } from '@components/ui'
 import { Label } from '@components/ui'
 

@@ -1,5 +1,5 @@
 import { useEffect } from 'react'
-import { siteMetadata } from '@config/siteMetadata'
+import { siteMetadata } from '@config/site'
 
 interface SEOHeadProps {
   title: string

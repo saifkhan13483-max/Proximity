@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import Navbar from './Navbar'
 import Footer from './Footer'
 import { ToastContainer, BackToTopButton, LoadingScreen } from '@components/ui'
-import AIChatWidget from '@components/ui/AIChatWidget'
+import AIChatWidget from '@common/AIChatWidget'
 
 function ScrollToTop() {
   const { pathname } = useLocation()

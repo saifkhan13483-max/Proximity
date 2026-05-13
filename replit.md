@@ -23,30 +23,116 @@ A high-end, premium marketing website and client portal for Proximity Credit Rep
 ## Project Structure
 ```
 /
-├── client/                    # Frontend → Vite dev server / Vercel deploy
+├── client/                        # Frontend → Vite dev server / Vercel deploy
 │   ├── src/
-│   │   ├── config/firebase.ts   # Firebase client SDK (VITE_* env vars)
-│   │   ├── services/
-│   │   │   ├── authService.ts   # Firebase Auth (sign in, register, logout)
-│   │   │   ├── adminService.ts  # Firestore admin CRUD (users, contacts, services)
-│   │   │   ├── contactService.ts # Firestore contact form submissions
-│   │   │   └── planService.ts   # Firestore plan updates
-│   │   ├── components/, pages/, store/, hooks/, lib/, data/, types/
-│   │   └── styles/globals.css
+│   │   ├── components/
+│   │   │   ├── common/            # App-specific shared components (Logo, AI Chat)
+│   │   │   │   ├── ProximityLogo.tsx
+│   │   │   │   ├── AIChatWidget.tsx
+│   │   │   │   └── index.ts
+│   │   │   ├── guards/            # Route protection
+│   │   │   │   ├── AdminRoute.tsx
+│   │   │   │   └── ProtectedRoute.tsx
+│   │   │   ├── layout/            # Page shell (Navbar, Footer, SEO, etc.)
+│   │   │   │   ├── AppLayout.tsx
+│   │   │   │   ├── AdminLayout.tsx
+│   │   │   │   ├── Navbar.tsx
+│   │   │   │   ├── Footer.tsx
+│   │   │   │   ├── SEOHead.tsx
+│   │   │   │   ├── PageWrapper.tsx
+│   │   │   │   ├── Section.tsx
+│   │   │   │   ├── ErrorBoundary.tsx
+│   │   │   │   └── index.ts
+│   │   │   ├── sections/          # Homepage section blocks
+│   │   │   │   ├── HeroSection.tsx
+│   │   │   │   ├── ServicesPreview.tsx
+│   │   │   │   ├── HowItWorksStrip.tsx
+│   │   │   │   ├── TestimonialsSlider.tsx
+│   │   │   │   └── FinalCTABand.tsx
+│   │   │   └── ui/                # Generic UI primitives (shadcn + custom)
+│   │   │       ├── Button.tsx, Card.tsx, Badge.tsx, Input.tsx
+│   │   │       ├── Textarea.tsx, Select.tsx, Modal.tsx
+│   │   │       ├── Toast.tsx, ToastContainer.tsx, LoadingScreen.tsx
+│   │   │       ├── BackToTopButton.tsx, SectionDivider.tsx, SectionLabel.tsx
+│   │   │       ├── OptimizedImage.tsx
+│   │   │       ├── dialog.tsx, label.tsx  ← shadcn/ui components
+│   │   │       └── index.ts
+│   │   ├── config/                # App configuration (single source of truth)
+│   │   │   ├── firebase.ts        # Firebase client SDK init
+│   │   │   ├── site.ts            # siteConfig + siteMetadata (merged)
+│   │   │   ├── navigation.ts      # Nav links + dropdown definitions
+│   │   │   └── index.ts           # Barrel — export all config
+│   │   ├── data/                  # Static content data
+│   │   │   ├── faqs.ts, plans.ts, services.ts
+│   │   │   ├── stats.ts, team.ts, testimonials.ts
+│   │   │   └── index.ts
+│   │   ├── hooks/                 # Custom React hooks
+│   │   │   ├── useCountUp.ts
+│   │   │   ├── useMediaQuery.ts
+│   │   │   └── index.ts
+│   │   ├── lib/                   # Utilities, helpers, animation variants
+│   │   │   ├── animations.ts      # Framer Motion variants
+│   │   │   ├── utils.ts           # cn(), formatPhone(), truncate()
+│   │   │   └── validators.ts      # Zod schemas
+│   │   ├── pages/                 # Route-level page components
+│   │   │   ├── Home.tsx, About.tsx, Services.tsx, Pricing.tsx
+│   │   │   ├── HowItWorks.tsx, Testimonials.tsx, FAQ.tsx, Contact.tsx
+│   │   │   ├── Login.tsx, Register.tsx, Dashboard.tsx, NotFound.tsx
+│   │   │   ├── CreditReviewer.tsx, DisputeLetterGenerator.tsx, DisputeAutopilot.tsx
+│   │   │   └── admin/
+│   │   │       ├── AdminLogin.tsx, AdminDashboard.tsx
+│   │   │       ├── AdminUsers.tsx, AdminContacts.tsx, AdminServices.tsx
+│   │   ├── providers/             # React context / app-level providers
+│   │   │   └── AppProviders.tsx   # QueryClient + ErrorBoundary + AuthObserver
+│   │   ├── services/              # Firebase / API service layer
+│   │   │   ├── authService.ts, adminService.ts
+│   │   │   ├── contactService.ts, planService.ts, geminiService.ts
+│   │   │   └── index.ts
+│   │   ├── store/                 # Zustand state stores
+│   │   │   ├── authStore.ts, uiStore.ts, formStore.ts
+│   │   │   └── index.ts
+│   │   ├── styles/
+│   │   │   └── globals.css        # Tailwind base + design tokens
+│   │   ├── types/
+│   │   │   └── index.ts           # Shared TypeScript types
+│   │   ├── App.tsx                # Router definition (all routes)
+│   │   ├── main.tsx               # Entry point (mounts AppProviders + App)
+│   │   └── vite-env.d.ts
 │   ├── public/
+│   │   ├── favicon.svg, og-image.png, robots.txt, sitemap.xml
 │   ├── index.html
 │   ├── vite.config.ts
-│   ├── vercel.json            # SPA routing + security headers
+│   ├── tsconfig.json
+│   ├── vercel.json
 │   └── package.json
 │
 ├── shared/
-│   └── types/index.ts         # Shared TypeScript types (Firestore docs, API shapes)
+│   └── types/index.ts             # Shared TypeScript types (Firestore docs)
 │
-├── firestore.rules            # Firestore security rules
-├── firestore.indexes.json     # Firestore composite indexes
-├── package.json               # Root scripts
+├── firestore.rules
+├── firestore.indexes.json
+├── package.json
 └── replit.md
 ```
+
+## Path Aliases
+All aliases are registered in both `vite.config.ts` and `tsconfig.json`:
+
+| Alias | Resolves To |
+|---|---|
+| `@` | `src/` |
+| `@components` | `src/components/` |
+| `@common` | `src/components/common/` |
+| `@pages` | `src/pages/` |
+| `@data` | `src/data/` |
+| `@store` | `src/store/` |
+| `@services` | `src/services/` |
+| `@hooks` | `src/hooks/` |
+| `@lib` | `src/lib/` |
+| `@types` | `src/types/` |
+| `@config` | `src/config/` |
+| `@styles` | `src/styles/` |
+| `@providers` | `src/providers/` |
 
 ## Design System
 - **Gold Primary:** `#B8924A`
@@ -85,7 +171,7 @@ All set as Replit secrets (prefixed with `VITE_` so Vite bundles them into the c
 ## Authentication System
 - **Auth:** Firebase Client SDK (`signInWithEmailAndPassword`, `createUserWithEmailAndPassword`)
 - **Database:** Firestore Client SDK — all reads/writes happen directly from the browser
-- **Token Refresh:** Automatic via Firebase `onIdTokenChanged` listener
+- **Token Refresh:** Automatic via Firebase `onIdTokenChanged` listener in `AppProviders`
 - **Admin role:** Stored as `role: 'admin'` on the Firestore user document; enforced client-side for routing
 
 ## Admin Panel
@@ -98,6 +184,9 @@ All set as Replit secrets (prefixed with `VITE_` so Vite bundles them into the c
 - Framer Motion pinned to v10 (v11+ dist structure incompatibility with Vite)
 - `v7_startTransition` future flag set on `RouterProvider` to suppress React Router v7 migration warning
 - `initializeFirestore` with `persistentLocalCache` replaces deprecated `enableIndexedDbPersistence`
+- `siteConfig` and `siteMetadata` are co-located in `config/site.ts` (single source of truth)
+- App-specific components (`ProximityLogo`, `AIChatWidget`) live in `components/common/` not `ui/`
+- All providers (QueryClient, ErrorBoundary, AuthObserver) are centralized in `providers/AppProviders.tsx`
 
 ## User Preferences
 - Keep the gold-and-dark luxury design system consistent across all components

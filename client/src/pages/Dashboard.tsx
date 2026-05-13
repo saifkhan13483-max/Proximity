@@ -11,7 +11,7 @@ import {
 import { useAuthStore } from '@store/authStore'
 import { fetchCurrentUser } from '@services/authService'
 import { plans } from '@data/plans'
-import ProximityLogo from '@components/ui/ProximityLogo'
+import ProximityLogo from '@common/ProximityLogo'
 
 const ALL_ACTIONS = {
   creditAnalysis: { label: 'Credit Analysis', desc: 'Full 3-bureau report review', icon: BarChart2, href: '/services#credit-analysis' },

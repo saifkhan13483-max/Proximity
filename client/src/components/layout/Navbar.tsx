@@ -8,7 +8,7 @@ import {
 } from 'lucide-react'
 import { navLinks, AI_TOOLS_DROPDOWN } from '@config/navigation'
 import { cn } from '@lib/utils'
-import ProximityLogo from '@components/ui/ProximityLogo'
+import ProximityLogo from '@common/ProximityLogo'
 import { useUIStore } from '@store/uiStore'
 import { useAuthStore } from '@store/authStore'
 

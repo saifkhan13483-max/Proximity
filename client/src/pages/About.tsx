@@ -9,7 +9,7 @@ import { useState } from 'react'
   import { Card, OptimizedImage } from '@components/ui'
   import { fadeUp } from '@lib/animations'
   import { teamMembers } from '@data/team'
-  import { siteMetadata } from '@config/siteMetadata'
+  import { siteMetadata } from '@config/site'
 
   const aboutSchema = {
     '@context': 'https://schema.org',

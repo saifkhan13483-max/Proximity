@@ -19,6 +19,7 @@
     "paths": {
       "@/*": ["./src/*"],
       "@components/*": ["./src/components/*"],
+      "@common/*": ["./src/components/common/*"],
       "@pages/*": ["./src/pages/*"],
       "@data/*": ["./src/data/*"],
       "@store/*": ["./src/store/*"],
@@ -26,7 +27,9 @@
       "@hooks/*": ["./src/hooks/*"],
       "@lib/*": ["./src/lib/*"],
       "@types/*": ["./src/types/*"],
-      "@config/*": ["./src/config/*"]
+      "@config/*": ["./src/config/*"],
+      "@styles/*": ["./src/styles/*"],
+      "@providers/*": ["./src/providers/*"]
     }
   },
   "include": ["src"],

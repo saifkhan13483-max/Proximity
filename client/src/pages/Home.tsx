@@ -5,7 +5,7 @@ import PageWrapper from '@components/layout/PageWrapper'
   import HowItWorksStrip from '@components/sections/HowItWorksStrip'
   import TestimonialsSlider from '@components/sections/TestimonialsSlider'
   import FinalCTABand from '@components/sections/FinalCTABand'
-  import { siteMetadata } from '@config/siteMetadata'
+  import { siteMetadata } from '@config/site'
 
   const homeSchema = {
     '@context': 'https://schema.org',

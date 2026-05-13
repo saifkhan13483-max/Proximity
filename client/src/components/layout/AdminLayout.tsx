@@ -7,7 +7,7 @@ import {
 } from 'lucide-react'
 import { useAuthStore } from '@store/authStore'
 import { cn } from '@lib/utils'
-import ProximityLogo from '@components/ui/ProximityLogo'
+import ProximityLogo from '@common/ProximityLogo'
 
 const NAV_ITEMS = [
   { label: 'Dashboard', href: '/admin', icon: LayoutDashboard },

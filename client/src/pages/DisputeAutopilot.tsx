@@ -344,7 +344,7 @@ export default function DisputeAutopilot() {
   const [personal, setPersonal] = useState({ ...defaultPersonal })
   const [items, setItems] = useState<DisputeItemInput[]>([emptyItem()])
   const [personalErrors, setPersonalErrors] = useState<Partial<typeof defaultPersonal>>({})
-  const [itemErrors, setItemErrors] = useState<Record<number, Partial<DisputeItemInput & { bureaus: string }>>>({})
+  const [itemErrors, setItemErrors] = useState<Record<number, Partial<Omit<DisputeItemInput, 'bureaus'> & { bureaus: string }>>>({})
   const [loading, setLoading] = useState(false)
   const [apiError, setApiError] = useState<string | null>(null)
   const [result, setResult] = useState<GeneratedLetter[] | null>(null)
@@ -399,7 +399,7 @@ export default function DisputeAutopilot() {
   function validateItems(): boolean {
     const errs: typeof itemErrors = {}
     items.forEach((item, i) => {
-      const e: Partial<DisputeItemInput & { bureaus: string }> = {}
+      const e: Partial<Omit<DisputeItemInput, 'bureaus'> & { bureaus: string }> = {}
       if (!item.creditorName.trim()) e.creditorName = 'Required'
       if (!item.accountNumber.trim()) e.accountNumber = 'Required'
       if (!item.disputeReason) e.disputeReason = 'Required'

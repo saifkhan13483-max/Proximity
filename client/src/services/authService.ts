@@ -3,6 +3,8 @@ import {
   createUserWithEmailAndPassword,
   updateProfile,
   signOut,
+  signInWithPopup,
+  GoogleAuthProvider,
 } from 'firebase/auth'
 import { doc, getDoc, setDoc } from 'firebase/firestore'
 import { auth, db } from '@config/firebase'
@@ -127,6 +129,52 @@ export async function fetchCurrentUser(_storedToken?: string): Promise<AuthUser>
     role: data.role || 'user',
     createdAt: data.createdAt || new Date().toISOString(),
     creditScore: data.creditScore ?? null,
+  }
+}
+
+export async function signInWithGoogle(): Promise<AuthResponse> {
+  if (!auth) throw new Error('Authentication is not configured. Please contact the site administrator.')
+  if (!db) throw new Error('Database is not configured. Please contact the site administrator.')
+
+  try {
+    const provider = new GoogleAuthProvider()
+    const credential = await signInWithPopup(auth, provider)
+    const token = await credential.user.getIdToken()
+    const uid = credential.user.uid
+
+    const userDoc = await getDoc(doc(db, 'users', uid))
+    if (userDoc.exists()) {
+      const data = userDoc.data()
+      return {
+        token,
+        user: {
+          id: data.id || uid,
+          name: data.name || credential.user.displayName || '',
+          email: data.email || credential.user.email || '',
+          plan: data.plan || 'Free Consultation',
+          role: data.role || 'user',
+          createdAt: data.createdAt || new Date().toISOString(),
+          creditScore: data.creditScore ?? null,
+        },
+      }
+    }
+
+    const profile: AuthUser = {
+      id: uid,
+      name: credential.user.displayName || credential.user.email?.split('@')[0] || 'User',
+      email: credential.user.email?.toLowerCase() ?? '',
+      createdAt: new Date().toISOString(),
+      plan: 'Free Consultation',
+      role: 'user',
+      creditScore: null,
+    }
+    await setDoc(doc(db, 'users', uid), profile)
+    return { token, user: profile }
+  } catch (err) {
+    if (err && typeof err === 'object' && 'code' in err) {
+      throw new Error(firebaseErrorMessage(err))
+    }
+    throw err
   }
 }
 

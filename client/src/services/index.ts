@@ -1,7 +1,6 @@
 export { submitContactForm } from './contactService'
 export { registerUser, loginUser, logoutUser, fetchCurrentUser } from './authService'
 export { selectPlan } from './planService'
-export { uploadFile, validateFile } from './uploadService'
 export {
   fetchAdminStats,
   fetchAdminUsers,

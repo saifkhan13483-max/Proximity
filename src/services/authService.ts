@@ -4,7 +4,7 @@ import {
   updateProfile,
   signOut,
 } from 'firebase/auth'
-import { auth } from '@lib/firebase'
+import { auth } from '@config/firebase'
 import type { AuthUser } from '@store/authStore'
 import { API_BASE, apiRequest } from './api'
 

@@ -73,9 +73,11 @@ proximity/
 │   │   ├── authStore.ts           # Zustand auth state (persisted to localStorage)
 │   │   └── uiStore.ts, formStore.ts
 │   ├── lib/
-│   │   ├── firebase.ts            # Firebase SDK init (persistentLocalCache)
-│   │   ├── animations.ts, utils.ts, validators.ts
+│   │   ├── animations.ts          # Framer Motion variant presets
+│   │   ├── utils.ts               # cn(), formatPhone, truncate
+│   │   └── validators.ts          # Zod schemas
 │   ├── config/
+│   │   ├── firebase.ts            # Firebase SDK init (persistentLocalCache)
 │   │   ├── siteMetadata.ts        # SEO metadata
 │   │   ├── navigation.ts          # Nav + footer links
 │   │   └── site.ts                # Phone, email, address

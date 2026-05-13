@@ -5,7 +5,7 @@ import { onIdTokenChanged } from 'firebase/auth'
 import App from './App'
 import ErrorBoundary from './components/layout/ErrorBoundary'
 import { useAuthStore } from '@store/authStore'
-import { auth } from '@lib/firebase'
+import { auth } from '@config/firebase'
 import './styles/globals.css'
 
 const queryClient = new QueryClient({

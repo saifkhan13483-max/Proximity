@@ -3,7 +3,6 @@ import { Slot } from '@radix-ui/react-slot'
 import { motion } from 'framer-motion'
 import { Link } from 'react-router-dom'
 import { cn } from '@lib/utils'
-import type { ButtonProps } from '@/types/component-props'
 
 const MotionLink = motion(Link)
 

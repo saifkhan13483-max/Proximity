@@ -2,7 +2,13 @@ import { motion } from 'framer-motion'
 import { useInView } from 'react-intersection-observer'
 import { cn } from '@lib/utils'
 import { fadeUp } from '@lib/animations'
-import type { CardProps } from '@/types/component-props'
+
+interface CardProps {
+  variant?: 'dark' | 'light'
+  hover?: boolean
+  className?: string
+  children?: React.ReactNode
+}
 
 const variantClasses = {
   dark: 'bg-card-black border-t-2 border-gold-primary backdrop-blur-sm text-white rounded-card shadow-gold-sm',

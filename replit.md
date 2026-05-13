@@ -75,11 +75,11 @@ proximity/  (root = frontend)
 │   │   ├── formStore.ts
 │   │   └── index.ts
 │   ├── lib/
-│   │   ├── firebase.ts        # Firebase web SDK — initializeFirestore with persistentLocalCache
-│   │   ├── animations.ts
+│   │   ├── animations.ts      # Framer Motion variant presets (fadeUp, fadeIn, staggerContainer)
 │   │   ├── utils.ts           # cn() (clsx + twMerge), formatPhone, truncate
-│   │   └── validators.ts
+│   │   └── validators.ts      # Zod schemas (contactFormSchema)
 │   ├── config/
+│   │   ├── firebase.ts        # Firebase web SDK — initializeFirestore with persistentLocalCache
 │   │   ├── siteMetadata.ts    # SEO metadata + siteUrl
 │   │   ├── navigation.ts      # navLinks + footerServiceLinks
 │   │   └── site.ts            # siteConfig (phone, email, address)
@@ -91,7 +91,7 @@ proximity/  (root = frontend)
 │   │   ├── useCountUp.ts, useMediaQuery.ts
 │   │   └── index.ts
 │   ├── types/
-│   │   └── index.ts, component-props.ts
+│   │   └── index.ts           # All shared types (Service, Testimonial, FAQItem, Stat, etc.)
 │   └── styles/
 │       └── globals.css        # Tailwind base + shadcn CSS vars + brand vars
 ├── public/

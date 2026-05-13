@@ -1,7 +1,7 @@
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 import { signOut } from 'firebase/auth'
-import { auth } from '@lib/firebase'
+import { auth } from '@config/firebase'
 
 export interface AuthUser {
   id: string

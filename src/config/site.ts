@@ -14,13 +14,3 @@ export const siteConfig = {
     twitter: '',
   },
 }
-
-export const navLinks = [
-  { label: 'Home', path: '/' },
-  { label: 'About', path: '/about' },
-  { label: 'Services', path: '/services' },
-  { label: 'How It Works', path: '/how-it-works' },
-  { label: 'Testimonials', path: '/testimonials' },
-  { label: 'FAQ', path: '/faq' },
-  { label: 'Contact', path: '/contact' },
-]

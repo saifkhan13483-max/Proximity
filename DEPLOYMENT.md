@@ -3,70 +3,38 @@
 ## Architecture Overview
 
 ```
-┌─────────────────────────────────────────────────────────────┐
-│                  Production Architecture                     │
-│                                                             │
-│  Browser ──► Vercel (static CDN)                           │
-│                  /client/dist  ──► React SPA               │
-│                                                             │
-│  React SPA ──► VITE_API_URL ──► Firebase Functions         │
-│                  /api/*  ──► Express (Firebase Functions)   │
-│                                                             │
-│  Firebase Functions ──► Firestore (database)               │
-│  Firebase Functions ──► Cloudinary (file uploads)          │
-│  Firebase Functions ──► Firebase Auth (token verify)        │
-└─────────────────────────────────────────────────────────────┘
+┌──────────────────────────────────────────────────────────────────┐
+│                     Production Architecture                       │
+│                                                                  │
+│  Browser ──► Vercel / Replit (static CDN)                        │
+│                  React SPA (Vite build)                          │
+│                                                                  │
+│  React SPA ──► Firebase Auth  (login / register / token)         │
+│  React SPA ──► Firestore      (user data, contacts, services)    │
+│  React SPA ──► Gemini API     (AI credit tools & chat)           │
+│                                                                  │
+│  No backend server required — all calls go direct from browser   │
+└──────────────────────────────────────────────────────────────────┘
 ```
 
-## Project Structure
-
-```
-/
-├── client/                    # Frontend — deployed to Vercel
-│   ├── src/
-│   │   ├── config/firebase.ts # Firebase client SDK (VITE_* env vars)
-│   │   ├── services/
-│   │   │   ├── api.ts         # Base API helper
-│   │   │   ├── authService.ts # Firebase Auth flows
-│   │   │   ├── adminService.ts
-│   │   │   ├── contactService.ts
-│   │   │   ├── planService.ts
-│   │   │   └── uploadService.ts  # Cloudinary uploads via Functions
-│   │   └── ...
-│   ├── vercel.json            # SPA routing + security headers
-│   └── .env.example           # Frontend env vars template
-│
-├── firebase/
-│   └── functions/             # Backend — deployed to Firebase Functions
-│       ├── src/
-│       │   ├── index.js       # Firebase Function exports (api, seedAdminFn)
-│       │   ├── app.js         # Express app — all routes
-│       │   ├── firebase-admin.js  # Admin SDK init
-│       │   └── cloudinary.js  # Cloudinary upload service
-│       └── .env.example       # Backend env vars template
-│
-├── shared/types/index.ts      # Shared TypeScript types
-├── firebase.json              # Firebase CLI config
-├── .firebaserc                # Firebase project aliases
-├── firestore.rules            # Firestore security rules
-└── firestore.indexes.json     # Firestore composite indexes
-```
+This is a **pure frontend** application. There is no Express server, no Firebase Functions, and no backend API. All data operations go through the Firebase Client SDK directly from the browser, protected by Firestore security rules.
 
 ---
 
-## Step 1: Firebase Project Setup
+## Step 1 — Firebase Project Setup
 
 ### 1a. Create Firebase Project
 
 1. Go to [Firebase Console](https://console.firebase.google.com)
-2. Click **Add project** → enter name (e.g. `proximity-credit-repair`)
+2. Click **Add project** → enter a name (e.g. `proximity-credit-repair`)
 3. Disable Google Analytics (optional) → **Create project**
 
 ### 1b. Enable Firebase Authentication
 
-1. In your project: **Build → Authentication → Get started**
+1. **Build → Authentication → Get started**
 2. Under **Sign-in method** → enable **Email/Password**
-3. Click **Save**
+3. Optionally enable **Google** for Google Sign-In
+4. Click **Save**
 
 ### 1c. Enable Firestore Database
 
@@ -74,14 +42,7 @@
 2. Choose **Production mode** → select your region (e.g. `us-central1`)
 3. Click **Enable**
 
-### 1d. Enable Firebase Functions
-
-Firebase Functions requires the **Blaze (pay-as-you-go)** plan.
-
-1. Upgrade your project to Blaze: **Settings (gear icon) → Usage and billing → Modify plan**
-2. Select **Blaze** → confirm
-
-### 1e. Get Firebase Web App Credentials (for frontend)
+### 1d. Get Firebase Web App Credentials
 
 1. **Project Settings → General → Your apps → Add app → Web**
 2. Register app (any nickname) → copy the config object:
@@ -97,27 +58,18 @@ const firebaseConfig = {
 }
 ```
 
-You'll use these as `VITE_FIREBASE_*` environment variables.
+These become your `VITE_FIREBASE_*` environment variables.
 
-### 1f. Get Firebase Admin SDK Credentials (for backend)
+---
 
-1. **Project Settings → Service Accounts → Generate new private key**
-2. Download the JSON file — keep it secret
-3. You'll paste the full JSON as `FIREBASE_SERVICE_ACCOUNT_JSON`
+## Step 2 — Firestore Security Rules & Indexes
 
-### 1g. Configure Firebase CLI
+### 2a. Install Firebase CLI
 
 ```bash
-# Install Firebase CLI globally
 npm install -g firebase-tools
-
-# Login
 firebase login
-
-# Set your project (replace with your actual project ID)
 firebase use your-firebase-project-id
-
-# Or add it to .firebaserc
 ```
 
 Update `.firebaserc` with your actual project ID:
@@ -129,11 +81,7 @@ Update `.firebaserc` with your actual project ID:
 }
 ```
 
----
-
-## Step 2: Firestore Setup
-
-### 2a. Deploy Security Rules
+### 2b. Deploy Security Rules
 
 ```bash
 firebase deploy --only firestore:rules
@@ -142,294 +90,194 @@ firebase deploy --only firestore:rules
 The rules in `firestore.rules` enforce:
 - Users can read/write their own profile only
 - Admins can read/write everything
-- Anyone can submit a contact form
-- Only admins can read/update/delete contacts
+- Anyone can submit a contact form (public)
+- Only admins can read, update, or delete contacts
+- Services collection is publicly readable, admin-write only
 
-### 2b. Deploy Indexes
+### 2c. Deploy Indexes
 
 ```bash
 firebase deploy --only firestore:indexes
 ```
 
-### 2c. Firestore Collections Schema
+### 2d. Firestore Collections Schema
 
-| Collection | Document ID | Fields |
+| Collection | Document ID | Key Fields |
 |---|---|---|
 | `users` | Firebase Auth UID | `id`, `name`, `email`, `createdAt`, `plan`, `role`, `creditScore` |
 | `contacts` | UUID (v4) | `id`, `fullName`, `email`, `phone`, `serviceOfInterest`, `message`, `status`, `createdAt` |
 | `services` | Service slug (e.g. `credit-analysis`) | `id`, `title`, `icon`, `shortDescription`, `description`, `benefits[]`, `order` |
+| `users/{uid}/disputePackages` | Auto ID | `createdAt`, `status`, `letterCount`, `bureaus[]`, `itemNames[]`, `letters[]` |
+| `users/{uid}/creditReviews` | Auto ID | `createdAt`, `firstName`, `currentScore`, `goalScore`, `result` |
 
-### 2d. Seed Initial Data
+### 2e. Create the First Admin Account
 
-The `services` collection is auto-seeded with 7 default services on the first request to `GET /api/admin/services`.
+Because the app has no seed script, set up the first admin manually:
 
-To manually seed the admin user after deployment, call the `seedAdminFn` endpoint:
-
-```bash
-curl -X GET \
-  "https://us-central1-YOUR_PROJECT_ID.cloudfunctions.net/seedAdminFn?token=YOUR_SEED_TOKEN" \
-  -H "x-seed-token: YOUR_SEED_TOKEN"
-```
-
----
-
-## Step 3: Cloudinary Setup
-
-### 3a. Create Cloudinary Account
-
-1. Go to [cloudinary.com](https://cloudinary.com) → **Sign up free**
-2. Complete registration
-
-### 3b. Get Credentials
-
-1. Go to your [Cloudinary Dashboard](https://console.cloudinary.com)
-2. Copy from **Product Environment Credentials**:
-   - **Cloud name** → `CLOUDINARY_CLOUD_NAME`
-   - **API Key** → `CLOUDINARY_API_KEY`
-   - **API Secret** → `CLOUDINARY_API_SECRET`
-
-### 3c. Configure Upload Settings (Recommended)
-
-1. In Cloudinary Console → **Settings → Upload**
-2. Add an upload preset for `proximity-credit-repair` folder
-3. Enable **Auto-tagging** for organization
-
-### 3d. Test Uploads
-
-After deploying Firebase Functions, test the upload endpoint:
-
-```bash
-curl -X POST \
-  "https://us-central1-YOUR_PROJECT_ID.cloudfunctions.net/api/api/upload" \
-  -H "Authorization: Bearer YOUR_FIREBASE_ID_TOKEN" \
-  -F "file=@/path/to/image.jpg" \
-  -F "folder=team-photos"
-```
+1. Register normally via `/register`
+2. In the Firebase Console → **Firestore → users → {your UID}**
+3. Edit the `role` field from `"user"` to `"admin"`
+4. The admin panel is now accessible at `/admin`
 
 ---
 
-## Step 4: Deploy Firebase Functions
+## Step 3 — Google Gemini API Key
 
-### 4a. Configure Environment Variables for Functions
+The AI features (Credit Reviewer, Dispute Letters, AI Chat) require a Gemini API key.
 
-```bash
-cd firebase/functions
+1. Go to [Google AI Studio](https://aistudio.google.com/app/apikey)
+2. Click **Create API key** → copy the key
+3. Set it as `VITE_GEMINI_API_KEY` in your environment
 
-# Copy the example file
-cp .env.example .env
-
-# Edit .env with your actual values
-nano .env
-```
-
-For production, set secrets via Firebase CLI (recommended over .env):
-
-```bash
-firebase functions:secrets:set FIREBASE_SERVICE_ACCOUNT_JSON
-firebase functions:secrets:set CLOUDINARY_API_SECRET
-firebase functions:secrets:set ADMIN_PASSWORD
-firebase functions:secrets:set SEED_ADMIN_TOKEN
-```
-
-### 4b. Install Dependencies
-
-```bash
-npm install --prefix firebase/functions
-```
-
-### 4c. Deploy Functions
-
-```bash
-firebase deploy --only functions
-```
-
-Or from the root:
-```bash
-npm run deploy:functions
-```
-
-After deployment, your API will be available at:
-```
-https://us-central1-YOUR_PROJECT_ID.cloudfunctions.net/api
-```
-
-### 4e. Seed the Admin Account
-
-```bash
-curl -H "x-seed-token: YOUR_SEED_TOKEN" \
-  "https://us-central1-YOUR_PROJECT_ID.cloudfunctions.net/seedAdminFn"
-```
+> **Note:** If deploying on Replit, this is already set up via the Replit Secrets panel.
 
 ---
 
-## Step 5: Vercel Frontend Deployment
+## Step 4 — Deploy to Vercel
 
-### 5a. Push to GitHub
+### 4a. Push to GitHub
 
 Ensure your code is in a GitHub repository.
 
-### 5b. Connect to Vercel
+### 4b. Connect to Vercel
 
 1. Go to [vercel.com](https://vercel.com) → **Add New Project**
 2. Import your GitHub repository
-3. **Framework Preset**: Vite
-4. **Root Directory**: `client`
-5. **Build Command**: `npm run build`
-6. **Output Directory**: `dist`
+3. Configure:
+   - **Framework Preset:** Vite
+   - **Root Directory:** `client`
+   - **Build Command:** `npm run build`
+   - **Output Directory:** `dist`
 
-### 5c. Set Environment Variables in Vercel
+### 4c. Set Environment Variables in Vercel
 
 In **Project Settings → Environment Variables**, add:
 
-| Variable | Value |
-|---|---|
-| `VITE_FIREBASE_API_KEY` | Your Firebase web API key |
-| `VITE_FIREBASE_AUTH_DOMAIN` | `your-project.firebaseapp.com` |
-| `VITE_FIREBASE_PROJECT_ID` | `your-project-id` |
-| `VITE_FIREBASE_STORAGE_BUCKET` | `your-project.appspot.com` |
-| `VITE_FIREBASE_MESSAGING_SENDER_ID` | Your messaging sender ID |
-| `VITE_FIREBASE_APP_ID` | Your Firebase app ID |
-| `VITE_API_URL` | `https://us-central1-YOUR_PROJECT_ID.cloudfunctions.net/api` |
+| Variable | Required | Description |
+|---|---|---|
+| `VITE_FIREBASE_API_KEY` | Yes | Firebase web API key |
+| `VITE_FIREBASE_AUTH_DOMAIN` | Yes | `your-project.firebaseapp.com` |
+| `VITE_FIREBASE_PROJECT_ID` | Yes | Your Firebase project ID |
+| `VITE_FIREBASE_STORAGE_BUCKET` | Yes | `your-project.appspot.com` |
+| `VITE_FIREBASE_MESSAGING_SENDER_ID` | Yes | Firebase messaging sender ID |
+| `VITE_FIREBASE_APP_ID` | Yes | Firebase app ID |
+| `VITE_GEMINI_API_KEY` | Yes | Google Gemini API key |
 
-### 5d. Deploy
+### 4d. Deploy
 
-Click **Deploy**. Vercel will build and deploy automatically.
+Click **Deploy**. Vercel will build and serve the static SPA automatically. All subsequent pushes to your main branch trigger an auto-redeploy.
 
-For subsequent deploys, push to your main branch and Vercel auto-deploys.
+The `client/vercel.json` already configures SPA routing (rewrites `/*` → `/index.html`) and security headers.
 
 ---
 
-## Step 6: Local Development
+## Step 5 — Deploy to Replit (Alternative)
 
-### 6a. Install All Dependencies
+If hosting directly on Replit:
+
+1. All `VITE_*` secrets are managed in the **Secrets** tab in Replit
+2. The **Start application** workflow runs `npm run dev --prefix client`
+3. Vite serves on port `5000` which Replit proxies to the public URL
+4. For production publishing, use **Replit Deployments** which runs `npm run build --prefix client` and serves the `dist/` output
+
+---
+
+## Step 6 — Local Development
+
+### 6a. Install Dependencies
 
 ```bash
+# Root dependencies
+npm install
+
+# Client dependencies
+npm install --prefix client
+
+# Or install both at once
 npm run install:all
 ```
 
-### 6b. Set Up Frontend Environment
+### 6b. Configure Environment Variables
 
-```bash
-cp client/.env.example client/.env.local
-# Edit client/.env.local with your Firebase credentials
+Create `client/.env.local` (never commit this file):
+
+```env
+VITE_FIREBASE_API_KEY=your_api_key
+VITE_FIREBASE_AUTH_DOMAIN=your-project.firebaseapp.com
+VITE_FIREBASE_PROJECT_ID=your-project-id
+VITE_FIREBASE_STORAGE_BUCKET=your-project.appspot.com
+VITE_FIREBASE_MESSAGING_SENDER_ID=your_sender_id
+VITE_FIREBASE_APP_ID=your_app_id
+VITE_GEMINI_API_KEY=your_gemini_api_key
 ```
 
-### 6c. Set Up Backend Environment
-
-```bash
-cp firebase/functions/.env.example firebase/functions/.env
-# Edit firebase/functions/.env with your credentials
-```
-
-### 6d. Start Firebase Emulators
-
-```bash
-npm run emulators
-```
-
-Emulator UI available at: `http://localhost:4000`
-- Auth emulator: `http://localhost:9099`
-- Firestore emulator: `http://localhost:8080`
-- Functions emulator: `http://localhost:5001`
-
-### 6e. Start Frontend Dev Server
-
-In a separate terminal:
+### 6c. Start Dev Server
 
 ```bash
 npm run dev
 ```
 
-Frontend will be at `http://localhost:5000`, proxying `/api` to the Functions emulator.
+Frontend will be available at `http://localhost:5000`.
 
-### 6f. Available Root Scripts
+### 6d. Available Scripts
 
 ```bash
-npm run dev              # Start frontend dev server
-npm run build            # Build frontend for production
-npm run emulators        # Start all Firebase emulators
-npm run deploy           # Deploy Functions + Firestore rules
-npm run deploy:functions # Deploy Firebase Functions only
-npm run deploy:firestore # Deploy Firestore rules + indexes only
-npm run deploy:all       # Deploy everything (Functions + Firestore + Hosting)
-npm run install:all      # Install deps for root + client + firebase/functions
+npm run dev          # Start Vite dev server (port 5000)
+npm run build        # Build for production (output: client/dist)
+npm run preview      # Preview production build locally
+npm run typecheck    # Run TypeScript type check (no emit)
+npm run lint         # Run ESLint on client/src
+npm run install:all  # Install root + client dependencies
 ```
 
 ---
 
-## Step 7: Production Verification Checklist
+## Step 7 — Production Verification Checklist
 
-### Frontend
-- [ ] Site loads at your Vercel URL
-- [ ] All pages render correctly
-- [ ] No console errors related to Firebase config
-- [ ] SPA routing works (navigate to `/about`, refresh — no 404)
+### Frontend & Routing
+- [ ] Site loads at your deployed URL
+- [ ] All pages render without console errors
+- [ ] SPA routing works (navigate to `/about`, hard refresh — no 404)
+- [ ] Back button navigates correctly
 
 ### Authentication
-- [ ] Registration creates a new user
-- [ ] Login works and returns correct user data
-- [ ] Token refresh works across sessions
-- [ ] Admin login works with seeded admin credentials
-- [ ] Protected routes redirect unauthenticated users
+- [ ] Registration creates a new Firebase Auth user + Firestore profile
+- [ ] Login works and returns correct user data from Firestore
+- [ ] Token refresh persists across browser sessions
+- [ ] Protected routes (`/dashboard`) redirect unauthenticated users to `/login`
+- [ ] Admin routes (`/admin`) redirect non-admin users
 
 ### Firestore
-- [ ] Contact form submission saves to Firestore `contacts` collection
-- [ ] User profile is created in `users` collection after registration
-- [ ] Admin can read/update/delete contacts
-- [ ] Admin can read/update/delete users
+- [ ] Contact form submission saves to the `contacts` collection
+- [ ] User profile document created in `users` after registration
+- [ ] Dashboard loads user data from Firestore
+- [ ] AI dispute packages save to `users/{uid}/disputePackages`
+- [ ] Credit reviews save to `users/{uid}/creditReviews`
 
-### Firebase Functions
-- [ ] `GET /api/health` returns `{ status: "ok" }`
-- [ ] `POST /api/contacts` saves contact forms
-- [ ] `GET /api/auth/me` returns authenticated user profile
-- [ ] `GET /api/admin/stats` works for admin users
-- [ ] `GET /api/admin/services` returns 7 default services
+### AI Features
+- [ ] AI Credit Reviewer returns a parsed JSON result
+- [ ] Dispute Letter Generator produces a formatted letter
+- [ ] AI Dispute Autopilot generates a full package of letters
+- [ ] AI Chat Widget responds to messages
 
-### Cloudinary
-- [ ] Upload endpoint accepts image files
-- [ ] Files appear in Cloudinary dashboard after upload
-- [ ] Returned URLs are accessible and load correctly
-- [ ] Oversized files and invalid types are rejected
+### Admin Panel
+- [ ] `/admin` redirects non-admins
+- [ ] Admin Dashboard shows real stats from Firestore
+- [ ] Admin Users page lists all registered users
+- [ ] Admin Contacts page shows contact form submissions
+- [ ] Admin Services page supports full CRUD
 
 ### Security
-- [ ] Unauthenticated requests to protected routes return 401
-- [ ] Non-admin requests to admin routes return 403
-- [ ] CORS blocks unauthorized origins
-- [ ] Rate limiting is active (test with repeated requests)
-- [ ] Firestore rules prevent direct client writes to `contacts` (admin-only fields)
-
----
-
-## Deployment Safety Flags
-
-### Limitations to Be Aware Of
-
-| Concern | Impact | Mitigation |
-|---|---|---|
-| Firebase Functions cold start | ~1-3s delay on first request | Use `runWith({ minInstances: 1 })` on Blaze plan for critical paths |
-| Firestore reads/writes per day | 50k reads, 20k writes/day on free tier | Upgrade to Blaze; add caching |
-| Firebase Functions timeout | 60s max per request | Long tasks should use background functions or Cloud Tasks |
-| Cloudinary free tier | 25GB storage, 25GB bandwidth/month | Monitor usage; upgrade if needed |
-| No persistent in-memory state | Functions are stateless | All state goes in Firestore — ✅ already implemented |
-| No file system writes | Functions filesystem is read-only | All uploads use Cloudinary — ✅ already implemented |
-| No WebSocket support | Firebase Functions are HTTP-only | Use Firestore real-time listeners on the client instead |
-
-### What's Already Production-Safe
-
-- Stateless Express handlers (no in-memory sessions)
-- All file uploads go to Cloudinary (no local filesystem)
-- All data stored in Firestore (no SQLite/local DB)
-- Firebase Admin SDK initialized from environment credentials
-- Rate limiting on all sensitive endpoints
-- Input sanitization and validation on all inputs
-- Helmet security headers on all responses
-- CORS configured for specific allowed origins
+- [ ] Unauthenticated Firestore reads to `users` collection are rejected
+- [ ] A user cannot read another user's document
+- [ ] Contact creation passes server-side Firestore rule validation
+- [ ] No sensitive keys visible in compiled JS (check DevTools → Sources)
 
 ---
 
 ## Environment Variable Reference
 
-### Frontend (`client/.env.local`)
+All variables are prefixed with `VITE_` so Vite can bundle them into the client build.
 
 | Variable | Required | Description |
 |---|---|---|
@@ -439,23 +287,41 @@ npm run install:all      # Install deps for root + client + firebase/functions
 | `VITE_FIREBASE_STORAGE_BUCKET` | Yes | Firebase storage bucket |
 | `VITE_FIREBASE_MESSAGING_SENDER_ID` | Yes | Firebase messaging sender ID |
 | `VITE_FIREBASE_APP_ID` | Yes | Firebase app ID |
-| `VITE_API_URL` | Yes | Firebase Functions API base URL |
+| `VITE_GEMINI_API_KEY` | Yes | Google Gemini API key for AI features |
 
-### Backend (`firebase/functions/.env`)
+---
 
-| Variable | Required | Description |
+## Firestore Security Model
+
+This app uses **Firestore client-side security rules as the sole security layer** — there is no backend to enforce auth. Understanding the rules is critical.
+
+```
+users/{userId}
+  ├── read:   owner or admin
+  ├── create: owner only (role must be 'user')
+  ├── update: owner (safe fields only) OR admin
+  └── delete: admin only
+
+contacts/{contactId}
+  ├── create: anyone (public contact form)
+  └── read / update / delete: admin only
+
+services/{serviceId}
+  ├── read:   anyone (public)
+  └── create / update / delete: admin only
+```
+
+Admin role is determined by `role: 'admin'` in the user's Firestore document. Set this manually in the Firebase Console for the first admin account.
+
+---
+
+## Common Issues
+
+| Issue | Cause | Fix |
 |---|---|---|
-| `FIREBASE_SERVICE_ACCOUNT_JSON` | Yes* | Full service account JSON |
-| `FIREBASE_PROJECT_ID` | Yes* | Firebase project ID (alternative) |
-| `FIREBASE_CLIENT_EMAIL` | Yes* | Service account email (alternative) |
-| `FIREBASE_PRIVATE_KEY` | Yes* | Service account private key (alternative) |
-| `ADMIN_EMAIL` | Yes | Email for seeded admin account |
-| `ADMIN_PASSWORD` | Yes | Password for seeded admin account |
-| `SEED_ADMIN_TOKEN` | Yes | Token to protect the seed endpoint |
-| `CLOUDINARY_CLOUD_NAME` | No | Cloudinary cloud name (uploads) |
-| `CLOUDINARY_API_KEY` | No | Cloudinary API key (uploads) |
-| `CLOUDINARY_API_SECRET` | No | Cloudinary API secret (uploads) |
-| `ALLOWED_ORIGINS` | No | Comma-separated list of allowed CORS origins |
-| `NODE_ENV` | No | `development` or `production` |
-
-*Use either `FIREBASE_SERVICE_ACCOUNT_JSON` OR the three individual fields.
+| `VITE_FIREBASE_API_KEY is not set` | Missing env var | Add `VITE_FIREBASE_API_KEY` to `.env.local` or Replit Secrets |
+| Firebase `auth/operation-not-allowed` | Email/Password not enabled | Enable in Firebase Console → Authentication → Sign-in method |
+| Firestore permission denied | Rules not deployed or role mismatch | Run `firebase deploy --only firestore:rules` |
+| AI features return "API key not configured" | Missing Gemini key | Set `VITE_GEMINI_API_KEY` in env |
+| SPA 404 on page refresh | Missing catch-all route | Ensure `vercel.json` rewrites are deployed (already included) |
+| Admin panel not accessible | `role` field not set to `'admin'` | Edit the Firestore user document manually |

@@ -18,7 +18,7 @@ A high-end, premium marketing website and client portal for Proximity Credit Rep
 - **State/Forms:** Zustand (with persist middleware), React Hook Form + Zod validation
 - **Data Fetching:** TanStack Query (React Query)
 - **Icons:** Lucide React
-- **AI:** Google Gemini 2.0 Flash API (credit review, dispute letters, AI chat)
+- **AI:** Google Gemini 2.0 Flash API (credit review, dispute letters, AI chat) — called client-side via `VITE_GEMINI_API_KEY`
 - **Error Handling:** React ErrorBoundary (catches unhandled component errors)
 
 ## Project Structure
@@ -90,9 +90,10 @@ A high-end, premium marketing website and client portal for Proximity Credit Rep
 │   │   ├── services/              # Firebase / API / Gemini service layer
 │   │   │   ├── authService.ts, adminService.ts
 │   │   │   ├── contactService.ts, planService.ts, geminiService.ts
+│   │   │   ├── disputeHistoryService.ts
 │   │   │   └── index.ts
 │   │   ├── store/                 # Zustand state stores
-│   │   │   ├── authStore.ts, uiStore.ts, formStore.ts
+│   │   │   ├── authStore.ts, uiStore.ts, formStore.ts, workflowStore.ts
 │   │   │   └── index.ts
 │   │   ├── styles/
 │   │   │   └── globals.css        # Tailwind base + design tokens
@@ -174,7 +175,7 @@ All set as Replit secrets (prefixed with `VITE_` so Vite bundles them into the c
 | `VITE_GEMINI_API_KEY` | Google Gemini API key (AI features) |
 
 ## Running Locally (Replit)
-- **Start application** workflow: `npm run dev` → Vite at port 5000
+- **Start application** workflow: `npm run dev` → delegates to `npm run dev --prefix client` → Vite at port 5000
 - No backend server needed — all data goes through Firebase Client SDK
 
 ## Authentication System
@@ -197,6 +198,7 @@ All set as Replit secrets (prefixed with `VITE_` so Vite bundles them into the c
 - App-specific components (`ProximityLogo`, `AIChatWidget`) live in `components/common/` not `ui/`
 - All providers (QueryClient, ErrorBoundary, AuthObserver) are centralized in `providers/AppProviders.tsx`
 - Every component folder has an `index.ts` barrel file for clean imports
+- Pure frontend architecture — no backend server; all AI and data calls are made directly from the browser
 
 ## User Preferences
 - Keep the gold-and-dark luxury design system consistent across all components

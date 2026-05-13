@@ -3,7 +3,7 @@ import { Outlet, useLocation } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import Navbar from './Navbar'
 import Footer from './Footer'
-import { ToastContainer, BackToTopButton, LoadingScreen, AIChatWidget } from '@components/ui'
+import { ToastContainer, BackToTopButton, LoadingScreen } from '@components/ui'
 
 function ScrollToTop() {
   const { pathname } = useLocation()
@@ -42,7 +42,6 @@ export default function AppLayout() {
       <Footer />
       <ToastContainer />
       <BackToTopButton />
-      <AIChatWidget />
     </>
   )
 }

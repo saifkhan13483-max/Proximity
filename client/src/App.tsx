@@ -24,6 +24,7 @@ const AdminContacts = lazy(() => import('@pages/admin/AdminContacts'))
 const AdminServices = lazy(() => import('@pages/admin/AdminServices'))
 const CreditReviewer = lazy(() => import('@pages/CreditReviewer'))
 const DisputeLetterGenerator = lazy(() => import('@pages/DisputeLetterGenerator'))
+const DisputeAutopilot = lazy(() => import('@pages/DisputeAutopilot'))
 
 function Wrap({ children }: { children: React.ReactNode }) {
   return <Suspense fallback={<LoadingScreen />}>{children}</Suspense>
@@ -43,6 +44,7 @@ const router = createBrowserRouter([
       { path: '/contact', element: <Contact /> },
       { path: '/ai-credit-reviewer', element: <Wrap><CreditReviewer /></Wrap> },
       { path: '/dispute-letter-generator', element: <Wrap><DisputeLetterGenerator /></Wrap> },
+      { path: '/ai-dispute-autopilot', element: <Wrap><DisputeAutopilot /></Wrap> },
       { path: '*', element: <NotFound /> },
     ],
   },

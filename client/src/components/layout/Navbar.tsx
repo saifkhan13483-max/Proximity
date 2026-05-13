@@ -4,8 +4,9 @@ import { motion, AnimatePresence, useScroll, useMotionValueEvent } from 'framer-
 import {
   Menu, X, Phone, ChevronDown, Star, ArrowRight,
   Shield, BarChart2, FileText, TrendingUp, LogOut, LayoutDashboard, UserPlus,
+  Brain, Package, Zap,
 } from 'lucide-react'
-import { navLinks } from '@config/navigation'
+import { navLinks, AI_TOOLS_DROPDOWN } from '@config/navigation'
 import { cn } from '@lib/utils'
 import ProximityLogo from '@components/ui/ProximityLogo'
 import { useUIStore } from '@store/uiStore'
@@ -20,8 +21,16 @@ const SERVICES_DROPDOWN = [
 
 type NavItemWithDropdown = { label: string; href: string; hasDropdown?: boolean }
 
+const AI_TOOLS_ICONS: Record<string, React.ElementType> = {
+  'Dispute Autopilot': Package,
+  'Credit Reviewer': Brain,
+  'Dispute Letter Generator': FileText,
+}
+
 const NAV_WITH_DROPDOWN: NavItemWithDropdown[] = navLinks.map((link) =>
-  link.label === 'Services' ? { ...link, hasDropdown: true } : { ...link }
+  link.label === 'Services' || link.label === 'AI Tools'
+    ? { ...link, hasDropdown: true }
+    : { ...link }
 )
 
 const TABLET_LINKS = navLinks.filter((l) =>
@@ -120,12 +129,15 @@ export default function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false)
   const [scrollY, setScrollY] = useState(0)
   const [servicesOpen, setServicesOpen] = useState(false)
+  const [aiToolsOpen, setAiToolsOpen] = useState(false)
   const [announcementVisible, setAnnouncementVisible] = useState(true)
   const [mobileServicesOpen, setMobileServicesOpen] = useState(false)
+  const [mobileAiToolsOpen, setMobileAiToolsOpen] = useState(false)
 
   const hamburgerRef = useRef<HTMLButtonElement>(null)
   const firstLinkRef = useRef<HTMLAnchorElement>(null)
   const servicesRef = useRef<HTMLDivElement>(null)
+  const aiToolsRef = useRef<HTMLDivElement>(null)
 
   const { scrollY: motionScrollY } = useScroll()
   useMotionValueEvent(motionScrollY, 'change', (y) => {
@@ -147,12 +159,16 @@ export default function Navbar() {
   useEffect(() => {
     closeMobileMenu()
     setServicesOpen(false)
+    setAiToolsOpen(false)
   }, [location.pathname, closeMobileMenu])
 
   useEffect(() => {
     function handleClickOutside(e: MouseEvent) {
       if (servicesRef.current && !servicesRef.current.contains(e.target as Node)) {
         setServicesOpen(false)
+      }
+      if (aiToolsRef.current && !aiToolsRef.current.contains(e.target as Node)) {
+        setAiToolsOpen(false)
       }
     }
     document.addEventListener('mousedown', handleClickOutside)
@@ -234,11 +250,15 @@ export default function Navbar() {
             {/* ── Desktop Nav Links (lg+) ── */}
             <div className="hidden lg:flex items-center gap-1">
               {NAV_WITH_DROPDOWN.map((link) => {
-                const isActive =
+                const isServicesActive =
                   location.pathname === link.href ||
                   (link.href === '/services' && location.pathname.startsWith('/services'))
+                const isAiActive = link.label === 'AI Tools' && (
+                  location.pathname.startsWith('/ai-') || location.pathname.startsWith('/dispute-')
+                )
+                const isActive = isServicesActive || isAiActive
 
-                if (link.hasDropdown) {
+                if (link.hasDropdown && link.label === 'Services') {
                   return (
                     <div key={link.href} className="relative" ref={servicesRef}>
                       <button
@@ -261,6 +281,72 @@ export default function Navbar() {
                       <AnimatePresence>
                         {servicesOpen && (
                           <ServicesDropdown onClose={() => setServicesOpen(false)} />
+                        )}
+                      </AnimatePresence>
+                    </div>
+                  )
+                }
+
+                if (link.hasDropdown && link.label === 'AI Tools') {
+                  return (
+                    <div key={link.href} className="relative" ref={aiToolsRef}>
+                      <button
+                        onClick={() => setAiToolsOpen((v) => !v)}
+                        onMouseEnter={() => setAiToolsOpen(true)}
+                        className={cn(
+                          'flex items-center gap-1.5 px-4 py-2 rounded-lg font-body text-sm font-medium transition-all duration-200',
+                          isActive || aiToolsOpen
+                            ? 'text-gold-primary bg-gold-primary/8'
+                            : 'text-white/75 hover:text-white hover:bg-white/5'
+                        )}
+                        aria-haspopup="true"
+                        aria-expanded={aiToolsOpen}
+                      >
+                        <Zap size={13} className={isActive || aiToolsOpen ? 'text-gold-primary' : 'text-white/40'} />
+                        {link.label}
+                        <motion.span animate={{ rotate: aiToolsOpen ? 180 : 0 }} transition={{ duration: 0.2 }}>
+                          <ChevronDown size={13} className="mt-0.5" />
+                        </motion.span>
+                      </button>
+                      <AnimatePresence>
+                        {aiToolsOpen && (
+                          <motion.div
+                            initial={{ opacity: 0, y: 8, scale: 0.97 }}
+                            animate={{ opacity: 1, y: 0, scale: 1 }}
+                            exit={{ opacity: 0, y: 8, scale: 0.97 }}
+                            transition={{ duration: 0.18, ease: 'easeOut' }}
+                            className="absolute top-full left-1/2 -translate-x-1/2 mt-3 w-72 bg-[#111111] border border-gold-primary/20 rounded-card shadow-gold-lg overflow-hidden"
+                          >
+                            <div className="p-1.5">
+                              {AI_TOOLS_DROPDOWN.map((item) => {
+                                const Icon = AI_TOOLS_ICONS[item.label] || Brain
+                                return (
+                                  <Link
+                                    key={item.href}
+                                    to={item.href}
+                                    onClick={() => setAiToolsOpen(false)}
+                                    className="flex items-center gap-3 px-3 py-3 rounded-lg hover:bg-gold-primary/10 transition-colors duration-150 group"
+                                  >
+                                    <div className="w-8 h-8 rounded-lg bg-gold-primary/10 flex items-center justify-center flex-shrink-0 group-hover:bg-gold-primary/20 transition-colors duration-150">
+                                      <Icon size={15} className="text-gold-primary" />
+                                    </div>
+                                    <div className="flex-1 min-w-0">
+                                      <div className="flex items-center gap-2">
+                                        <p className="font-body font-semibold text-white text-sm leading-none">{item.label}</p>
+                                        {item.badge && (
+                                          <span className="px-1.5 py-0.5 rounded text-[9px] font-heading font-bold bg-gold-primary text-near-black leading-none">
+                                            {item.badge}
+                                          </span>
+                                        )}
+                                      </div>
+                                      <p className="font-body text-muted-text text-xs mt-0.5">{item.desc}</p>
+                                    </div>
+                                    <ArrowRight size={13} className="ml-auto text-gold-primary/0 group-hover:text-gold-primary/70 transition-colors duration-150" />
+                                  </Link>
+                                )
+                              })}
+                            </div>
+                          </motion.div>
                         )}
                       </AnimatePresence>
                     </div>
@@ -463,11 +549,15 @@ export default function Navbar() {
                 </p>
 
                 {NAV_WITH_DROPDOWN.map((link, index) => {
-                  const isActive =
+                  const isServicesActive =
                     location.pathname === link.href ||
                     (link.href === '/services' && location.pathname.startsWith('/services'))
+                  const isAiActive = link.label === 'AI Tools' && (
+                    location.pathname.startsWith('/ai-') || location.pathname.startsWith('/dispute-')
+                  )
+                  const isActive = isServicesActive || isAiActive
 
-                  if (link.hasDropdown) {
+                  if (link.hasDropdown && link.label === 'Services') {
                     return (
                       <div key={link.href}>
                         <button
@@ -485,7 +575,6 @@ export default function Navbar() {
                             <ChevronDown size={14} />
                           </motion.span>
                         </button>
-
                         <AnimatePresence>
                           {mobileServicesOpen && (
                             <motion.div
@@ -510,6 +599,68 @@ export default function Navbar() {
                                     </div>
                                   </Link>
                                 ))}
+                              </div>
+                            </motion.div>
+                          )}
+                        </AnimatePresence>
+                      </div>
+                    )
+                  }
+
+                  if (link.hasDropdown && link.label === 'AI Tools') {
+                    return (
+                      <div key={link.href}>
+                        <button
+                          onClick={() => setMobileAiToolsOpen((v) => !v)}
+                          className={cn(
+                            'w-full flex items-center justify-between px-3 py-3 rounded-lg font-body font-medium text-sm transition-all duration-150',
+                            isActive || mobileAiToolsOpen
+                              ? 'text-gold-primary bg-gold-primary/8'
+                              : 'text-white/70 hover:text-white hover:bg-white/5'
+                          )}
+                        >
+                          <span className="flex items-center gap-2">
+                            <Zap size={13} className={isActive || mobileAiToolsOpen ? 'text-gold-primary' : 'text-white/40'} />
+                            {link.label}
+                          </span>
+                          <motion.span animate={{ rotate: mobileAiToolsOpen ? 180 : 0 }} transition={{ duration: 0.2 }}>
+                            <ChevronDown size={14} />
+                          </motion.span>
+                        </button>
+                        <AnimatePresence>
+                          {mobileAiToolsOpen && (
+                            <motion.div
+                              initial={{ height: 0, opacity: 0 }}
+                              animate={{ height: 'auto', opacity: 1 }}
+                              exit={{ height: 0, opacity: 0 }}
+                              transition={{ duration: 0.2 }}
+                              className="overflow-hidden"
+                            >
+                              <div className="ml-3 mt-1 mb-1 pl-3 border-l border-gold-primary/20 space-y-1">
+                                {AI_TOOLS_DROPDOWN.map((item) => {
+                                  const Icon = AI_TOOLS_ICONS[item.label] || Brain
+                                  return (
+                                    <Link
+                                      key={item.href}
+                                      to={item.href}
+                                      onClick={closeMobileMenu}
+                                      className="flex items-center gap-3 px-2 py-2.5 rounded-lg hover:bg-white/5 transition-colors"
+                                    >
+                                      <Icon size={14} className="text-gold-primary flex-shrink-0" />
+                                      <div>
+                                        <div className="flex items-center gap-1.5">
+                                          <p className="font-body text-white/80 text-sm font-medium leading-none">{item.label}</p>
+                                          {item.badge && (
+                                            <span className="px-1.5 py-0.5 rounded text-[9px] font-heading font-bold bg-gold-primary text-near-black leading-none">
+                                              {item.badge}
+                                            </span>
+                                          )}
+                                        </div>
+                                        <p className="font-body text-white/30 text-[11px] mt-0.5">{item.desc}</p>
+                                      </div>
+                                    </Link>
+                                  )
+                                })}
                               </div>
                             </motion.div>
                           )}

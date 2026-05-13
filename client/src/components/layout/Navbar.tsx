@@ -403,26 +403,6 @@ export default function Navbar() {
             {/* ── Right Side Controls ── */}
             <div className="flex items-center gap-1.5 sm:gap-2">
 
-              {/* Phone icon — mobile only */}
-              <a
-                href="tel:+18005550192"
-                className="flex md:hidden items-center justify-center w-8 h-8 sm:w-9 sm:h-9 rounded-lg text-white/60 hover:text-gold-primary hover:bg-white/5 transition-all duration-200"
-                aria-label="Call (800) 555-0192"
-              >
-                <Phone size={16} />
-              </a>
-
-              {/* Phone text — desktop only */}
-              <a
-                href="tel:+18005550192"
-                className="hidden lg:flex items-center gap-2 text-white/50 hover:text-gold-primary transition-colors duration-200 font-body text-sm"
-              >
-                <Phone size={14} />
-                <span className="font-medium">(800) 555-0192</span>
-              </a>
-
-              {/* Divider — desktop only */}
-              <div className="hidden lg:block w-px h-5 bg-white/10" />
 
               {/* Auth / CTA — desktop */}
               {loggedIn ? (

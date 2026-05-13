@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Search, Trash2, AlertCircle, RefreshCw, Mail, Phone, ChevronDown, ChevronUp } from 'lucide-react'
-import AdminLayout from '@components/admin/AdminLayout'
+import AdminLayout from '@components/layout/AdminLayout'
 import { fetchAdminContacts, updateContactStatus, deleteContact, type AdminContact } from '@services/adminService'
 
 const STATUS_OPTIONS: AdminContact['status'][] = ['new', 'in-progress', 'resolved']

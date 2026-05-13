@@ -23,19 +23,18 @@ proximity/  (root = frontend)
 │   ├── main.tsx               # App entry point — sets up token refresh listener, ErrorBoundary
 │   ├── App.tsx                # Router setup, lazy-loaded routes
 │   ├── components/
-│   │   ├── ErrorBoundary.tsx  # Top-level React error boundary (class component)
-│   │   ├── admin/
-│   │   │   └── AdminLayout.tsx
-│   │   ├── auth/
-│   │   │   ├── ProtectedRoute.tsx   # Redirects unauthenticated users
-│   │   │   └── AdminRoute.tsx       # Redirects non-admin users
 │   │   ├── layout/
 │   │   │   ├── AppLayout.tsx        # Root layout with Navbar + Footer + Suspense
+│   │   │   ├── AdminLayout.tsx      # Admin panel shell with sidebar nav
+│   │   │   ├── ErrorBoundary.tsx    # Top-level React error boundary (class component)
 │   │   │   ├── Navbar.tsx
 │   │   │   ├── Footer.tsx
 │   │   │   ├── PageWrapper.tsx
 │   │   │   ├── Section.tsx
 │   │   │   └── SEOHead.tsx
+│   │   ├── guards/
+│   │   │   ├── ProtectedRoute.tsx   # Redirects unauthenticated users
+│   │   │   └── AdminRoute.tsx       # Redirects non-admin users
 │   │   ├── sections/
 │   │   │   ├── HeroSection.tsx
 │   │   │   ├── ServicesPreview.tsx

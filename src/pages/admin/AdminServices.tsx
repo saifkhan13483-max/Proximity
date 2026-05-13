@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Plus, Trash2, AlertCircle, RefreshCw, Pencil, X, Check, GripVertical, Star } from 'lucide-react'
-import AdminLayout from '@components/admin/AdminLayout'
+import AdminLayout from '@components/layout/AdminLayout'
 import {
   fetchAdminServices,
   createService,

@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Search, Trash2, AlertCircle, RefreshCw, ChevronDown, CreditCard, Check } from 'lucide-react'
-import AdminLayout from '@components/admin/AdminLayout'
+import AdminLayout from '@components/layout/AdminLayout'
 import { fetchAdminUsers, updateUser, deleteUser, type AdminUser } from '@services/adminService'
 import {
   Dialog,

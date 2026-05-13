@@ -2,8 +2,8 @@ import { lazy, Suspense } from 'react'
 import { createBrowserRouter, RouterProvider, Navigate } from 'react-router-dom'
 import AppLayout from '@components/layout/AppLayout'
 import NotFound from '@pages/NotFound'
-import ProtectedRoute from '@components/auth/ProtectedRoute'
-import AdminRoute from '@components/auth/AdminRoute'
+import ProtectedRoute from '@components/guards/ProtectedRoute'
+import AdminRoute from '@components/guards/AdminRoute'
 import LoadingScreen from '@components/ui/LoadingScreen'
 
 const Home = lazy(() => import('@pages/Home'))

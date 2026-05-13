@@ -48,10 +48,9 @@ proximity/
 │   ├── main.tsx                   # App entry — token refresh listener, ErrorBoundary
 │   ├── App.tsx                    # Router setup, lazy-loaded routes
 │   ├── components/
-│   │   ├── ErrorBoundary.tsx
-│   │   ├── admin/                 # AdminLayout
-│   │   ├── auth/                  # ProtectedRoute, AdminRoute
-│   │   ├── layout/                # AppLayout, Navbar, Footer, PageWrapper, Section, SEOHead
+│   │   ├── layout/                # AppLayout, AdminLayout, ErrorBoundary,
+│   │   │                          #   Navbar, Footer, PageWrapper, Section, SEOHead
+│   │   ├── guards/                # ProtectedRoute, AdminRoute
 │   │   ├── sections/              # HeroSection, ServicesPreview, HowItWorksStrip,
 │   │   │                          #   TestimonialsSlider, FinalCTABand
 │   │   └── ui/                    # Button, Card, Badge, Input, Select, Textarea,

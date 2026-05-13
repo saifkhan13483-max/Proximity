@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { Users, Mail, TrendingUp, AlertCircle, ArrowRight } from 'lucide-react'
-import AdminLayout from '@components/admin/AdminLayout'
+import AdminLayout from '@components/layout/AdminLayout'
 import { fetchAdminStats, type AdminStats } from '@services/adminService'
 
 function StatCard({

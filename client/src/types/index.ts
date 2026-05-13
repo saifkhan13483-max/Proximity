@@ -5,6 +5,7 @@ export interface Service {
   shortDescription: string
   icon: string
   benefits: string[]
+  order?: number
 }
 
 export interface Testimonial {
@@ -67,4 +68,45 @@ export interface Stat {
   suffix: string
   prefix?: string
   icon: string
+}
+
+export interface PricingPlan {
+  id: string
+  name: string
+  monthlyPrice: number
+  annualPrice: number
+  description: string
+  badge?: string
+  highlighted: boolean
+  features: string[]
+  notIncluded?: string[]
+  ctaLabel: string
+  color: string
+}
+
+export type DisputeStatus = 'Generated' | 'Mailed' | 'Under Review' | 'Resolved'
+
+export interface DisputeRecord {
+  id: string
+  createdAt: string
+  status: DisputeStatus
+  letterCount: number
+  bureaus: string[]
+  itemNames: string[]
+  letters: Array<{
+    bureau: string
+    creditorName: string
+    accountNumber: string
+    disputeReason: string
+    letterText: string
+  }>
+}
+
+export interface CreditReviewRecord {
+  id: string
+  createdAt: string
+  firstName: string
+  currentScore: string
+  goalScore: string
+  result: import('@services/geminiService').CreditReviewResult
 }

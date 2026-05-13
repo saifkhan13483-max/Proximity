@@ -1,5 +1,6 @@
 // ─────────────────────────────────────────────────────────────────────────────
-// Shared types — used by both /client and /firebase/functions
+// Shared types — Firestore document shapes and API response interfaces
+// Used by the client frontend and any future serverless functions
 // ─────────────────────────────────────────────────────────────────────────────
 
 export interface Service {
@@ -74,6 +75,22 @@ export interface Stat {
   icon: string
 }
 
+// ── Pricing ───────────────────────────────────────────────────────────────────
+
+export interface PricingPlan {
+  id: string
+  name: string
+  monthlyPrice: number
+  annualPrice: number
+  description: string
+  badge?: string
+  highlighted: boolean
+  features: string[]
+  notIncluded?: string[]
+  ctaLabel: string
+  color: string
+}
+
 // ── Firestore Document Shapes ─────────────────────────────────────────────────
 
 export interface UserDocument {
@@ -107,16 +124,25 @@ export interface ServiceDocument {
   order: number
 }
 
-// ── API Response Shapes ───────────────────────────────────────────────────────
+export type DisputeStatus = 'Generated' | 'Mailed' | 'Under Review' | 'Resolved'
 
-export interface ApiSuccessResponse {
-  success: true
-  message: string
+export interface DisputeRecord {
+  id: string
+  createdAt: string
+  status: DisputeStatus
+  letterCount: number
+  bureaus: string[]
+  itemNames: string[]
+  letters: Array<{
+    bureau: string
+    creditorName: string
+    accountNumber: string
+    disputeReason: string
+    letterText: string
+  }>
 }
 
-export interface ApiErrorResponse {
-  error: string
-}
+// ── Admin Stats ───────────────────────────────────────────────────────────────
 
 export interface AdminStats {
   totalUsers: number
@@ -125,14 +151,4 @@ export interface AdminStats {
   newContactsThisMonth: number
   unreadContacts: number
   plans: Record<string, number>
-}
-
-export interface UploadResponse {
-  success: true
-  url: string
-  publicId: string
-  width: number
-  height: number
-  format: string
-  bytes: number
 }

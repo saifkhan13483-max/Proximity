@@ -7,7 +7,13 @@ export {
   fetchCreditReviews,
 } from './disputeHistoryService'
 export type { DisputeRecord, CreditReviewRecord, DisputeStatus } from './disputeHistoryService'
-export { registerUser, loginUser, logoutUser, fetchCurrentUser } from './authService'
+export {
+  registerUser,
+  loginUser,
+  logoutUser,
+  fetchCurrentUser,
+  signInWithGoogle,
+} from './authService'
 export { selectPlan } from './planService'
 export {
   fetchAdminStats,

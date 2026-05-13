@@ -14,3 +14,20 @@ export {
   updateService,
   deleteService,
 } from './adminService'
+export {
+  sendChatMessage,
+  generateDisputeLetter,
+  generateDisputePackage,
+  generateCreditReview,
+} from './geminiService'
+export type {
+  ChatMessage,
+  DisputeLetterInput,
+  CreditReviewInput,
+  CreditReviewResult,
+  ActionStep,
+  DisputeItemInput,
+  DisputePackageInput,
+  GeneratedLetter,
+  DisputePackageResult,
+} from './geminiService'

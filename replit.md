@@ -18,21 +18,23 @@ A high-end, premium marketing website and client portal for Proximity Credit Rep
 - **State/Forms:** Zustand (with persist middleware), React Hook Form + Zod validation
 - **Data Fetching:** TanStack Query (React Query)
 - **Icons:** Lucide React
+- **AI:** Google Gemini 2.0 Flash API (credit review, dispute letters, AI chat)
 - **Error Handling:** React ErrorBoundary (catches unhandled component errors)
 
 ## Project Structure
 ```
 /
-├── client/                        # Frontend → Vite dev server / Vercel deploy
+├── client/                        # Frontend — Vite dev server / Vercel deploy
 │   ├── src/
 │   │   ├── components/
-│   │   │   ├── common/            # App-specific shared components (Logo, AI Chat)
+│   │   │   ├── common/            # App-specific shared components
 │   │   │   │   ├── ProximityLogo.tsx
 │   │   │   │   ├── AIChatWidget.tsx
 │   │   │   │   └── index.ts
 │   │   │   ├── guards/            # Route protection
 │   │   │   │   ├── AdminRoute.tsx
-│   │   │   │   └── ProtectedRoute.tsx
+│   │   │   │   ├── ProtectedRoute.tsx
+│   │   │   │   └── index.ts
 │   │   │   ├── layout/            # Page shell (Navbar, Footer, SEO, etc.)
 │   │   │   │   ├── AppLayout.tsx
 │   │   │   │   ├── AdminLayout.tsx
@@ -48,7 +50,8 @@ A high-end, premium marketing website and client portal for Proximity Credit Rep
 │   │   │   │   ├── ServicesPreview.tsx
 │   │   │   │   ├── HowItWorksStrip.tsx
 │   │   │   │   ├── TestimonialsSlider.tsx
-│   │   │   │   └── FinalCTABand.tsx
+│   │   │   │   ├── FinalCTABand.tsx
+│   │   │   │   └── index.ts
 │   │   │   └── ui/                # Generic UI primitives (shadcn + custom)
 │   │   │       ├── Button.tsx, Card.tsx, Badge.tsx, Input.tsx
 │   │   │       ├── Textarea.tsx, Select.tsx, Modal.tsx
@@ -84,7 +87,7 @@ A high-end, premium marketing website and client portal for Proximity Credit Rep
 │   │   │       ├── AdminUsers.tsx, AdminContacts.tsx, AdminServices.tsx
 │   │   ├── providers/             # React context / app-level providers
 │   │   │   └── AppProviders.tsx   # QueryClient + ErrorBoundary + AuthObserver
-│   │   ├── services/              # Firebase / API service layer
+│   │   ├── services/              # Firebase / API / Gemini service layer
 │   │   │   ├── authService.ts, adminService.ts
 │   │   │   ├── contactService.ts, planService.ts, geminiService.ts
 │   │   │   └── index.ts
@@ -111,7 +114,9 @@ A high-end, premium marketing website and client portal for Proximity Credit Rep
 │
 ├── firestore.rules
 ├── firestore.indexes.json
-├── package.json
+├── firebase.json
+├── .firebaserc
+├── package.json                   # Root orchestrator (runs client via --prefix)
 └── replit.md
 ```
 
@@ -150,6 +155,9 @@ All aliases are registered in both `vite.config.ts` and `tsconfig.json`:
 5. **Testimonials** (`/testimonials`) — Trust badges row, full 8-card testimonials grid
 6. **FAQ** (`/faq`) — Animated accordion organized by 2 categories
 7. **Contact** (`/contact`) — Split layout: contact info + form with Zod validation, animated success state
+8. **AI Credit Reviewer** (`/ai-credit-reviewer`) — Gemini-powered credit profile analysis
+9. **Dispute Letter Generator** (`/dispute-letter-generator`) — AI-generated FCRA dispute letters
+10. **AI Dispute Autopilot** (`/ai-dispute-autopilot`) — Multi-item dispute package generator
 
 ## Environment Variables
 
@@ -163,6 +171,7 @@ All set as Replit secrets (prefixed with `VITE_` so Vite bundles them into the c
 | `VITE_FIREBASE_STORAGE_BUCKET` | Firebase storage bucket |
 | `VITE_FIREBASE_MESSAGING_SENDER_ID` | Firebase messaging sender ID |
 | `VITE_FIREBASE_APP_ID` | Firebase App ID |
+| `VITE_GEMINI_API_KEY` | Google Gemini API key (AI features) |
 
 ## Running Locally (Replit)
 - **Start application** workflow: `npm run dev` → Vite at port 5000
@@ -187,6 +196,7 @@ All set as Replit secrets (prefixed with `VITE_` so Vite bundles them into the c
 - `siteConfig` and `siteMetadata` are co-located in `config/site.ts` (single source of truth)
 - App-specific components (`ProximityLogo`, `AIChatWidget`) live in `components/common/` not `ui/`
 - All providers (QueryClient, ErrorBoundary, AuthObserver) are centralized in `providers/AppProviders.tsx`
+- Every component folder has an `index.ts` barrel file for clean imports
 
 ## User Preferences
 - Keep the gold-and-dark luxury design system consistent across all components

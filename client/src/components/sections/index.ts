@@ -1,0 +1,5 @@
+export { default as HeroSection } from './HeroSection'
+export { default as ServicesPreview } from './ServicesPreview'
+export { default as HowItWorksStrip } from './HowItWorksStrip'
+export { default as TestimonialsSlider } from './TestimonialsSlider'
+export { default as FinalCTABand } from './FinalCTABand'

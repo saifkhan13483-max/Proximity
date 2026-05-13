@@ -1,8 +1,0 @@
-export { default as Navbar } from './Navbar'
-export { default as Footer } from './Footer'
-export { default as PageWrapper } from './PageWrapper'
-export { default as Section } from './Section'
-export { default as AppLayout } from './AppLayout'
-export { default as AdminLayout } from './AdminLayout'
-export { default as SEOHead } from './SEOHead'
-export { default as ErrorBoundary } from './ErrorBoundary'

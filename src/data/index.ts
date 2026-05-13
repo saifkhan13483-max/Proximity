@@ -1,5 +1,0 @@
-export { services } from './services'
-export { testimonials } from './testimonials'
-export { faqs } from './faqs'
-export { teamMembers } from './team'
-export { stats } from './stats'

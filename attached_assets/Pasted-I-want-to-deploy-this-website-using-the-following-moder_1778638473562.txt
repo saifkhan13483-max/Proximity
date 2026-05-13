@@ -1,0 +1,230 @@
+I want to deploy this website using the following modern free-tier stack:
+
+Frontend: Vercel (static hosting)
+Backend / API: Firebase
+Database: Firestore
+Storage: Cloudinary
+
+This is a newly created project that does not yet contain any Vercel, Firebase, Firestore, or Cloudinary configuration files. I need you to set everything up from scratch so the site is fully deployment-ready for this stack.
+
+Please do the following:
+
+1. Project Audit
+- Audit the current project structure and explain:
+  - Frontend framework in use
+  - Backend architecture currently used
+  - Current database/storage solution
+  - Existing environment variables
+  - Existing API architecture
+  - Build scripts and package managers
+  - Any deployment blockers or architecture issues
+- Before making changes, provide a concise summary of findings and planned restructuring.
+
+2. Project Structure / Monorepo Setup
+- Restructure the project if needed so the frontend and backend are cleanly organized.
+- Preferred structure:
+
+/client   → frontend app (Vercel)
+/firebase → Firebase backend functions/config
+/shared   → optional shared types/utilities
+
+- Update imports, scripts, aliases, and configs after restructuring.
+- Ensure local development still works correctly.
+
+3. Firebase Backend Setup
+- Configure Firebase properly from scratch.
+- Use:
+  - Firebase Authentication (if auth exists or is needed)
+  - Firestore database
+  - Firebase Functions (if backend APIs are required)
+  - Firebase Admin SDK where appropriate
+- Add:
+  - firebase.json
+  - .firebaserc
+  - Firestore rules
+  - Firestore indexes
+  - Firebase Functions configuration
+- Ensure the backend is production-ready and scalable.
+
+4. Firestore Database Setup
+- Configure Firestore collections and schema structure.
+- Create:
+  - Firestore data models
+  - Validation layer
+  - Seed/example data if useful
+- Ensure:
+  - Secure Firestore rules
+  - Proper indexing
+  - Efficient querying
+  - Pagination support where needed
+- Flag any relational-data patterns that are not ideal for Firestore and suggest NoSQL-friendly alternatives.
+
+5. Cloudinary Storage Setup
+- Integrate Cloudinary for image/file uploads.
+- Add:
+  - Upload utility/service
+  - Secure upload handling
+  - File optimization
+  - Image transformations where useful
+- Use environment variables for:
+  - CLOUDINARY_CLOUD_NAME
+  - CLOUDINARY_API_KEY
+  - CLOUDINARY_API_SECRET
+- Ensure uploads work securely in production.
+- Avoid exposing sensitive credentials on the frontend.
+
+6. Backend API / Firebase Functions
+- If APIs are needed:
+  - Implement Firebase Functions or server-side handlers
+  - Add validation and error handling
+  - Add security middleware where appropriate
+  - Organize routes/services cleanly
+- Include:
+  - Health check endpoint/function
+  - Environment-based configuration
+  - Logging utilities
+- Ensure compatibility with Firebase deployment best practices.
+
+7. Frontend Setup (Vercel)
+- Configure frontend deployment for Vercel.
+- Add vercel.json if needed.
+- Replace hardcoded API URLs and Firebase configs with environment variables:
+  - VITE_API_URL
+  - NEXT_PUBLIC_API_URL
+  - VITE_FIREBASE_API_KEY
+  - NEXT_PUBLIC_FIREBASE_API_KEY
+  - or framework-appropriate equivalents
+- Ensure:
+  - Correct build command
+  - Correct output directory
+  - SPA routing support if required
+  - Production environment variable support
+  - Optimized production builds
+
+8. Environment Variables
+- Create:
+  - /client/.env.example
+  - /firebase/functions/.env.example
+- Include:
+  - Firebase config variables
+  - Firebase Admin variables
+  - Cloudinary credentials
+  - API URLs
+  - NODE_ENV
+  - Auth secrets if used
+  - Third-party API keys if used
+- Add comments explaining each variable.
+- Update .gitignore to exclude:
+  - .env
+  - .env.local
+  - .env.production
+  - .env.development
+
+9. Local Development Experience
+- Ensure local development works smoothly.
+- Configure:
+  - Firebase Emulator Suite
+  - Local Firestore emulator
+  - Local Functions emulator
+- Add:
+  - Root-level package.json scripts
+  - Concurrent frontend/backend startup
+- Example commands:
+  - npm run dev
+  - npm run build
+  - npm run deploy
+  - npm run emulators
+- Ensure hot reload still works.
+
+10. Deployment Documentation
+Create a detailed DEPLOYMENT.md including:
+
+a. Firebase Setup
+- Create Firebase project
+- Enable Firestore
+- Enable Authentication (if needed)
+- Configure Firebase Functions
+- Configure Firebase CLI
+- Deploy Firebase backend
+
+b. Firestore Setup
+- Configure collections
+- Configure rules
+- Deploy indexes
+- Seed initial data
+
+c. Cloudinary Setup
+- Create Cloudinary account
+- Copy credentials
+- Configure upload settings
+- Test uploads
+
+d. Vercel Deployment
+- Connect GitHub repo
+- Set root directory to /client
+- Configure environment variables
+- Configure API URLs and Firebase variables
+- Deploy frontend
+
+e. Local Testing
+- Run frontend/backend locally
+- Test Firestore connection
+- Test Firebase Functions
+- Test Cloudinary uploads
+- Test authentication flow if applicable
+
+f. Production Verification
+- Verify frontend loads
+- Verify API/functions work
+- Verify Firestore reads/writes
+- Verify uploads work
+- Verify security rules
+- Verify CORS/security configuration
+
+11. Deployment Safety Checks
+- Identify anything incompatible with:
+  - Vercel static/serverless hosting
+  - Firebase Functions limitations
+  - Firestore limitations
+  - Cloudinary upload constraints
+- Flag:
+  - File-system writes
+  - In-memory sessions
+  - Long-running background jobs
+  - WebSockets
+  - Cron dependencies
+  - Large relational database patterns
+- Suggest production-safe alternatives.
+
+12. Performance & Security
+- Add:
+  - Secure Firestore rules
+  - Rate limiting where appropriate
+  - Input validation
+  - Sanitization
+  - Secure file upload validation
+  - Proper authentication checks
+- Optimize:
+  - Firestore query performance
+  - Frontend bundle size
+  - Image delivery using Cloudinary transformations
+  - Caching strategies
+
+13. Final Output Requirements
+After all changes are complete, provide:
+- Full summary of:
+  - Files created
+  - Files modified
+  - Dependencies added
+  - Scripts added
+- Final architecture overview
+- Firestore collection structure overview
+- Cloudinary integration overview
+- Manual deployment checklist for:
+  - Firebase Console
+  - Cloudinary
+  - Vercel
+
+Do not skip any step.
+Make the project fully production-ready for this deployment stack.
+Use clean architecture, maintainable structure, scalable Firebase patterns, and deployment best practices.

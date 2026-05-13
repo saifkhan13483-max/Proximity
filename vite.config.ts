@@ -4,14 +4,6 @@ import { fileURLToPath, URL } from 'node:url'
 
 export default defineConfig({
   plugins: [react()],
-  define: {
-    __FB_API_KEY__: JSON.stringify(process.env.apiKey || process.env.VITE_FIREBASE_API_KEY || ''),
-    __FB_AUTH_DOMAIN__: JSON.stringify(process.env.authDomain || process.env.VITE_FIREBASE_AUTH_DOMAIN || ''),
-    __FB_PROJECT_ID__: JSON.stringify(process.env.projectId || process.env.VITE_FIREBASE_PROJECT_ID || ''),
-    __FB_STORAGE_BUCKET__: JSON.stringify(process.env.storageBucket || process.env.VITE_FIREBASE_STORAGE_BUCKET || ''),
-    __FB_MESSAGING_SENDER_ID__: JSON.stringify(process.env.messagingSenderId || process.env.VITE_FIREBASE_MESSAGING_SENDER_ID || ''),
-    __FB_APP_ID__: JSON.stringify(process.env.appId || process.env.VITE_FIREBASE_APP_ID || ''),
-  },
   server: {
     host: '0.0.0.0',
     port: 5000,
@@ -43,6 +35,7 @@ export default defineConfig({
     },
   },
   build: {
+    outDir: 'dist',
     target: 'es2020',
     minify: 'esbuild',
     cssMinify: true,

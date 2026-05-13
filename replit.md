@@ -3,6 +3,13 @@
 ## Overview
 A high-end, premium marketing website and client portal for Proximity Credit Repair. Built with React 18 + Vite + TypeScript + Tailwind CSS v3. Features a gold-and-dark luxury design system, animated UI with Framer Motion, Firebase Authentication, Firestore database, and a fully data-driven architecture across 7 public pages plus a protected client dashboard and admin panel.
 
+## Deployment Stack
+- **Frontend:** Vercel (Vite static build from `/client`)
+- **Backend API:** Firebase Functions (Express wrapped in `onRequest`, from `/firebase/functions`)
+- **Database:** Firestore
+- **File Storage:** Cloudinary
+- **Local Dev:** Firebase Emulator Suite + Vite dev server
+
 ## Tech Stack
 - **Frontend:** React 18 + Vite 5 (TypeScript)
 - **Styling:** Tailwind CSS v3 with custom design tokens + shadcn/ui (Slate base, CSS variables)
@@ -13,106 +20,58 @@ A high-end, premium marketing website and client portal for Proximity Credit Rep
 - **State/Forms:** Zustand (with persist middleware), React Hook Form + Zod validation
 - **Data Fetching:** TanStack Query (React Query)
 - **Icons:** Lucide React
-- **Counters:** Custom `useCountUp` hook with IntersectionObserver
+- **File Uploads:** Cloudinary (via Firebase Functions — never exposes credentials to client)
 - **Error Handling:** React ErrorBoundary (catches unhandled component errors)
 
-## Project Structure
+## Monorepo Structure
 ```
-proximity/  (root = frontend)
-├── src/
-│   ├── main.tsx               # App entry point — sets up token refresh listener, ErrorBoundary
-│   ├── App.tsx                # Router setup, lazy-loaded routes
-│   ├── components/
-│   │   ├── layout/
-│   │   │   ├── AppLayout.tsx        # Root layout with Navbar + Footer + Suspense
-│   │   │   ├── AdminLayout.tsx      # Admin panel shell with sidebar nav
-│   │   │   ├── ErrorBoundary.tsx    # Top-level React error boundary (class component)
-│   │   │   ├── Navbar.tsx
-│   │   │   ├── Footer.tsx
-│   │   │   ├── PageWrapper.tsx
-│   │   │   ├── Section.tsx
-│   │   │   └── SEOHead.tsx
-│   │   ├── guards/
-│   │   │   ├── ProtectedRoute.tsx   # Redirects unauthenticated users
-│   │   │   └── AdminRoute.tsx       # Redirects non-admin users
-│   │   ├── sections/
-│   │   │   ├── HeroSection.tsx
-│   │   │   ├── ServicesPreview.tsx
-│   │   │   ├── HowItWorksStrip.tsx
-│   │   │   ├── TestimonialsSlider.tsx
-│   │   │   └── FinalCTABand.tsx
-│   │   └── ui/
-│   │       ├── Button.tsx, Card.tsx, Badge.tsx, Input.tsx
-│   │       ├── Select.tsx, Textarea.tsx, Modal.tsx, dialog.tsx
-│   │       ├── Toast.tsx, ToastContainer.tsx, label.tsx
-│   │       ├── LoadingScreen.tsx, BackToTopButton.tsx
-│   │       ├── OptimizedImage.tsx, ProximityLogo.tsx
-│   │       ├── SectionDivider.tsx, SectionLabel.tsx
-│   │       └── index.ts
-│   ├── pages/
-│   │   ├── Home.tsx, About.tsx, Services.tsx
-│   │   ├── HowItWorks.tsx, Testimonials.tsx, FAQ.tsx
-│   │   ├── Contact.tsx, Pricing.tsx, NotFound.tsx
-│   │   ├── Login.tsx          # Firebase Auth sign-in
-│   │   ├── Register.tsx       # Firebase Auth registration
-│   │   ├── Dashboard.tsx      # Protected client portal
-│   │   └── admin/
-│   │       ├── AdminLogin.tsx
-│   │       ├── AdminDashboard.tsx
-│   │       ├── AdminUsers.tsx
-│   │       ├── AdminContacts.tsx
-│   │       └── AdminServices.tsx
-│   ├── services/
-│   │   ├── authService.ts     # Firebase Auth SDK — register, login, logout, fetchCurrentUser
-│   │   ├── adminService.ts    # Admin API calls — users, contacts, stats
-│   │   ├── contactService.ts  # Contact form submission
-│   │   ├── planService.ts     # Plan selection API call
-│   │   ├── api.ts             # Base apiRequest helper + API_BASE constant
-│   │   └── index.ts
-│   ├── store/
-│   │   ├── authStore.ts       # Zustand auth state (user, token) — persisted to localStorage; setToken for refresh
-│   │   ├── uiStore.ts
-│   │   ├── formStore.ts
-│   │   └── index.ts
-│   ├── lib/
-│   │   ├── animations.ts      # Framer Motion variant presets (fadeUp, fadeIn, staggerContainer)
-│   │   ├── utils.ts           # cn() (clsx + twMerge), formatPhone, truncate
-│   │   └── validators.ts      # Zod schemas (contactFormSchema)
-│   ├── config/
-│   │   ├── firebase.ts        # Firebase web SDK — initializeFirestore with persistentLocalCache
-│   │   ├── siteMetadata.ts    # SEO metadata + siteUrl
-│   │   ├── navigation.ts      # navLinks + footerServiceLinks
-│   │   └── site.ts            # siteConfig (phone, email, address)
-│   ├── data/
-│   │   ├── services.ts, testimonials.ts, faqs.ts
-│   │   ├── stats.ts, team.ts, plans.ts
-│   │   └── index.ts
-│   ├── hooks/
-│   │   ├── useCountUp.ts, useMediaQuery.ts
-│   │   └── index.ts
-│   ├── types/
-│   │   └── index.ts           # All shared types (Service, Testimonial, FAQItem, Stat, etc.)
-│   └── styles/
-│       └── globals.css        # Tailwind base + shadcn CSS vars + brand vars
-├── public/
-│   ├── favicon.svg, og-image.png, robots.txt, sitemap.xml
-├── backend/
-│   ├── server.js              # Express entry — graceful SIGTERM/SIGINT shutdown
-│   ├── app.js                 # Express API — helmet, rate limiting, compression, all routes
-│   ├── firebase.js            # Firebase Admin SDK init
-│   └── .env.example           # Template for required environment variables
-├── index.html
-├── vite.config.ts             # Vite config — proxy /api → :3001, FB env vars via define
-├── tailwind.config.js
-├── postcss.config.js
-├── eslint.config.js
-├── tsconfig.json
-├── components.json            # shadcn/ui config
-├── firebase.json              # Firebase CLI config
+/
+├── client/                    # Frontend → deployed to Vercel
+│   ├── src/
+│   │   ├── config/firebase.ts   # Firebase client SDK (VITE_* env vars)
+│   │   ├── services/
+│   │   │   ├── api.ts
+│   │   │   ├── authService.ts
+│   │   │   ├── adminService.ts
+│   │   │   ├── contactService.ts
+│   │   │   ├── planService.ts
+│   │   │   └── uploadService.ts  # Cloudinary uploads via Functions
+│   │   ├── components/, pages/, store/, hooks/, lib/, data/, types/
+│   │   └── styles/globals.css
+│   ├── public/
+│   ├── index.html
+│   ├── vite.config.ts
+│   ├── vercel.json            # SPA routing + security headers
+│   ├── .env.example           # Frontend env vars template
+│   └── package.json
+│
+├── firebase/
+│   └── functions/             # Backend API → deployed to Firebase Functions
+│       ├── src/
+│       │   ├── index.js        # Function exports: api, seedAdminFn
+│       │   ├── app.js          # Express app (all routes)
+│       │   ├── firebase-admin.js  # Firebase Admin SDK init
+│       │   ├── cloudinary.js   # Cloudinary upload service
+│       │   └── seed.js         # Local dev seed script
+│       ├── package.json
+│       └── .env.example
+│
+├── shared/
+│   └── types/index.ts         # Shared TypeScript types (Firestore docs, API shapes)
+│
+├── src/                       # Root-level source (used by Replit dev workflow)
+│   └── ...                    # Same as client/src — kept in sync
+│
+├── backend/                   # Legacy Express server (Replit-only, superseded by Firebase Functions)
+│   └── server.js              # Still used by Replit "Auth API" workflow
+│
+├── firebase.json              # Firebase CLI config (Functions + Firestore + Emulators)
+├── .firebaserc                # Firebase project aliases
 ├── firestore.rules            # Firestore security rules
 ├── firestore.indexes.json     # Firestore composite indexes
-├── package.json               # Frontend deps (React, Vite, Tailwind, etc.)
-└── README.md
+├── package.json               # Root monorepo scripts
+├── .gitignore
+└── DEPLOYMENT.md              # Full step-by-step deployment guide
 ```
 
 ## Design System
@@ -132,73 +91,102 @@ proximity/  (root = frontend)
 6. **FAQ** (`/faq`) — Animated accordion organized by 2 categories
 7. **Contact** (`/contact`) — Split layout: contact info + form with Zod validation, animated success state
 
+## Environment Variables
+
+### Frontend (Vercel / `client/.env.local`)
+| Variable | Description |
+|---|---|
+| `VITE_FIREBASE_API_KEY` | Firebase Web API key |
+| `VITE_FIREBASE_AUTH_DOMAIN` | Firebase Auth domain |
+| `VITE_FIREBASE_PROJECT_ID` | Firebase project ID |
+| `VITE_FIREBASE_STORAGE_BUCKET` | Firebase storage bucket |
+| `VITE_FIREBASE_MESSAGING_SENDER_ID` | Firebase messaging sender ID |
+| `VITE_FIREBASE_APP_ID` | Firebase App ID |
+| `VITE_API_URL` | Firebase Functions API base URL |
+
+### Backend (Firebase Functions / `firebase/functions/.env`)
+| Variable | Description |
+|---|---|
+| `FIREBASE_SERVICE_ACCOUNT_JSON` | Full service account JSON blob (recommended) |
+| `ADMIN_EMAIL` | Email for seeded admin account |
+| `ADMIN_PASSWORD` | Password for seeded admin account |
+| `SEED_ADMIN_TOKEN` | Random secret to protect the seed endpoint |
+| `CLOUDINARY_CLOUD_NAME` | Cloudinary cloud name |
+| `CLOUDINARY_API_KEY` | Cloudinary API key |
+| `CLOUDINARY_API_SECRET` | Cloudinary API secret |
+| `ALLOWED_ORIGINS` | Comma-separated allowed CORS origins |
+
+### Replit Secrets (legacy — for the existing Replit dev environment)
+| Secret | Description |
+|---|---|
+| `apiKey` / `VITE_FIREBASE_API_KEY` | Firebase Web API key |
+| `authDomain` / `VITE_FIREBASE_AUTH_DOMAIN` | Firebase Auth domain |
+| `projectId` / `VITE_FIREBASE_PROJECT_ID` | Firebase project ID |
+| `storageBucket` / `VITE_FIREBASE_STORAGE_BUCKET` | Firebase storage bucket |
+| `messagingSenderId` / `VITE_FIREBASE_MESSAGING_SENDER_ID` | Firebase messaging sender ID |
+| `appId` / `VITE_FIREBASE_APP_ID` | Firebase App ID |
+| `FIREBASE_SERVICE_ACCOUNT_JSON` | Firebase Admin SDK service account |
+| `ADMIN_EMAIL` | Admin account email |
+| `ADMIN_PASSWORD` | Admin account password |
+
+## Running Locally (Replit)
+- **Start application** workflow: `npm run dev` → Vite at port 5000 (reads from root `src/`)
+- **Auth API** workflow: `node backend/server.js` → Express API at port 3001
+- Vite proxies `/api/*` → port 3001
+
+## Running Locally (Target Stack)
+```bash
+npm run install:all      # Install all dependencies
+npm run emulators        # Firebase Emulator Suite (port 4000 UI, 5001 Functions, 8080 Firestore)
+# In another terminal:
+cd client && npm run dev # Frontend at port 5000
+```
+
+## Deployment
+See [DEPLOYMENT.md](./DEPLOYMENT.md) for full step-by-step instructions covering:
+- Firebase project setup (Auth, Firestore, Functions)
+- Cloudinary account setup
+- Vercel frontend deployment
+- Firebase Functions deployment
+- Environment variable configuration
+- Local emulator development
+- Production verification checklist
+
 ## Authentication System
-- **Backend:** Express.js REST API on port 3001 (`backend/server.js`)
-- **Security:** helmet (security headers), express-rate-limit, compression (gzip), input sanitization
-- **Rate Limits:** Auth routes — 20 req/15min; Contact form — 10 req/hour; General API — 200 req/15min
+- **Backend:** Firebase Functions (Express `onRequest`) replacing the legacy Express server
+- **Security:** helmet, express-rate-limit, compression, input sanitization
+- **Rate Limits:** Auth routes — 20 req/15min; Contact form — 10 req/hour; Uploads — 20 req/hour; General API — 200 req/15min
 - **Auth Routes:** `POST /api/auth/profile`, `GET /api/auth/me`
-- **Contact Route:** `POST /api/contacts` — stores contact form submissions in Firestore `contacts` collection
+- **Contact Route:** `POST /api/contacts`
+- **Upload Route:** `POST /api/upload` (authenticated, stores to Cloudinary)
 - **Firebase Auth:** ID tokens verified server-side via Firebase Admin SDK
-- **Token Refresh:** Automatic via Firebase `onIdTokenChanged` listener initialized in `main.tsx`
-- **Storage:** Google Cloud Firestore — `users` collection, `contacts` collection
-- **Firestore Persistence:** `persistentLocalCache` with `persistentMultipleTabManager` (multi-tab support)
-- **Frontend Store:** Zustand `authStore.ts` with `persist` middleware (localStorage); `setToken` for refresh
-- **Error Boundary:** Top-level `ErrorBoundary` component catches unhandled React errors
-- **Protected Routes:** `ProtectedRoute` (user) and `AdminRoute` (admin only)
+- **Token Refresh:** Automatic via Firebase `onIdTokenChanged` listener
 
 ## Admin Panel
-- **Default Admin:** Created via environment variables `ADMIN_EMAIL` + `ADMIN_PASSWORD` (seeded on first run when Firebase is configured)
+- **Default Admin:** Created via `ADMIN_EMAIL` + `ADMIN_PASSWORD` env vars (seeded via `seedAdminFn` endpoint)
 - **Dashboard:** Stats overview — total users, contact leads, unread leads, plan distribution
 - **Users:** Full table with search, edit plan, delete user
-- **Contacts:** All contact form submissions — expandable cards, status management, reply by email, delete
-- **Services:** Full CRUD for the 7 service offerings — edit titles, descriptions, benefits, order
-
-## Required Secrets (Replit)
-
-Set these in the Replit Secrets tab:
-
-### Backend (Firebase Admin SDK — pick one option):
-| Secret | Description |
-|--------|-------------|
-| `FIREBASE_SERVICE_ACCOUNT_JSON` | Full service account JSON blob (recommended — paste the entire JSON) |
-| OR `FIREBASE_PROJECT_ID` + `FIREBASE_CLIENT_EMAIL` + `FIREBASE_PRIVATE_KEY` | Individual credentials (alternative) |
-| `ADMIN_EMAIL` | Email for the seeded admin account |
-| `ADMIN_PASSWORD` | Strong password for the seeded admin account |
-
-### Frontend (Firebase Client SDK):
-| Secret | Description |
-|--------|-------------|
-| `apiKey` | Firebase Web API key |
-| `authDomain` | Firebase Auth domain (`your-project.firebaseapp.com`) |
-| `projectId` | Firebase project ID |
-| `storageBucket` | Firebase storage bucket |
-| `messagingSenderId` | Firebase messaging sender ID |
-| `appId` | Firebase App ID |
-
-## Running the App (Replit)
-- **Start application** workflow: `npm run dev` → serves frontend at port 5000
-- **Auth API** workflow: `node backend/server.js` → backend at port 3001
-- Vite proxies `/api/*` requests from port 5000 → 3001 automatically
-
-## Production Architecture (Replit Deployment)
-```
-Browser → Replit deployment (frontend + backend bundled)
-  Frontend: Vite build (dist/) served as static files
-  Backend: node backend/server.js on PORT
-  /api/* → backend Express routes
-```
+- **Contacts:** All contact form submissions — expandable cards, status management
+- **Services:** Full CRUD for the 7 service offerings
 
 ## Security Features (Production)
-- `helmet` — sets X-Frame-Options, X-Content-Type-Options, HSTS, and other security headers
-- `express-rate-limit` — prevents brute force on auth and contact endpoints
+- `helmet` — sets security headers (X-Frame-Options, X-Content-Type-Options, etc.)
+- `express-rate-limit` — brute force protection on all endpoints
 - `compression` — gzip for all responses
-- Input sanitization — strips whitespace, enforces max lengths, validates email format
-- CORS — allows only `.replit.dev`, `.replit.app`, and `ALLOWED_ORIGINS`
+- Input sanitization — strips whitespace, enforces max lengths
+- CORS — allows only Vercel, Replit, and `ALLOWED_ORIGINS`
 - Admin credentials via env vars — never hardcoded
 - Firebase token verification — all protected routes verify Firebase ID tokens server-side
-- Automatic token refresh — `onIdTokenChanged` keeps stored token fresh (Firebase tokens expire in 1h)
+- Cloudinary uploads — all file validation and upload happens server-side; credentials never exposed to client
 
 ## Notes
 - Framer Motion pinned to v10 (v11+ dist structure incompatibility with Vite)
 - `v7_startTransition` future flag set on `RouterProvider` to suppress React Router v7 migration warning
 - `initializeFirestore` with `persistentLocalCache` replaces deprecated `enableIndexedDbPersistence`
+- Firebase Functions wraps the Express app with `functions.https.onRequest()` — all existing routes preserved
+- Admin seed: call `GET /seedAdminFn?token=SEED_ADMIN_TOKEN` once after first deployment
+
+## User Preferences
+- Keep the gold-and-dark luxury design system consistent across all components
+- Never expose Cloudinary, Firebase Admin, or other server-side credentials to the frontend
+- All file uploads must go through the Firebase Functions `/api/upload` endpoint

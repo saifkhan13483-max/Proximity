@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://proximity-credit-repair.replit.app/sitemap.xml

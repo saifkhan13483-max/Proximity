@@ -1,5 +1,54 @@
+# ── Dependencies ──────────────────────────────────────────────────────────────
 node_modules/
+client/node_modules/
+firebase/functions/node_modules/
+
+# ── Build Outputs ─────────────────────────────────────────────────────────────
 dist/
+client/dist/
+build/
+.firebase/
+
+# ── Environment Variables ─────────────────────────────────────────────────────
+.env
 .env.local
-.DS_Store
+.env.development
+.env.production
+.env.staging
+client/.env
+client/.env.local
+client/.env.development
+client/.env.production
+firebase/functions/.env
+firebase/functions/.env.local
+firebase/functions/.env.production
+
+# ── Firebase Emulator Data ────────────────────────────────────────────────────
+firebase/emulator-data/
+firebase-debug.log
+firebase-debug.*.log
+firestore-debug.log
+ui-debug.log
+pubsub-debug.log
+
+# ── Logs ──────────────────────────────────────────────────────────────────────
 *.log
+npm-debug.log*
+
+# ── OS ────────────────────────────────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+
+# ── Editor ────────────────────────────────────────────────────────────────────
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# ── TypeScript ────────────────────────────────────────────────────────────────
+*.tsbuildinfo
+.cache/typescript/
+
+# ── Misc ──────────────────────────────────────────────────────────────────────
+.upm/
+*.local

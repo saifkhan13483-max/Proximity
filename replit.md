@@ -61,7 +61,8 @@ proximity/  (root = frontend)
 │   │       ├── AdminLogin.tsx
 │   │       ├── AdminDashboard.tsx
 │   │       ├── AdminUsers.tsx
-│   │       └── AdminContacts.tsx
+│   │       ├── AdminContacts.tsx
+│   │       └── AdminServices.tsx
 │   ├── services/
 │   │   ├── authService.ts     # Firebase Auth SDK — register, login, logout, fetchCurrentUser
 │   │   ├── adminService.ts    # Admin API calls — users, contacts, stats
@@ -76,7 +77,6 @@ proximity/  (root = frontend)
 │   │   └── index.ts
 │   ├── lib/
 │   │   ├── firebase.ts        # Firebase web SDK — initializeFirestore with persistentLocalCache
-│   │   ├── cloudinary.ts      # getImageUrl() — builds Cloudinary CDN URLs
 │   │   ├── animations.ts
 │   │   ├── utils.ts           # cn() (clsx + twMerge), formatPhone, truncate
 │   │   └── validators.ts
@@ -101,15 +101,7 @@ proximity/  (root = frontend)
 │   ├── server.js              # Express entry — graceful SIGTERM/SIGINT shutdown
 │   ├── app.js                 # Express API — helmet, rate limiting, compression, all routes
 │   ├── firebase.js            # Firebase Admin SDK init
-│   ├── .env.example           # Template for required environment variables
-│   └── package.json
-├── api/
-│   └── index.js               # Vercel serverless entry — wraps backend/app
-├── docs/
-│   ├── DEPLOYMENT.md
-│   ├── FIRESTORE_MIGRATION.md
-│   ├── PRD.md
-│   └── AI_BUILD_PROMPT.md
+│   └── .env.example           # Template for required environment variables
 ├── index.html
 ├── vite.config.ts             # Vite config — proxy /api → :3001, FB env vars via define
 ├── tailwind.config.js
@@ -117,13 +109,11 @@ proximity/  (root = frontend)
 ├── eslint.config.js
 ├── tsconfig.json
 ├── components.json            # shadcn/ui config
+├── firebase.json              # Firebase CLI config
+├── firestore.rules            # Firestore security rules
+├── firestore.indexes.json     # Firestore composite indexes
 ├── package.json               # Frontend deps (React, Vite, Tailwind, etc.)
-├── vercel.json
-├── firebase.json
-├── firestore.rules
-├── .gitignore
-├── README.md
-└── replit.md
+└── README.md
 ```
 
 ## Design System
@@ -162,10 +152,11 @@ proximity/  (root = frontend)
 - **Dashboard:** Stats overview — total users, contact leads, unread leads, plan distribution
 - **Users:** Full table with search, edit plan, delete user
 - **Contacts:** All contact form submissions — expandable cards, status management, reply by email, delete
+- **Services:** Full CRUD for the 7 service offerings — edit titles, descriptions, benefits, order
 
 ## Required Secrets (Replit)
 
-Set these in the Replit Secrets tab (or via environment variables):
+Set these in the Replit Secrets tab:
 
 ### Backend (Firebase Admin SDK — pick one option):
 | Secret | Description |
@@ -203,7 +194,7 @@ Browser → Replit deployment (frontend + backend bundled)
 - `express-rate-limit` — prevents brute force on auth and contact endpoints
 - `compression` — gzip for all responses
 - Input sanitization — strips whitespace, enforces max lengths, validates email format
-- CORS — allows only `.replit.dev`, `.replit.app`, `.vercel.app`, and `ALLOWED_ORIGINS`
+- CORS — allows only `.replit.dev`, `.replit.app`, and `ALLOWED_ORIGINS`
 - Admin credentials via env vars — never hardcoded
 - Firebase token verification — all protected routes verify Firebase ID tokens server-side
 - Automatic token refresh — `onIdTokenChanged` keeps stored token fresh (Firebase tokens expire in 1h)

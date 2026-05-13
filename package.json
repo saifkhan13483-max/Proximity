@@ -5,7 +5,7 @@
   "type": "module",
   "description": "Proximity Credit Repair — React + Vite frontend with Express API proxy for Gemini, Firebase Client SDK for auth and database.",
   "scripts": {
-    "dev": "node server/index.js",
+    "dev": "npm run dev --prefix client",
     "build": "npm run build --prefix client",
     "preview": "npm run preview --prefix client",
     "install:all": "npm install && npm install --prefix client",

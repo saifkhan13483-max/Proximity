@@ -1,4 +1,5 @@
-const GEMINI_PROXY = '/api/gemini'
+const GEMINI_API_KEY = import.meta.env.VITE_GEMINI_API_KEY as string | undefined
+const GEMINI_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent`
 
 export interface ChatMessage {
   role: 'user' | 'model'
@@ -17,7 +18,10 @@ Rules:
 - You specialize in: credit disputes, score improvement, negative item removal, debt validation, collections, charge-offs, bankruptcies, and credit building`
 
 async function callGemini(body: object): Promise<Response> {
-  const res = await fetch(GEMINI_PROXY, {
+  if (!GEMINI_API_KEY) {
+    throw new Error('Gemini API key is not configured. Please set VITE_GEMINI_API_KEY.')
+  }
+  const res = await fetch(`${GEMINI_URL}?key=${GEMINI_API_KEY}`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(body),

@@ -216,20 +216,42 @@ Output ONLY the full letter text. Use proper letter formatting with date, addres
   }
 }
 
-export async function generateDisputePackage(input: DisputePackageInput): Promise<DisputePackageResult> {
+export async function generateDisputePackage(
+  input: DisputePackageInput,
+  onProgress?: (completed: number, total: number, latestLetter?: GeneratedLetter) => void
+): Promise<DisputePackageResult> {
   const { items, ...personal } = input
-  const tasks: Promise<GeneratedLetter>[] = []
   let counter = 0
+  const allTasks: { promise: Promise<GeneratedLetter> }[] = []
 
   for (const item of items) {
     for (const bureau of item.bureaus) {
       const id = `letter-${counter++}`
-      tasks.push(generateSingleLetter(personal, item, bureau, id))
+      allTasks.push({ promise: generateSingleLetter(personal, item, bureau, id) })
     }
   }
 
-  const letters = await Promise.all(tasks)
-  return { letters }
+  const total = allTasks.length
+  let completed = 0
+  const letters: GeneratedLetter[] = []
+
+  const tracked = allTasks.map(({ promise }) =>
+    promise.then((letter) => {
+      completed++
+      letters.push(letter)
+      onProgress?.(completed, total, letter)
+      return letter
+    })
+  )
+
+  await Promise.all(tracked)
+
+  const ordered = allTasks.map((_, i) => {
+    const id = `letter-${i}`
+    return letters.find((l) => l.id === id) ?? letters[i]
+  }).filter(Boolean) as GeneratedLetter[]
+
+  return { letters: ordered.length === letters.length ? ordered : letters }
 }
 
 export async function generateCreditReview(input: CreditReviewInput): Promise<CreditReviewResult> {

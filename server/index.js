@@ -46,7 +46,7 @@ app.post('/api/gemini', async (req, res) => {
 })
 
 const isDev = process.env.NODE_ENV !== 'production'
-const PORT = parseInt(process.env.PORT || '5000', 10)
+const PORT = 5000
 
 if (isDev) {
   const vite = await createServer({

@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import {
@@ -6,10 +6,13 @@ import {
   CheckCircle, Clock, Star, ArrowRight, Bell, Zap, CreditCard,
   BookOpen, Handshake, ShieldCheck, CalendarDays, Mail, Award,
   ChevronRight, Activity, Target, Sparkles, User, Home,
-  AlertCircle, Info,
+  AlertCircle, Info, Brain, Wand2, Package, CheckCircle2,
+  RefreshCw,
 } from 'lucide-react'
 import { useAuthStore } from '@store/authStore'
 import { fetchCurrentUser } from '@services/authService'
+import { fetchDisputePackages, updateDisputeStatus } from '@services/disputeHistoryService'
+import type { DisputeRecord, DisputeStatus } from '@services/disputeHistoryService'
 import { plans } from '@data/plans'
 import ProximityLogo from '@common/ProximityLogo'
 
@@ -152,9 +155,21 @@ const ACTIVITY = [
   { icon: AlertCircle, color: 'text-amber-400', bg: 'bg-amber-400/10', text: 'Schedule your first consultation', time: 'Pending' },
 ]
 
+const DISPUTE_STATUS_CONFIG: Record<DisputeStatus, { label: string; color: string; bg: string; border: string }> = {
+  Generated: { label: 'Generated', color: 'text-blue-400', bg: 'bg-blue-400/10', border: 'border-blue-400/25' },
+  Mailed: { label: 'Mailed', color: 'text-amber-400', bg: 'bg-amber-400/10', border: 'border-amber-400/25' },
+  'Under Review': { label: 'Under Review', color: 'text-purple-400', bg: 'bg-purple-400/10', border: 'border-purple-400/25' },
+  Resolved: { label: 'Resolved', color: 'text-emerald-400', bg: 'bg-emerald-400/10', border: 'border-emerald-400/25' },
+}
+
+const DISPUTE_STATUS_FLOW: DisputeStatus[] = ['Generated', 'Mailed', 'Under Review', 'Resolved']
+
 export default function Dashboard() {
   const { user, token, logout, updateUser } = useAuthStore()
   const navigate = useNavigate()
+  const [disputes, setDisputes] = useState<DisputeRecord[]>([])
+  const [loadingDisputes, setLoadingDisputes] = useState(false)
+  const [updatingId, setUpdatingId] = useState<string | null>(null)
 
   useEffect(() => {
     if (!token) return
@@ -162,6 +177,28 @@ export default function Dashboard() {
       .then((freshUser) => updateUser(freshUser))
       .catch(() => {})
   }, [token])
+
+  useEffect(() => {
+    if (!user) return
+    setLoadingDisputes(true)
+    fetchDisputePackages(user.id, 5)
+      .then(setDisputes)
+      .catch(() => {})
+      .finally(() => setLoadingDisputes(false))
+  }, [user?.id])
+
+  async function handleStatusChange(pkg: DisputeRecord, newStatus: DisputeStatus) {
+    if (!user) return
+    setUpdatingId(pkg.id)
+    try {
+      await updateDisputeStatus(user.id, pkg.id, newStatus)
+      setDisputes(prev => prev.map(d => d.id === pkg.id ? { ...d, status: newStatus } : d))
+    } catch {
+      // silent
+    } finally {
+      setUpdatingId(null)
+    }
+  }
 
   function handleLogout() {
     logout()
@@ -526,8 +563,190 @@ export default function Dashboard() {
           </motion.div>
         </div>
 
+        {/* ── AI Tools Panel ── */}
+        <motion.div {...fadeUp(0.30)} className="mb-5">
+          <div className="bg-[#0f0f0f] border border-white/8 rounded-2xl p-6">
+            <div className="flex items-center justify-between mb-5">
+              <div className="flex items-center gap-2.5">
+                <div className="w-8 h-8 rounded-lg bg-gold-primary/10 flex items-center justify-center">
+                  <Brain size={14} className="text-gold-primary" />
+                </div>
+                <div>
+                  <h3 className="font-heading font-bold text-white text-sm leading-none">AI Credit Tools</h3>
+                  <p className="font-body text-white/25 text-[11px] mt-0.5">Powered by Google Gemini</p>
+                </div>
+              </div>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+              {[
+                {
+                  icon: BarChart2,
+                  label: 'AI Credit Reviewer',
+                  desc: 'Get a full personalized credit analysis with action plan',
+                  href: '/ai-credit-reviewer',
+                  badge: 'Free',
+                  badgeColor: 'text-emerald-400 bg-emerald-400/10',
+                },
+                {
+                  icon: Wand2,
+                  label: 'Dispute Autopilot',
+                  desc: 'Auto-generate a complete dispute package for all bureaus',
+                  href: '/ai-dispute-autopilot',
+                  badge: 'Automated',
+                  badgeColor: 'text-gold-primary bg-gold-primary/10',
+                },
+                {
+                  icon: FileText,
+                  label: 'Dispute Letter Writer',
+                  desc: 'Generate a single FCRA dispute letter for one item',
+                  href: '/dispute-letter-generator',
+                  badge: 'Quick',
+                  badgeColor: 'text-blue-400 bg-blue-400/10',
+                },
+              ].map((tool, i) => (
+                <motion.a
+                  key={tool.label}
+                  href={tool.href}
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.32 + i * 0.06, duration: 0.4 }}
+                  className="group flex flex-col gap-3 bg-white/3 hover:bg-white/6 border border-white/6 hover:border-gold-primary/25 rounded-xl p-4 transition-all duration-200"
+                >
+                  <div className="flex items-start justify-between">
+                    <div className="w-9 h-9 rounded-xl bg-gold-primary/8 group-hover:bg-gold-primary/16 flex items-center justify-center flex-shrink-0 transition-colors duration-200">
+                      <tool.icon size={16} className="text-gold-primary" />
+                    </div>
+                    <span className={`font-body text-[10px] font-bold px-2 py-0.5 rounded-full ${tool.badgeColor}`}>
+                      {tool.badge}
+                    </span>
+                  </div>
+                  <div>
+                    <p className="font-body font-semibold text-white text-sm leading-tight mb-1">{tool.label}</p>
+                    <p className="font-body text-white/35 text-[11px] leading-relaxed">{tool.desc}</p>
+                  </div>
+                  <div className="flex items-center gap-1 text-gold-primary/50 group-hover:text-gold-primary font-body text-[11px] font-semibold transition-colors">
+                    Launch tool <ArrowRight size={11} />
+                  </div>
+                </motion.a>
+              ))}
+            </div>
+          </div>
+        </motion.div>
+
+        {/* ── Dispute History ── */}
+        <motion.div {...fadeUp(0.31)} className="mb-5">
+          <div className="bg-[#0f0f0f] border border-white/8 rounded-2xl p-6">
+            <div className="flex items-center justify-between mb-5">
+              <div className="flex items-center gap-2.5">
+                <div className="w-8 h-8 rounded-lg bg-blue-500/10 flex items-center justify-center">
+                  <Package size={14} className="text-blue-400" />
+                </div>
+                <div>
+                  <h3 className="font-heading font-bold text-white text-sm leading-none">Dispute Packages</h3>
+                  <p className="font-body text-white/25 text-[11px] mt-0.5">Generated from AI Autopilot</p>
+                </div>
+              </div>
+              <a
+                href="/ai-dispute-autopilot"
+                className="flex items-center gap-1 text-white/25 hover:text-gold-primary font-body text-xs transition-colors"
+              >
+                New package <ChevronRight size={12} />
+              </a>
+            </div>
+
+            {loadingDisputes ? (
+              <div className="flex items-center justify-center py-8 gap-2 text-white/25">
+                <RefreshCw size={14} className="animate-spin" />
+                <span className="font-body text-xs">Loading dispute history…</span>
+              </div>
+            ) : disputes.length === 0 ? (
+              <div className="text-center py-8">
+                <div className="w-12 h-12 rounded-2xl bg-white/4 border border-white/8 flex items-center justify-center mx-auto mb-3">
+                  <Package size={20} className="text-white/20" />
+                </div>
+                <p className="font-body text-white/30 text-sm">No dispute packages yet</p>
+                <p className="font-body text-white/20 text-xs mt-1">Use the AI Credit Reviewer or Dispute Autopilot to generate your first package.</p>
+                <a
+                  href="/ai-credit-reviewer"
+                  className="inline-flex items-center gap-1.5 mt-4 px-4 py-2 rounded-xl bg-gold-primary/10 border border-gold-primary/20 text-gold-primary font-body text-xs font-semibold hover:bg-gold-primary/20 transition-all"
+                >
+                  <Brain size={12} /> Start with AI Review
+                </a>
+              </div>
+            ) : (
+              <div className="space-y-3">
+                {disputes.map((pkg, i) => {
+                  const cfg = DISPUTE_STATUS_CONFIG[pkg.status]
+                  const currentIdx = DISPUTE_STATUS_FLOW.indexOf(pkg.status)
+                  const nextStatus = currentIdx < DISPUTE_STATUS_FLOW.length - 1
+                    ? DISPUTE_STATUS_FLOW[currentIdx + 1]
+                    : null
+                  const isUpdating = updatingId === pkg.id
+
+                  return (
+                    <motion.div
+                      key={pkg.id}
+                      initial={{ opacity: 0, y: 8 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 0.32 + i * 0.07, duration: 0.35 }}
+                      className="flex items-start gap-4 p-4 bg-white/[0.02] border border-white/6 rounded-xl hover:border-white/10 transition-all"
+                    >
+                      <div className="w-9 h-9 rounded-xl bg-blue-500/10 flex items-center justify-center flex-shrink-0 mt-0.5">
+                        <FileText size={15} className="text-blue-400" />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <div className="flex flex-wrap items-center gap-2 mb-1">
+                          <p className="font-body font-semibold text-white text-sm">
+                            {pkg.letterCount} Letter{pkg.letterCount !== 1 ? 's' : ''} — {pkg.itemNames.slice(0, 2).join(', ')}{pkg.itemNames.length > 2 ? ` +${pkg.itemNames.length - 2}` : ''}
+                          </p>
+                          <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full border text-[10px] font-heading font-bold ${cfg.bg} ${cfg.border} ${cfg.color}`}>
+                            {pkg.status === 'Resolved' && <CheckCircle2 size={9} />}
+                            {cfg.label}
+                          </span>
+                        </div>
+                        <div className="flex flex-wrap items-center gap-3">
+                          <span className="font-body text-white/25 text-[11px]">
+                            <Clock size={10} className="inline mr-1" />
+                            {new Date(pkg.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+                          </span>
+                          <div className="flex gap-1 flex-wrap">
+                            {pkg.bureaus.map(b => (
+                              <span key={b} className="font-body text-white/25 text-[10px] px-1.5 py-0.5 rounded bg-white/4 border border-white/6">
+                                {b}
+                              </span>
+                            ))}
+                          </div>
+                        </div>
+                      </div>
+                      {nextStatus && pkg.status !== 'Resolved' && (
+                        <button
+                          onClick={() => handleStatusChange(pkg, nextStatus)}
+                          disabled={isUpdating}
+                          className="flex-shrink-0 flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/5 border border-white/10 text-white/40 hover:text-white/70 hover:bg-white/8 font-body text-[11px] font-semibold transition-all disabled:opacity-40"
+                        >
+                          {isUpdating ? (
+                            <RefreshCw size={10} className="animate-spin" />
+                          ) : (
+                            <ChevronRight size={10} />
+                          )}
+                          Mark {nextStatus}
+                        </button>
+                      )}
+                      {pkg.status === 'Resolved' && (
+                        <span className="flex-shrink-0 flex items-center gap-1 px-3 py-1.5 rounded-lg bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 font-body text-[11px] font-semibold">
+                          <CheckCircle2 size={10} /> Done
+                        </span>
+                      )}
+                    </motion.div>
+                  )
+                })}
+              </div>
+            )}
+          </div>
+        </motion.div>
+
         {/* ── CTA Banner ── */}
-        <motion.div {...fadeUp(0.32)}>
+        <motion.div {...fadeUp(0.36)}>
           <div className="relative overflow-hidden rounded-2xl">
             <div className="bg-gold-gradient p-px rounded-2xl">
               <div className="bg-[#0f0f0f] rounded-[calc(1rem-1px)] p-6 sm:p-8">

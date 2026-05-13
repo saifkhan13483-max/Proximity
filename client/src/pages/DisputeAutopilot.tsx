@@ -1,9 +1,10 @@
-import { useState } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
   Brain, Loader2, Copy, Download, CheckCircle2, AlertTriangle,
   Plus, Trash2, Shield, Zap, Package, FileText, ChevronDown,
   ArrowRight, RefreshCw, CheckCircle, RotateCcw, Building2,
+  Wand2, Save, XCircle,
 } from 'lucide-react'
 import PageWrapper from '@components/layout/PageWrapper'
 import SEOHead from '@components/layout/SEOHead'
@@ -11,6 +12,9 @@ import { Button } from '@components/ui'
 import { generateDisputePackage } from '@services/geminiService'
 import type { DisputeItemInput, DisputePackageInput, GeneratedLetter } from '@services/geminiService'
 import { fadeUp, staggerContainer } from '@lib/animations'
+import { useWorkflowStore } from '@store/workflowStore'
+import { useAuthStore } from '@store/authStore'
+import { saveDisputePackage } from '@services/disputeHistoryService'
 
 const DISPUTE_REASONS = [
   'Account does not belong to me (identity theft or mixed file)',
@@ -339,7 +343,17 @@ const defaultPersonal = {
   yourName: '', yourAddress: '', yourCity: '', yourState: '', yourZip: ''
 }
 
+interface GenerationProgress {
+  completed: number
+  total: number
+  latestCreditor?: string
+  latestBureau?: string
+}
+
 export default function DisputeAutopilot() {
+  const { pendingDisputeItems, pendingPersonalInfo, clearPendingDisputes } = useWorkflowStore()
+  const { user } = useAuthStore()
+
   const [step, setStep] = useState(0)
   const [personal, setPersonal] = useState({ ...defaultPersonal })
   const [items, setItems] = useState<DisputeItemInput[]>([emptyItem()])
@@ -348,6 +362,36 @@ export default function DisputeAutopilot() {
   const [loading, setLoading] = useState(false)
   const [apiError, setApiError] = useState<string | null>(null)
   const [result, setResult] = useState<GeneratedLetter[] | null>(null)
+  const [progress, setProgress] = useState<GenerationProgress | null>(null)
+  const [savedToAccount, setSavedToAccount] = useState(false)
+  const [autoFilled, setAutoFilled] = useState(false)
+
+  useEffect(() => {
+    if (pendingDisputeItems && pendingDisputeItems.length > 0) {
+      setItems(pendingDisputeItems.slice(0, 6))
+      if (pendingPersonalInfo) {
+        setPersonal({
+          yourName: pendingPersonalInfo.yourName || '',
+          yourAddress: pendingPersonalInfo.yourAddress || '',
+          yourCity: pendingPersonalInfo.yourCity || '',
+          yourState: pendingPersonalInfo.yourState || '',
+          yourZip: pendingPersonalInfo.yourZip || '',
+        })
+      }
+      setAutoFilled(true)
+      setStep(pendingPersonalInfo?.yourName ? 1 : 0)
+      clearPendingDisputes()
+    }
+  }, [])
+
+  const handleProgress = useCallback((completed: number, total: number, letter?: GeneratedLetter) => {
+    setProgress({
+      completed,
+      total,
+      latestCreditor: letter?.creditorName,
+      latestBureau: letter?.bureau,
+    })
+  }, [])
 
   function setP(field: keyof typeof defaultPersonal, value: string) {
     setPersonal(prev => ({ ...prev, [field]: value }))
@@ -423,12 +467,26 @@ export default function DisputeAutopilot() {
   async function handleGenerate() {
     setLoading(true)
     setApiError(null)
+    setSavedToAccount(false)
+    const total = items.reduce((sum, item) => sum + item.bureaus.length, 0)
+    setProgress({ completed: 0, total })
     try {
       const packageInput: DisputePackageInput = { ...personal, items }
-      const pkg = await generateDisputePackage(packageInput)
+      const pkg = await generateDisputePackage(packageInput, handleProgress)
       setResult(pkg.letters)
+      setProgress(null)
+
+      if (user) {
+        try {
+          await saveDisputePackage(user.id, pkg.letters)
+          setSavedToAccount(true)
+        } catch {
+          // silent — saving is non-critical
+        }
+      }
     } catch (err: unknown) {
       setApiError(err instanceof Error ? err.message : 'Something went wrong. Please try again.')
+      setProgress(null)
     } finally {
       setLoading(false)
     }
@@ -442,6 +500,9 @@ export default function DisputeAutopilot() {
     setItemErrors({})
     setApiError(null)
     setResult(null)
+    setProgress(null)
+    setSavedToAccount(false)
+    setAutoFilled(false)
   }
 
   const totalLetters = items.reduce((sum, item) => sum + item.bureaus.length, 0)
@@ -494,8 +555,43 @@ export default function DisputeAutopilot() {
         <div className="max-w-2xl mx-auto px-4">
 
           {result ? (
-            <PackageResult letters={result} packageName={personal.yourName} onReset={reset} />
+            <>
+              {savedToAccount && (
+                <motion.div
+                  initial={{ opacity: 0, y: -8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="flex items-center gap-3 p-4 rounded-xl bg-emerald-500/10 border border-emerald-500/25 mb-5"
+                >
+                  <Save size={16} className="text-emerald-400 flex-shrink-0" />
+                  <p className="font-body text-emerald-400 text-sm">
+                    Dispute package saved to your account — track status in your dashboard.
+                  </p>
+                </motion.div>
+              )}
+              <PackageResult letters={result} packageName={personal.yourName} onReset={reset} />
+            </>
           ) : (
+            <>
+              {autoFilled && (
+                <motion.div
+                  initial={{ opacity: 0, y: -8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="flex items-start justify-between gap-3 p-4 rounded-xl bg-[#B8924A]/10 border border-[#B8924A]/25 mb-5"
+                >
+                  <div className="flex items-start gap-3">
+                    <Wand2 size={16} className="text-[#D4AF72] flex-shrink-0 mt-0.5" />
+                    <div>
+                      <p className="font-body text-[#D4AF72] text-sm font-semibold">Auto-filled from your Credit Review</p>
+                      <p className="font-body text-white/45 text-xs mt-0.5">
+                        {items.length} dispute item{items.length !== 1 ? 's' : ''} detected — all set for all 3 bureaus. Add your address to generate.
+                      </p>
+                    </div>
+                  </div>
+                  <button onClick={() => setAutoFilled(false)} className="text-white/25 hover:text-white/50 transition-colors flex-shrink-0">
+                    <XCircle size={15} />
+                  </button>
+                </motion.div>
+              )}
             <div className="bg-white/[0.03] border border-white/10 rounded-3xl p-6 md:p-10">
               <ProgressBar step={step} />
 
@@ -694,6 +790,46 @@ export default function DisputeAutopilot() {
                 )}
               </AnimatePresence>
 
+              {/* Generation progress UI */}
+              {loading && progress && (
+                <motion.div
+                  initial={{ opacity: 0, y: 8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="mt-6 p-5 bg-[#B8924A]/8 border border-[#B8924A]/20 rounded-2xl"
+                >
+                  <div className="flex items-center gap-3 mb-3">
+                    <Loader2 size={16} className="text-[#D4AF72] animate-spin flex-shrink-0" />
+                    <div className="flex-1">
+                      <p className="font-heading font-semibold text-white text-sm">
+                        Generating Letters… {progress.completed}/{progress.total}
+                      </p>
+                      {progress.latestCreditor && (
+                        <p className="font-body text-white/40 text-xs mt-0.5">
+                          Latest: {progress.latestBureau} letter for {progress.latestCreditor}
+                        </p>
+                      )}
+                    </div>
+                    <span className="font-heading font-black text-[#D4AF72] text-sm">
+                      {Math.round((progress.completed / progress.total) * 100)}%
+                    </span>
+                  </div>
+                  <div className="w-full bg-white/8 rounded-full h-1.5">
+                    <motion.div
+                      className="h-1.5 rounded-full bg-gradient-to-r from-[#B8924A] to-[#D4AF72]"
+                      animate={{ width: `${(progress.completed / progress.total) * 100}%` }}
+                      transition={{ duration: 0.3, ease: 'easeOut' }}
+                    />
+                  </div>
+                  <div className="flex flex-wrap gap-2 mt-3">
+                    {progress.completed > 0 && Array.from({ length: progress.completed }).map((_, i) => (
+                      <span key={i} className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-green-500/10 border border-green-500/20 text-green-400 text-[10px] font-body">
+                        <CheckCircle size={10} /> Letter {i + 1} ready
+                      </span>
+                    ))}
+                  </div>
+                </motion.div>
+              )}
+
               {/* Navigation buttons */}
               {!result && (
                 <div className="flex gap-3 mt-8">
@@ -722,12 +858,13 @@ export default function DisputeAutopilot() {
                 </div>
               )}
 
-              {loading && (
+              {loading && !progress && (
                 <p className="text-white/25 font-body text-xs text-center mt-3">
-                  Generating {totalLetters} letters in parallel via Google Gemini AI…
+                  Generating {totalLetters} letters via Google Gemini AI…
                 </p>
               )}
             </div>
+            </>
           )}
         </div>
       </section>

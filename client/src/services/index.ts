@@ -1,4 +1,12 @@
 export { submitContactForm } from './contactService'
+export {
+  saveDisputePackage,
+  fetchDisputePackages,
+  updateDisputeStatus,
+  saveCreditReview,
+  fetchCreditReviews,
+} from './disputeHistoryService'
+export type { DisputeRecord, CreditReviewRecord, DisputeStatus } from './disputeHistoryService'
 export { registerUser, loginUser, logoutUser, fetchCurrentUser } from './authService'
 export { selectPlan } from './planService'
 export {

@@ -1,9 +1,11 @@
 import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
   Brain, ChevronRight, ChevronLeft, Loader2, CheckCircle,
   TrendingUp, AlertTriangle, Star, Target, Clock, Zap,
-  FileText, DollarSign, BarChart2, Shield, RefreshCw, ArrowRight
+  FileText, DollarSign, BarChart2, Shield, RefreshCw, ArrowRight,
+  Wand2, Save,
 } from 'lucide-react'
 import PageWrapper from '@components/layout/PageWrapper'
 import SEOHead from '@components/layout/SEOHead'
@@ -11,8 +13,11 @@ import Section from '@components/layout/Section'
 import SectionLabel from '@components/ui/SectionLabel'
 import { Button } from '@components/ui'
 import { generateCreditReview } from '@services/geminiService'
-import type { CreditReviewInput, CreditReviewResult, ActionStep } from '@services/geminiService'
+import type { CreditReviewInput, CreditReviewResult, ActionStep, DisputeItemInput } from '@services/geminiService'
 import { fadeUp, staggerContainer } from '@lib/animations'
+import { useWorkflowStore } from '@store/workflowStore'
+import { useAuthStore } from '@store/authStore'
+import { saveCreditReview } from '@services/disputeHistoryService'
 
 const STEPS = ['Your Profile', 'Credit Details', 'Your Goals', 'Review']
 
@@ -182,7 +187,17 @@ function StyledTextarea({ value, onChange, placeholder }: {
   )
 }
 
-function ResultCard({ result, onReset }: { result: CreditReviewResult; onReset: () => void }) {
+function ResultCard({
+  result,
+  onReset,
+  onAutomate,
+  savedToAccount,
+}: {
+  result: CreditReviewResult
+  onReset: () => void
+  onAutomate?: () => void
+  savedToAccount?: boolean
+}) {
   return (
     <motion.div
       variants={staggerContainer}
@@ -326,18 +341,72 @@ function ResultCard({ result, onReset }: { result: CreditReviewResult; onReset: 
         </motion.div>
       )}
 
-      {/* CTA */}
-      <motion.div variants={fadeUp} className="bg-gradient-to-br from-gold-primary/20 to-transparent border border-gold-primary/25 rounded-2xl p-8 text-center">
-        <h3 className="font-heading font-bold text-xl text-white mb-2">Ready to Take Action?</h3>
-        <p className="font-body text-white/60 text-sm mb-6">Our credit repair experts are ready to execute this plan for you — faster and more effectively.</p>
-        <div className="flex flex-col sm:flex-row gap-3 justify-center">
-          <Button href="/contact" size="md">
-            Get Expert Help <ArrowRight size={16} />
-          </Button>
-          <Button variant="secondary" size="md" onClick={onReset}>
-            <RefreshCw size={16} /> Start New Review
-          </Button>
-        </div>
+      {/* Automate CTA — primary action */}
+      {onAutomate && result.priorityDisputes && result.priorityDisputes.length > 0 && (
+        <motion.div variants={fadeUp} className="bg-gradient-to-br from-gold-primary/25 to-gold-primary/5 border-2 border-gold-primary/40 rounded-2xl p-8 text-center relative overflow-hidden">
+          <div className="absolute -top-10 -right-10 w-40 h-40 rounded-full bg-gold-primary/10 blur-2xl pointer-events-none" />
+          <div className="relative">
+            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-gold-primary/20 border border-gold-primary/40 mb-4">
+              <Wand2 size={13} className="text-gold-primary" />
+              <span className="text-gold-primary font-heading font-bold text-[11px] uppercase tracking-wider">One-Click Automation</span>
+            </div>
+            <h3 className="font-heading font-bold text-xl text-white mb-2">
+              Automate Your Disputes Instantly
+            </h3>
+            <p className="font-body text-white/60 text-sm mb-2 max-w-sm mx-auto">
+              We've identified <span className="text-gold-primary font-semibold">{result.priorityDisputes.length} priority dispute{result.priorityDisputes.length !== 1 ? 's' : ''}</span> from your review. One click will pre-fill your complete dispute package — ready to generate in seconds.
+            </p>
+            <ul className="flex flex-wrap justify-center gap-2 mb-6">
+              {result.priorityDisputes.slice(0, 4).map((item, i) => (
+                <li key={i} className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-white/5 border border-white/10 font-body text-[11px] text-white/60">
+                  <Shield size={10} className="text-gold-primary flex-shrink-0" />
+                  <span className="truncate max-w-[180px]">{item}</span>
+                </li>
+              ))}
+              {result.priorityDisputes.length > 4 && (
+                <li className="inline-flex items-center px-2.5 py-1 rounded-full bg-white/5 border border-white/10 font-body text-[11px] text-white/40">
+                  +{result.priorityDisputes.length - 4} more
+                </li>
+              )}
+            </ul>
+            <div className="flex flex-col sm:flex-row gap-3 justify-center">
+              <button
+                onClick={onAutomate}
+                className="flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl bg-gold-gradient text-white font-heading font-bold text-sm shadow-gold-md hover:shadow-gold-lg transition-all duration-200"
+              >
+                <Wand2 size={16} />
+                Auto-Generate Dispute Package
+                <ArrowRight size={16} />
+              </button>
+              <Button href="/contact" variant="secondary" size="md">
+                Get Expert Help
+              </Button>
+            </div>
+          </div>
+        </motion.div>
+      )}
+
+      {/* Saved confirmation */}
+      {savedToAccount && (
+        <motion.div
+          variants={fadeUp}
+          className="flex items-center gap-3 p-4 rounded-xl bg-emerald-500/10 border border-emerald-500/25"
+        >
+          <Save size={16} className="text-emerald-400 flex-shrink-0" />
+          <p className="font-body text-emerald-400 text-sm">
+            This review has been saved to your account — find it in your dashboard.
+          </p>
+        </motion.div>
+      )}
+
+      {/* Secondary CTA */}
+      <motion.div variants={fadeUp} className="flex flex-col sm:flex-row gap-3">
+        <Button href="/contact" size="md" className="flex-1 justify-center">
+          Get Expert Help <ArrowRight size={16} />
+        </Button>
+        <Button variant="secondary" size="md" onClick={onReset} className="flex-1 justify-center">
+          <RefreshCw size={16} /> Start New Review
+        </Button>
       </motion.div>
 
       {/* Disclaimer */}
@@ -348,13 +417,64 @@ function ResultCard({ result, onReset }: { result: CreditReviewResult; onReset: 
   )
 }
 
+const DISPUTE_REASON_KEYWORDS: Array<{ keywords: string[]; reason: string }> = [
+  { keywords: ['late payment', 'late payments', 'payment history'], reason: 'Incorrect payment history — payments were on time' },
+  { keywords: ['collection', 'collections'], reason: 'Collection account — debt is not valid or already paid' },
+  { keywords: ['charge-off', 'charge off', 'chargeoff'], reason: 'Charge-off amount is incorrect' },
+  { keywords: ['not mine', 'does not belong', 'identity theft', 'fraud'], reason: 'Account does not belong to me (identity theft or mixed file)' },
+  { keywords: ['paid', 'settled', 'pay'], reason: 'Account was paid in full but still shows as unpaid or delinquent' },
+  { keywords: ['7-year', '7 year', 'reporting limit', 'time limit'], reason: 'Account is past the 7-year reporting limit and should be removed' },
+  { keywords: ['duplicate'], reason: 'Duplicate account listing on credit report' },
+  { keywords: ['balance', 'incorrect balance', 'limit'], reason: 'Incorrect balance or credit limit reported' },
+  { keywords: ['bankruptcy'], reason: 'Account included in bankruptcy but still showing negative' },
+  { keywords: ['status', 'open', 'closed'], reason: 'Incorrect account status (open vs. closed)' },
+]
+
+function mapDisputeReason(text: string): string {
+  const lower = text.toLowerCase()
+  for (const { keywords, reason } of DISPUTE_REASON_KEYWORDS) {
+    if (keywords.some((k) => lower.includes(k))) return reason
+  }
+  return 'Account does not belong to me (identity theft or mixed file)'
+}
+
+function parseDisputeItems(priorityDisputes: string[], firstName: string): DisputeItemInput[] {
+  return priorityDisputes.map((item) => {
+    const lower = item.toLowerCase()
+    let creditorName = item
+    const fromMatch = item.match(/from\s+([^—\-–(]+)/i)
+    const withMatch = item.match(/with\s+([^—\-–(]+)/i)
+    const onMatch = item.match(/on\s+([^—\-–(]+)/i)
+    if (fromMatch) creditorName = fromMatch[1].trim()
+    else if (withMatch) creditorName = withMatch[1].trim()
+    else if (onMatch) creditorName = onMatch[1].trim()
+    else if (item.length > 40) creditorName = item.substring(0, 40).trim() + '…'
+
+    const acctMatch = item.match(/(?:account|acct)[^0-9]*([0-9X*-]{4,})/i) ||
+      item.match(/ending in\s+([0-9X*]{4})/i)
+    const accountNumber = acctMatch ? acctMatch[1] : 'See credit report'
+
+    return {
+      creditorName: creditorName.replace(/[.,;]+$/, '').trim(),
+      accountNumber,
+      disputeReason: mapDisputeReason(lower),
+      bureaus: ['Equifax', 'Experian', 'TransUnion'],
+    }
+  })
+}
+
 export default function CreditReviewer() {
+  const navigate = useNavigate()
+  const { setPendingDisputes, setLastCreditReview } = useWorkflowStore()
+  const { user } = useAuthStore()
+
   const [step, setStep] = useState(0)
   const [input, setInput] = useState<CreditReviewInput>(defaultInput)
   const [errors, setErrors] = useState<Partial<Record<keyof CreditReviewInput, string>>>({})
   const [loading, setLoading] = useState(false)
   const [result, setResult] = useState<CreditReviewResult | null>(null)
   const [apiError, setApiError] = useState<string | null>(null)
+  const [savedToAccount, setSavedToAccount] = useState(false)
 
   function set(field: keyof CreditReviewInput, value: string) {
     setInput(prev => ({ ...prev, [field]: value }))
@@ -400,12 +520,29 @@ export default function CreditReviewer() {
     try {
       const review = await generateCreditReview(input)
       setResult(review)
+      setLastCreditReview(review)
       setStep(4)
+
+      if (user) {
+        try {
+          await saveCreditReview(user.id, input.firstName, input.currentScore, input.goalScore, review)
+          setSavedToAccount(true)
+        } catch {
+          // silent — saving to account is non-critical
+        }
+      }
     } catch (err: unknown) {
       setApiError(err instanceof Error ? err.message : 'Something went wrong. Please try again.')
     } finally {
       setLoading(false)
     }
+  }
+
+  function handleAutomate() {
+    if (!result?.priorityDisputes?.length) return
+    const items = parseDisputeItems(result.priorityDisputes, input.firstName)
+    setPendingDisputes(items, null)
+    navigate('/ai-dispute-autopilot')
   }
 
   function reset() {
@@ -414,6 +551,7 @@ export default function CreditReviewer() {
     setStep(0)
     setErrors({})
     setApiError(null)
+    setSavedToAccount(false)
   }
 
   const slideVariants = {
@@ -465,7 +603,12 @@ export default function CreditReviewer() {
       <Section dark className="py-16">
         <div className="max-w-2xl mx-auto">
           {result ? (
-            <ResultCard result={result} onReset={reset} />
+            <ResultCard
+              result={result}
+              onReset={reset}
+              onAutomate={handleAutomate}
+              savedToAccount={savedToAccount}
+            />
           ) : (
             <div className="bg-white/4 border border-white/10 rounded-3xl p-6 md:p-10">
               <ProgressBar step={step} />

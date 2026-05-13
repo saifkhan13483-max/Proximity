@@ -2,84 +2,185 @@ import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { useInView } from 'react-intersection-observer'
 import Section from '@components/layout/Section'
-import SectionLabel from '@components/ui/SectionLabel'
 import { Button } from '@components/ui'
-import { fadeUp } from '@lib/animations'
+import { PhoneCall, FileSearch, ShieldCheck, TrendingUp } from 'lucide-react'
 
 const steps = [
   {
     number: '01',
     title: 'Free Consultation',
-    description: 'We start with a no-cost call to understand your credit goals and situation.',
+    description:
+      'We start with a no-cost strategy call to understand your credit goals, review your situation, and map out a custom plan.',
+    icon: PhoneCall,
+    highlight: 'No cost. No commitment.',
   },
   {
     number: '02',
     title: 'Full Credit Review',
-    description: 'We pull and analyze all three bureau reports to identify every opportunity.',
+    description:
+      'We pull and deeply analyze all three bureau reports — Equifax, Experian, and TransUnion — to identify every dispute opportunity.',
+    icon: FileSearch,
+    highlight: 'All 3 bureaus covered.',
   },
   {
     number: '03',
     title: 'Dispute & Repair',
-    description: 'We submit expert dispute letters and manage the entire process on your behalf.',
+    description:
+      'Our experts craft and submit precision dispute letters, managing every back-and-forth with creditors entirely on your behalf.',
+    icon: ShieldCheck,
+    highlight: 'We handle everything.',
   },
   {
     number: '04',
     title: 'Monitor Progress',
-    description: 'We track every change and keep you updated throughout your journey.',
+    description:
+      'We track every update in real time and keep you informed at every milestone until your score reflects your true potential.',
+    icon: TrendingUp,
+    highlight: 'Full transparency.',
   },
 ]
 
-function StepItem({ step, index }: { step: (typeof steps)[0]; index: number }) {
-  const { ref, inView } = useInView({ triggerOnce: true, threshold: 0.1 })
+function StepCard({ step, index }: { step: (typeof steps)[0]; index: number }) {
+  const { ref, inView } = useInView({ triggerOnce: true, threshold: 0.15 })
+  const Icon = step.icon
 
   return (
     <motion.div
       ref={ref}
-      variants={fadeUp}
-      initial="hidden"
-      animate={inView ? 'visible' : 'hidden'}
-      transition={{ delay: index * 0.15 }}
-      className="flex flex-col items-center text-center flex-1"
+      initial={{ opacity: 0, y: 40 }}
+      animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 40 }}
+      transition={{ duration: 0.6, delay: index * 0.15, ease: 'easeOut' }}
+      className="relative flex-1 group"
     >
-      <div className="w-12 h-12 rounded-full bg-gold-gradient flex items-center justify-center font-heading font-black text-white text-sm mb-4">
-        {step.number}
+      <div className="relative rounded-2xl border border-white/8 bg-[#111111] p-7 h-full flex flex-col gap-5 overflow-hidden transition-all duration-500 hover:border-gold-primary/40 hover:shadow-[0_0_40px_rgba(184,146,74,0.12)]">
+
+        {/* Background step number watermark */}
+        <span className="absolute -top-3 -right-1 font-heading font-black text-[7rem] leading-none text-white/[0.03] select-none pointer-events-none">
+          {step.number}
+        </span>
+
+        {/* Icon + number row */}
+        <div className="flex items-center gap-4">
+          <div className="relative flex-shrink-0">
+            <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-[#B8924A] to-[#8B6A2E] flex items-center justify-center shadow-[0_0_20px_rgba(184,146,74,0.25)] group-hover:shadow-[0_0_30px_rgba(184,146,74,0.4)] transition-shadow duration-500">
+              <Icon className="w-6 h-6 text-white" strokeWidth={1.75} />
+            </div>
+          </div>
+          <span className="font-heading font-black text-[2rem] leading-none bg-gradient-to-br from-[#D4AF72] to-[#8B6A2E] bg-clip-text text-transparent">
+            {step.number}
+          </span>
+        </div>
+
+        {/* Title */}
+        <h4 className="font-heading font-bold text-[1.15rem] text-white leading-snug">
+          {step.title}
+        </h4>
+
+        {/* Description */}
+        <p className="font-body text-[0.9rem] text-[#9A9A9A] leading-relaxed flex-1">
+          {step.description}
+        </p>
+
+        {/* Highlight pill */}
+        <div className="inline-flex items-center self-start gap-2 px-3 py-1.5 rounded-full bg-[#B8924A]/10 border border-[#B8924A]/20">
+          <span className="w-1.5 h-1.5 rounded-full bg-[#D4AF72] flex-shrink-0" />
+          <span className="font-heading font-semibold text-[0.72rem] tracking-wider text-[#D4AF72] uppercase">
+            {step.highlight}
+          </span>
+        </div>
+
+        {/* Bottom gold accent line */}
+        <div className="absolute bottom-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-[#B8924A]/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
       </div>
-      <h4 className="font-heading font-semibold text-body-text mb-2">{step.title}</h4>
-      <p className="font-body text-caption text-muted-text">{step.description}</p>
     </motion.div>
   )
 }
 
-export default function HowItWorksStrip() {
+function ConnectorLine({ index }: { index: number }) {
+  const { ref, inView } = useInView({ triggerOnce: true, threshold: 0.3 })
+
   return (
-    <Section alt>
-      <SectionLabel>THE PROCESS</SectionLabel>
-      <h2 className="font-heading font-bold text-h2 text-body-text mt-2 mb-12">
-        Four Simple Steps to a Better Score
-      </h2>
+    <div ref={ref} className="hidden lg:flex flex-col items-center justify-start pt-7 flex-shrink-0 w-10">
+      <motion.div
+        initial={{ scaleX: 0, opacity: 0 }}
+        animate={inView ? { scaleX: 1, opacity: 1 } : { scaleX: 0, opacity: 0 }}
+        transition={{ duration: 0.6, delay: index * 0.15 + 0.35, ease: 'easeOut' }}
+        style={{ originX: 0 }}
+        className="w-full h-[2px] bg-gradient-to-r from-[#B8924A]/60 via-[#D4AF72]/80 to-[#B8924A]/60 rounded-full"
+      />
+    </div>
+  )
+}
 
-      <div className="hidden md:flex flex-row items-start gap-0">
-        {steps.map((step, index) => (
-          <div key={step.number} className="flex flex-row items-start flex-1">
-            <StepItem step={step} index={index} />
-            {index < steps.length - 1 && (
-              <div className="h-px flex-1 bg-gold-gradient mt-6 mx-2 flex-shrink-0 min-w-[20px]" />
-            )}
-          </div>
-        ))}
+export default function HowItWorksStrip() {
+  const { ref, inView } = useInView({ triggerOnce: true, threshold: 0.1 })
+
+  return (
+    <section className="py-24 bg-[#0A0A0A] relative overflow-hidden">
+
+      {/* Subtle radial glow behind section */}
+      <div className="absolute inset-0 pointer-events-none">
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[400px] rounded-full bg-[#B8924A]/5 blur-[100px]" />
       </div>
 
-      <div className="flex md:hidden flex-col gap-8">
-        {steps.map((step, index) => (
-          <StepItem key={step.number} step={step} index={index} />
-        ))}
-      </div>
+      <div className="relative max-w-7xl mx-auto px-6 lg:px-10">
 
-      <div className="text-center mt-12">
-        <Link to="/how-it-works">
-          <Button variant="secondary">View Full Process</Button>
-        </Link>
+        {/* Header */}
+        <div ref={ref} className="text-center mb-16">
+          <motion.span
+            initial={{ opacity: 0, y: 12 }}
+            animate={inView ? { opacity: 1, y: 0 } : {}}
+            transition={{ duration: 0.5 }}
+            className="inline-block font-heading font-semibold text-[0.7rem] tracking-[0.2em] uppercase text-[#B8924A] mb-4"
+          >
+            The Process
+          </motion.span>
+
+          <motion.h2
+            initial={{ opacity: 0, y: 18 }}
+            animate={inView ? { opacity: 1, y: 0 } : {}}
+            transition={{ duration: 0.6, delay: 0.1 }}
+            className="font-heading font-bold text-white text-3xl sm:text-4xl lg:text-[2.75rem] leading-tight"
+          >
+            Four Simple Steps to a
+            <span className="block bg-gradient-to-r from-[#D4AF72] via-[#B8924A] to-[#8B6A2E] bg-clip-text text-transparent">
+              Better Score
+            </span>
+          </motion.h2>
+
+          <motion.p
+            initial={{ opacity: 0, y: 18 }}
+            animate={inView ? { opacity: 1, y: 0 } : {}}
+            transition={{ duration: 0.6, delay: 0.2 }}
+            className="mt-4 font-body text-[#7A7A7A] text-[0.95rem] max-w-xl mx-auto leading-relaxed"
+          >
+            Our proven, structured approach removes the guesswork and puts your credit restoration on autopilot.
+          </motion.p>
+        </div>
+
+        {/* Steps grid */}
+        <div className="flex flex-col md:flex-row items-stretch gap-4 lg:gap-0">
+          {steps.map((step, index) => (
+            <div key={step.number} className="flex flex-row md:flex-row flex-1 items-stretch">
+              <StepCard step={step} index={index} />
+              {index < steps.length - 1 && <ConnectorLine index={index} />}
+            </div>
+          ))}
+        </div>
+
+        {/* CTA */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={inView ? { opacity: 1, y: 0 } : {}}
+          transition={{ duration: 0.6, delay: 0.75 }}
+          className="text-center mt-14"
+        >
+          <Link to="/how-it-works">
+            <Button variant="secondary">View Full Process</Button>
+          </Link>
+        </motion.div>
+
       </div>
-    </Section>
+    </section>
   )
 }

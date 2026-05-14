@@ -1,10 +1,8 @@
-const GEMINI_MODEL = 'gemini-2.5-flash'
-
 function getGeminiUrl(): string {
-  // Always use the relative proxy path.
-  // Dev:  Vite server proxies /api/gemini/* → Replit integration at localhost:1106
-  // Prod: Vercel serverless function at api/gemini/[...slug].js forwards with server-side GEMINI_API_KEY
-  return `/api/gemini/models/${GEMINI_MODEL}:generateContent`
+  // /api/ai — a clean URL with no colon that Vercel's router handles correctly.
+  // Dev:  Vite proxies /api/ai → Replit AI integration at localhost:1106
+  // Prod: Vercel serverless function at api/ai.js calls Google Gemini directly
+  return '/api/ai'
 }
 
 export interface ChatMessage {

@@ -10,13 +10,13 @@ export default defineConfig({
     strictPort: true,
     allowedHosts: true,
     proxy: {
-      '/api/gemini': {
-        target: 'http://localhost:1106/modelfarm/gemini',
+      '/api/ai': {
+        target: 'http://localhost:1106',
         changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/api\/gemini/, ''),
+        rewrite: () => '/modelfarm/gemini/models/gemini-2.5-flash:generateContent',
         configure: (proxy) => {
           proxy.on('error', (err) => {
-            console.error('[vite proxy] Gemini proxy error:', err.message)
+            console.error('[vite proxy] /api/ai proxy error:', err.message)
           })
         },
       },

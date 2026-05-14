@@ -5,6 +5,91 @@ import { sendChatMessage } from '@services/geminiService'
 import type { ChatMessage } from '@services/geminiService'
 import { cn } from '@lib/utils'
 
+function renderMarkdown(text: string) {
+  const lines = text.split('\n')
+  const elements: React.ReactNode[] = []
+  let i = 0
+
+  function parseBoldAndLinks(line: string): React.ReactNode[] {
+    const parts: React.ReactNode[] = []
+    const regex = /\*\*([^*]+)\*\*/g
+    let last = 0
+    let match
+    let key = 0
+    while ((match = regex.exec(line)) !== null) {
+      if (match.index > last) parts.push(line.slice(last, match.index))
+      parts.push(<strong key={key++} className="font-semibold text-gold-light">{match[1]}</strong>)
+      last = match.index + match[0].length
+    }
+    if (last < line.length) parts.push(line.slice(last))
+    return parts
+  }
+
+  while (i < lines.length) {
+    const line = lines[i]
+    const trimmed = line.trim()
+
+    if (!trimmed) {
+      i++
+      continue
+    }
+
+    if (trimmed.startsWith('## ')) {
+      elements.push(
+        <p key={i} className="font-heading font-bold text-gold-primary text-xs uppercase tracking-wider mt-3 mb-1 first:mt-0">
+          {trimmed.slice(3)}
+        </p>
+      )
+      i++
+      continue
+    }
+
+    if (trimmed.startsWith('- ') || trimmed.startsWith('* ')) {
+      const bulletItems: React.ReactNode[] = []
+      while (i < lines.length && (lines[i].trim().startsWith('- ') || lines[i].trim().startsWith('* '))) {
+        const content = lines[i].trim().slice(2)
+        bulletItems.push(
+          <li key={i} className="flex gap-2 items-start">
+            <span className="text-gold-primary mt-1 flex-shrink-0 text-[10px]">◆</span>
+            <span>{parseBoldAndLinks(content)}</span>
+          </li>
+        )
+        i++
+      }
+      elements.push(<ul key={`ul-${i}`} className="space-y-1.5 my-1.5">{bulletItems}</ul>)
+      continue
+    }
+
+    const numberedMatch = trimmed.match(/^(\d+)\.\s+(.+)/)
+    if (numberedMatch) {
+      const numberedItems: React.ReactNode[] = []
+      while (i < lines.length && lines[i].trim().match(/^\d+\.\s+/)) {
+        const m = lines[i].trim().match(/^(\d+)\.\s+(.+)/)
+        if (m) {
+          numberedItems.push(
+            <li key={i} className="flex gap-2 items-start">
+              <span className="text-gold-primary font-bold flex-shrink-0 text-xs min-w-[16px]">{m[1]}.</span>
+              <span>{parseBoldAndLinks(m[2])}</span>
+            </li>
+          )
+        }
+        i++
+      }
+      elements.push(<ol key={`ol-${i}`} className="space-y-1.5 my-1.5">{numberedItems}</ol>)
+      continue
+    }
+
+    elements.push(
+      <p key={i} className="leading-relaxed">
+        {parseBoldAndLinks(trimmed)}
+      </p>
+    )
+    i++
+  }
+
+  return <div className="space-y-1.5 text-sm">{elements}</div>
+}
+
 const WELCOME: ChatMessage = {
   role: 'model',
   text: "Welcome to Proximity Credit Repair!\n\nI'm your AI Credit Advisor — I know everything about this site: every service, pricing plan, free tool, team member, and FAQ. I can also give you real credit advice.\n\nHow can I help you today?",
@@ -116,13 +201,13 @@ export default function AIChatWidget() {
                   )}
                   <div
                     className={cn(
-                      'max-w-[85%] rounded-2xl px-3.5 py-2.5 font-body text-sm leading-relaxed whitespace-pre-wrap',
+                      'max-w-[85%] rounded-2xl px-3.5 py-2.5 font-body leading-relaxed',
                       msg.role === 'user'
-                        ? 'bg-gold-primary text-near-black rounded-tr-sm'
+                        ? 'bg-gold-primary text-near-black rounded-tr-sm text-sm whitespace-pre-wrap'
                         : 'bg-white/8 text-white/85 rounded-tl-sm border border-white/8'
                     )}
                   >
-                    {msg.text}
+                    {msg.role === 'user' ? msg.text : renderMarkdown(msg.text)}
                   </div>
                 </div>
               ))}

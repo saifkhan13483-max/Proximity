@@ -1,0 +1,17 @@
+Please address the following gaps in the previous color system delivery:
+
+The primary button uses white text on the gold gradient, but white-on-#EAC96A is only ~2.8:1 which fails WCAG AA for normal-size button labels (button text is typically 14–16px, not "large text" under WCAG which requires 18pt/24px regular or 14pt/18.66px bold). Switch primary button text to #0A0A0A (near-black) and recalculate ratios at every gradient stop. Confirm minimum ratio is ≥ 4.5:1 across the full gradient. Update the Before/After table.
+
+Split the AAA column in the contrast audit into AAA-Large (≥ 4.5:1) and AAA-Normal (≥ 7:1) so the gold-on-dark pairings are labeled accurately.
+
+Add a :visited link state to the Interaction States table. Propose a value that's distinguishable from default but stays within the warm-gold family.
+
+Verify surface.hover #202018 is perceptible on non-OLED IPS displays at 250 nits in a bright room. If borderline, propose an alternative that combines a slightly larger ΔL background shift with a 1px gold-tinted top border for redundancy.
+
+Confirm the disabled button state pairs with cursor: not-allowed and aria-disabled="true", since the 2.1:1 contrast alone is insufficient signaling for colorblind and low-vision users. Add this to the usage rules.
+
+Output the complete, untruncated theme.extend.colors object from tailwind.config.js — including every key in the state namespace (success, success-subtle, success-deep, success-bg, warning and its variants, info and its variants, destructive and its variants). No ellipses or "..." placeholders. I need to verify the file contents match what was described.
+
+Add a short "Print & Email" section: which colors degrade poorly when the marketing site is printed or screenshotted into a PDF (gradients, gold-on-dark), and what fallbacks should be used in @media print rules.
+
+Run the new palette through a colorblind simulator mentally (protanopia, deuteranopia, tritanopia) and confirm the semantic state colors (success/warning/info/destructive) remain distinguishable from gold and from each other. If any pair collapses, propose an icon or pattern augmentation.

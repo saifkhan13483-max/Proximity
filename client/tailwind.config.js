@@ -37,7 +37,7 @@ export default {
           raised:  '#111111',   // HSL 0 0% 7%    — slight elevation above base
           card:    '#141414',   // HSL 0 0% 8%    — card / panel bg
           overlay: '#1A1A1A',   // HSL 0 0% 10%   — drawers, popovers on dark
-          hover:   '#202018',   // HSL 40 3% 11%  — hover state on dark cards
+          hover:   '#282620',   // HSL 38 5% 15%  — FIXED from #202018 (1.13:1 vs card, imperceptible on IPS); paired with gold border in .admin-row
           border:  '#242420',   // HSL 40 4% 14%  — subtle borders on dark
           divider: '#2E2E28',   // HSL 42 6% 17%  — dividers
           muted:   '#3A3A32',   // HSL 44 8% 21%  — very muted dark surfaces

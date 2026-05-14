@@ -1,3 +1,4 @@
+import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import { useInView } from 'react-intersection-observer'
 import { Link } from 'react-router-dom'
@@ -11,6 +12,15 @@ import {
   BookOpen,
   ShieldCheck,
   ArrowRight,
+  Star,
+  Zap,
+  Lock,
+  Award,
+  Users,
+  DollarSign,
+  Clock,
+  Globe,
+  Phone,
 } from 'lucide-react'
 import type { LucideIcon } from 'lucide-react'
 import PageWrapper from '@components/layout/PageWrapper'
@@ -18,7 +28,9 @@ import SEOHead from '@components/layout/SEOHead'
 import Section from '@components/layout/Section'
 import { Button } from '@components/ui'
 import { fadeUp, staggerContainer } from '@lib/animations'
-import { services } from '@data/services'
+import { services as staticServices } from '@data/services'
+import { fetchAdminServices } from '@services/adminService'
+import type { Service } from '@/types/index'
 
 const iconMap: Record<string, LucideIcon> = {
   BarChart2,
@@ -28,26 +40,29 @@ const iconMap: Record<string, LucideIcon> = {
   Handshake,
   BookOpen,
   ShieldCheck,
+  Star,
+  Zap,
+  Lock,
+  CheckCircle,
+  Award,
+  Users,
+  DollarSign,
+  Clock,
+  Globe,
+  Phone,
 }
 
-const servicesSchema = {
-  '@context': 'https://schema.org',
-  '@graph': services.map((s) => ({
-    '@type': 'Service',
-    name: s.title,
-    description: s.description,
-    provider: { '@type': 'Organization', name: 'Proximity Credit Repair' },
-  })),
-}
-
-function QuickNavCard({ service }: { service: typeof services[0] }) {
+function QuickNavCard({ service }: { service: Service }) {
   const Icon = iconMap[service.icon]
   return (
     <a
       href={`#${service.id}`}
       className="group bg-card-black border border-white/10 hover:border-gold-primary rounded-card p-5 flex flex-col items-center text-center gap-3 transition-all duration-300 hover:-translate-y-1"
     >
-      {Icon && <Icon className="text-gold-primary" size={28} />}
+      {Icon
+        ? <Icon className="text-gold-primary" size={28} />
+        : <span className="text-gold-primary text-2xl font-bold">★</span>
+      }
       <span className="font-heading font-semibold text-white text-sm leading-snug group-hover:text-gold-primary transition-colors">
         {service.title}
       </span>
@@ -55,7 +70,7 @@ function QuickNavCard({ service }: { service: typeof services[0] }) {
   )
 }
 
-function ServiceBlock({ service, index }: { service: typeof services[0]; index: number }) {
+function ServiceBlock({ service, index }: { service: Service; index: number }) {
   const { ref, inView } = useInView({ triggerOnce: true, threshold: 0.08 })
   const isDark = index % 2 === 0
   const Icon = iconMap[service.icon]
@@ -64,7 +79,10 @@ function ServiceBlock({ service, index }: { service: typeof services[0]; index: 
     <div className="flex flex-col">
       <div className="flex items-center gap-4 mb-5">
         <div className="bg-gold-primary/10 border border-gold-primary/30 rounded-xl p-3 flex-shrink-0">
-          {Icon && <Icon className="text-gold-primary" size={36} />}
+          {Icon
+            ? <Icon className="text-gold-primary" size={36} />
+            : <span className="text-gold-primary text-3xl font-bold">★</span>
+          }
         </div>
         <span className="font-heading font-bold text-gold-primary text-sm tracking-widest uppercase">
           Service {String(index + 1).padStart(2, '0')}
@@ -120,7 +138,32 @@ function ServiceBlock({ service, index }: { service: typeof services[0]; index: 
 }
 
 export default function Services() {
+  const [services, setServices] = useState<Service[]>(staticServices)
   const { ref: overviewRef, inView: overviewInView } = useInView({ triggerOnce: true, threshold: 0.1 })
+
+  useEffect(() => {
+    fetchAdminServices()
+      .then((live) => {
+        if (live && live.length > 0) {
+          setServices(
+            [...live].sort((a, b) => (a.order ?? 0) - (b.order ?? 0))
+          )
+        }
+      })
+      .catch(() => {
+        // Firestore unavailable — static fallback already in state
+      })
+  }, [])
+
+  const servicesSchema = {
+    '@context': 'https://schema.org',
+    '@graph': services.map((s) => ({
+      '@type': 'Service',
+      name: s.title,
+      description: s.description,
+      provider: { '@type': 'Organization', name: 'Proximity Credit Repair' },
+    })),
+  }
 
   return (
     <PageWrapper dark>

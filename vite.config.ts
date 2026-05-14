@@ -11,7 +11,7 @@ export default defineConfig({
     allowedHosts: true,
     proxy: {
       '/api/gemini': {
-        target: 'http://localhost:1106/modelfarm/gemini',
+        target: 'http://localhost:3001/modelfarm/gemini',
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/api\/gemini/, ''),
         configure: (proxy) => {

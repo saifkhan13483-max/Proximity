@@ -1,4 +1,6 @@
-const GEMINI_PROXY = '/api/gemini/generate'
+const GEMINI_API_KEY = import.meta.env.VITE_GEMINI_API_KEY as string | undefined
+const GEMINI_MODEL = 'gemini-2.5-flash'
+const GEMINI_BASE_URL = `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent`
 
 export interface ChatMessage {
   role: 'user' | 'model'
@@ -203,14 +205,17 @@ RESPONSE RULES
 - If unsure about something, be honest and direct the user to contact Proximity directly at (800) 555-0192 or hello@proximitycreditrepair.com`
 
 async function callGeminiProxy(body: object): Promise<{ candidates: { content: { parts: { text: string }[] } }[] }> {
-  const res = await fetch(GEMINI_PROXY, {
+  if (!GEMINI_API_KEY) throw new Error('VITE_GEMINI_API_KEY is not set. Please add it to your environment variables.')
+  const url = `${GEMINI_BASE_URL}?key=${GEMINI_API_KEY}`
+  const res = await fetch(url, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(body),
   })
   if (!res.ok) {
     const err = await res.json().catch(() => ({}))
-    throw new Error((err as { error?: string }).error || `Server error: ${res.status}`)
+    const errMsg = (err as { error?: { message?: string } })?.error?.message
+    throw new Error(errMsg || `Gemini API error: ${res.status}`)
   }
   return res.json()
 }

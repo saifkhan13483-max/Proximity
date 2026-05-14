@@ -6,28 +6,13 @@
   "description": "Proximity Credit Repair — React + Vite frontend with Firebase Auth, Firestore, and Google Gemini AI.",
   "scripts": {
     "dev": "npm run dev --prefix client",
-    "server": "node server/index.js",
     "build": "npm run build --prefix client",
     "preview": "npm run preview --prefix client",
-    "install:all": "npm install && npm install --prefix client",
+    "install:all": "npm install --prefix client",
     "lint": "npm run lint --prefix client",
     "typecheck": "npm run typecheck --prefix client"
   },
   "engines": {
     "node": ">=20.0.0"
-  },
-  "dependencies": {
-    "@google/genai": "^2.2.0",
-    "cors": "^2.8.6",
-    "drizzle-zod": "^0.8.3",
-    "express": "^5.2.1",
-    "p-limit": "^7.3.0",
-    "p-retry": "^7.1.1",
-    "zod": "^4.4.3",
-    "zod-validation-error": "^5.0.0"
-  },
-  "devDependencies": {
-    "@types/cors": "^2.8.19",
-    "@types/express": "^5.0.6"
   }
 }

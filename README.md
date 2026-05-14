@@ -79,7 +79,7 @@ Built with **React 18 + Vite + TypeScript**, a gold-and-dark luxury design syste
 | State | Zustand with persist middleware |
 | Forms | React Hook Form + Zod validation |
 | Data Fetching | TanStack Query (React Query v5) |
-| AI | Google Gemini 2.0 Flash — REST API, called client-side |
+| AI | Google Gemini 2.5 Flash — REST API, called directly client-side |
 | Icons | Lucide React |
 | Error Handling | React ErrorBoundary wrapping all routes |
 
@@ -89,7 +89,7 @@ Built with **React 18 + Vite + TypeScript**, a gold-and-dark luxury design syste
 
 ```
 /
-├── client/                             # React + Vite frontend
+├── client/                             # React + Vite frontend (the entire app)
 │   ├── src/
 │   │   ├── components/
 │   │   │   ├── common/                 # ProximityLogo, AIChatWidget
@@ -108,7 +108,7 @@ Built with **React 18 + Vite + TypeScript**, a gold-and-dark luxury design syste
 │   │   │   └── admin/                  # AdminLogin, AdminDashboard, AdminUsers, AdminContacts, AdminServices
 │   │   ├── providers/                  # AppProviders — QueryClient, ErrorBoundary, AuthObserver
 │   │   ├── services/                   # authService, adminService, geminiService, contactService,
-│   │   │   │                           #   disputeHistoryService, planService
+│   │   │                               #   disputeHistoryService, planService
 │   │   ├── store/                      # authStore, uiStore, formStore, workflowStore (Zustand)
 │   │   ├── styles/                     # globals.css — Tailwind base + design tokens
 │   │   ├── types/                      # Shared TypeScript types
@@ -121,13 +121,10 @@ Built with **React 18 + Vite + TypeScript**, a gold-and-dark luxury design syste
 │   ├── vercel.json                     # SPA rewrites + security headers
 │   └── package.json
 │
-├── shared/
-│   └── types/index.ts                  # Shared TypeScript types (Firestore document shapes)
-│
 ├── firestore.rules                     # Firestore security rules
 ├── firestore.indexes.json              # Composite + single-field indexes
 ├── firebase.json                       # Firebase CLI config (Firestore + Hosting)
-├── .firebaserc                         # Firebase project alias (proximity-2c866)
+├── .firebaserc                         # Firebase project alias
 └── README.md
 ```
 
@@ -144,7 +141,6 @@ Built with **React 18 + Vite + TypeScript**, a gold-and-dark luxury design syste
 ### 1. Install Dependencies
 
 ```bash
-# Install root + client dependencies
 npm run install:all
 ```
 
@@ -194,7 +190,7 @@ All variables are prefixed with `VITE_` so Vite bundles them into the client bui
 | `VITE_FIREBASE_APP_ID` | Yes | Firebase App ID |
 | `VITE_GEMINI_API_KEY` | Yes | Google Gemini API key — powers all AI features |
 
-> **Note:** Because these are `VITE_` prefixed, they are visible in the compiled JavaScript bundle. For production, consider proxying Gemini API calls through a Firebase Function or server to protect the Gemini key.
+> **Note:** All `VITE_` variables are embedded in the browser bundle at build time. For higher security in production, consider proxying Gemini API calls through a Firebase Function to keep the key server-side.
 
 ---
 
@@ -325,7 +321,7 @@ Run from the project root:
 | `npm run preview` | Preview the production build locally |
 | `npm run typecheck` | TypeScript type check (no emit) |
 | `npm run lint` | ESLint on `client/src` |
-| `npm run install:all` | Install root + client dependencies |
+| `npm run install:all` | Install client dependencies |
 
 Firebase CLI commands:
 
@@ -345,7 +341,7 @@ Firebase CLI commands:
 | `VITE_FIREBASE_API_KEY is not set` | Missing environment variable | Add all `VITE_*` vars to `client/.env.local` or your hosting secrets panel |
 | `auth/operation-not-allowed` | Email/Password not enabled in Firebase | Enable it under Firebase Console → Authentication → Sign-in method |
 | Firestore `permission-denied` | Rules not deployed or admin role not set | Run `firebase deploy --only firestore:rules` |
-| AI tools return "API key not configured" | Missing Gemini key | Set `VITE_GEMINI_API_KEY` in environment variables |
+| AI tools return "VITE_GEMINI_API_KEY is not set" | Missing Gemini key | Set `VITE_GEMINI_API_KEY` in environment variables |
 | 404 on page refresh | SPA routing not configured | Ensure `vercel.json` or Firebase Hosting rewrites are active |
 | Admin panel shows no data | `role` field not set to `"admin"` | Edit the user's Firestore document manually in Firebase Console |
 | Dispute packages not saving | Firestore subcollection rules missing | Ensure latest `firestore.rules` are deployed |
@@ -356,8 +352,8 @@ Firebase CLI commands:
 
 - Framer Motion is pinned to **v10** — v11+ has a dist structure incompatibility with Vite
 - `initializeFirestore` with `persistentLocalCache` is used, replacing the deprecated `enableIndexedDbPersistence`
-- The Gemini API is called **client-side** — the API key is embedded in the browser bundle. For higher security in production, proxy AI requests through a Firebase Function or backend
-- Deleting a user from the Admin panel removes their Firestore document only. Their Firebase Auth account remains (requires the Firebase Admin SDK + a server environment to fully delete)
+- The Gemini 2.5 Flash API is called **directly from the browser** — the API key is embedded in the browser bundle. For higher security in production, proxy AI requests through a Firebase Function
+- Deleting a user from the Admin panel removes their Firestore document only. Their Firebase Auth account remains (requires the Firebase Admin SDK to fully delete)
 - The `v7_startTransition` future flag is set on `RouterProvider` to suppress the React Router v7 migration warning
 
 ---

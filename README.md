@@ -45,7 +45,7 @@ Built with **React 18 + Vite + TypeScript**, a gold-and-dark luxury design syste
 | AI Credit Reviewer | `/ai-credit-reviewer` | Enter your credit profile → Gemini generates a full analysis with key strengths, critical issues, action plan, and 6/12/24-month score projections |
 | Dispute Letter Generator | `/dispute-letter-generator` | Generate a professional FCRA Section 611 dispute letter for any bureau, ready to print and mail |
 | AI Dispute Autopilot | `/ai-dispute-autopilot` | Add multiple dispute items across multiple bureaus — generates a complete letter package in parallel |
-| AI Chat Widget | Every page | Floating credit advisor chatbot with full knowledge of all site pages, services, pricing, and team |
+| AI Chat Widget | Every page | Floating credit advisor chatbot powered by Google Gemini |
 
 ### Client Dashboard (Protected)
 
@@ -79,7 +79,7 @@ Built with **React 18 + Vite + TypeScript**, a gold-and-dark luxury design syste
 | State | Zustand with persist middleware |
 | Forms | React Hook Form + Zod validation |
 | Data Fetching | TanStack Query (React Query v5) |
-| AI | Google Gemini 2.5 Flash — REST API, called directly client-side |
+| AI | Google Gemini 2.5 Flash — called directly client-side |
 | Icons | Lucide React |
 | Error Handling | React ErrorBoundary wrapping all routes |
 
@@ -89,42 +89,44 @@ Built with **React 18 + Vite + TypeScript**, a gold-and-dark luxury design syste
 
 ```
 /
-├── client/                             # React + Vite frontend (the entire app)
-│   ├── src/
-│   │   ├── components/
-│   │   │   ├── common/                 # ProximityLogo, AIChatWidget
-│   │   │   ├── guards/                 # ProtectedRoute, AdminRoute
-│   │   │   ├── layout/                 # Navbar, Footer, AppLayout, AdminLayout, SEOHead
-│   │   │   ├── sections/               # HeroSection, ServicesPreview, TestimonialsSlider…
-│   │   │   └── ui/                     # Button, Card, Input, Modal, Toast, Badge…
-│   │   ├── config/
-│   │   │   ├── firebase.ts             # Firebase app + Firestore init
-│   │   │   ├── site.ts                 # siteConfig + siteMetadata (single source of truth)
-│   │   │   └── navigation.ts           # Nav links and dropdown definitions
-│   │   ├── data/                       # Static content: services, testimonials, faqs, plans, team
-│   │   ├── hooks/                      # useCountUp, useMediaQuery
-│   │   ├── lib/                        # animations.ts, utils.ts (cn, formatPhone), validators.ts
-│   │   ├── pages/                      # Route-level page components
-│   │   │   └── admin/                  # AdminLogin, AdminDashboard, AdminUsers, AdminContacts, AdminServices
-│   │   ├── providers/                  # AppProviders — QueryClient, ErrorBoundary, AuthObserver
-│   │   ├── services/                   # authService, adminService, geminiService, contactService,
-│   │   │                               #   disputeHistoryService, planService
-│   │   ├── store/                      # authStore, uiStore, formStore, workflowStore (Zustand)
-│   │   ├── styles/                     # globals.css — Tailwind base + design tokens
-│   │   ├── types/                      # Shared TypeScript types
-│   │   ├── App.tsx                     # Router definition (all routes)
-│   │   └── main.tsx                    # Entry point — mounts AppProviders + App
-│   ├── public/                         # favicon.svg, og-image.png, robots.txt, sitemap.xml
-│   ├── index.html
-│   ├── vite.config.ts
-│   ├── tsconfig.json
-│   ├── vercel.json                     # SPA rewrites + security headers
-│   └── package.json
-│
-├── firestore.rules                     # Firestore security rules
-├── firestore.indexes.json              # Composite + single-field indexes
-├── firebase.json                       # Firebase CLI config (Firestore + Hosting)
-├── .firebaserc                         # Firebase project alias
+├── src/
+│   ├── components/
+│   │   ├── common/           # ProximityLogo, AIChatWidget
+│   │   ├── guards/           # ProtectedRoute, AdminRoute
+│   │   ├── layout/           # Navbar, Footer, AppLayout, AdminLayout, SEOHead
+│   │   ├── sections/         # HeroSection, ServicesPreview, TestimonialsSlider…
+│   │   └── ui/               # Button, Card, Input, Modal, Toast, Badge…
+│   ├── config/
+│   │   ├── firebase.ts       # Firebase app + Firestore init
+│   │   ├── site.ts           # siteConfig + siteMetadata (single source of truth)
+│   │   └── navigation.ts     # Nav links and dropdown definitions
+│   ├── data/                 # Static content: services, testimonials, faqs, plans, team
+│   ├── hooks/                # useCountUp, useMediaQuery
+│   ├── lib/                  # animations.ts, utils.ts (cn, formatPhone), validators.ts
+│   ├── pages/
+│   │   └── admin/            # AdminLogin, AdminDashboard, AdminUsers, AdminContacts, AdminServices
+│   ├── providers/            # AppProviders — QueryClient, ErrorBoundary, AuthObserver
+│   ├── services/             # authService, adminService, geminiService, contactService,
+│   │                         #   disputeHistoryService, planService
+│   ├── store/                # authStore, uiStore, formStore, workflowStore (Zustand)
+│   ├── styles/               # globals.css — Tailwind base + design tokens
+│   ├── types/                # Shared TypeScript types
+│   ├── App.tsx               # Router definition (all routes)
+│   └── main.tsx              # Entry point — mounts AppProviders + App
+├── public/                   # favicon.svg, og-image.png, robots.txt, sitemap.xml
+├── index.html
+├── vite.config.ts
+├── tailwind.config.js
+├── postcss.config.js
+├── tsconfig.json
+├── tsconfig.node.json
+├── eslint.config.js
+├── components.json           # shadcn/ui config
+├── vercel.json               # SPA rewrites + security headers
+├── package.json
+├── firestore.rules           # Firestore security rules
+├── firestore.indexes.json    # Composite + single-field indexes
+├── firebase.json             # Firebase CLI config (Firestore + Hosting)
 └── README.md
 ```
 
@@ -141,12 +143,12 @@ Built with **React 18 + Vite + TypeScript**, a gold-and-dark luxury design syste
 ### 1. Install Dependencies
 
 ```bash
-npm run install:all
+npm install
 ```
 
 ### 2. Configure Environment Variables
 
-Create `client/.env.local` (never commit this file):
+Create `.env.local` in the project root (never commit this file):
 
 ```env
 VITE_FIREBASE_API_KEY=your_firebase_api_key
@@ -190,7 +192,7 @@ All variables are prefixed with `VITE_` so Vite bundles them into the client bui
 | `VITE_FIREBASE_APP_ID` | Yes | Firebase App ID |
 | `VITE_GEMINI_API_KEY` | Yes | Google Gemini API key — powers all AI features |
 
-> **Note:** All `VITE_` variables are embedded in the browser bundle at build time. For higher security in production, consider proxying Gemini API calls through a Firebase Function to keep the key server-side.
+> **Note:** All `VITE_` variables are embedded in the browser bundle at build time. For higher security in production, consider proxying Gemini API calls through a Firebase Function.
 
 ---
 
@@ -225,7 +227,7 @@ There is no automated admin creation — set it manually once:
 
 ## Design System
 
-The luxury gold-and-dark design system is defined in `client/src/styles/globals.css` and extended via Tailwind.
+The luxury gold-and-dark design system is defined in `src/styles/globals.css` and extended via Tailwind.
 
 | Token | Value | Usage |
 |---|---|---|
@@ -259,32 +261,29 @@ Firestore security rules are the **sole access control layer** — there is no b
 users/{userId}
   ├── read       owner or admin
   ├── create     owner only  (role field must be "user")
-  ├── update     owner (safe fields only, cannot change role/email) OR admin
+  ├── update     owner (safe fields only) OR admin
   └── delete     admin only
 
 users/{userId}/disputePackages/{packageId}
-  ├── read       owner only
-  ├── create     owner only
-  ├── update     owner only (status field only)
-  └── delete     owner or admin
+  ├── read/create/update   owner only
+  └── delete               owner or admin
 
 users/{userId}/creditReviews/{reviewId}
-  ├── read       owner only
-  ├── create     owner only
-  └── delete     owner or admin
+  ├── read/create   owner only
+  └── delete        owner or admin
 
 contacts/{contactId}
-  ├── create     anyone  (public contact form, no auth required)
-  └── read / update / delete   admin only
+  ├── create     anyone  (public contact form)
+  └── read/update/delete   admin only
 
 services/{serviceId}
-  ├── read       anyone  (public website)
-  └── create / update / delete   admin only
+  ├── read       anyone
+  └── create/update/delete   admin only
 
 all other paths   denied
 ```
 
-**Admin role** is determined by reading `role: "admin"` from the user's own Firestore document using `get()`. It is not stored as a Firebase custom claim.
+**Admin role** is determined by `role: "admin"` in the user's Firestore document — not a Firebase custom claim.
 
 ---
 
@@ -312,16 +311,13 @@ Configured in both `vite.config.ts` and `tsconfig.json`.
 
 ## Available Scripts
 
-Run from the project root:
-
 | Command | Description |
 |---|---|
 | `npm run dev` | Start Vite dev server on port 5000 |
-| `npm run build` | Production build → `client/dist` |
+| `npm run build` | Production build → `dist/` |
 | `npm run preview` | Preview the production build locally |
 | `npm run typecheck` | TypeScript type check (no emit) |
-| `npm run lint` | ESLint on `client/src` |
-| `npm run install:all` | Install client dependencies |
+| `npm run lint` | ESLint on `src/` |
 
 Firebase CLI commands:
 
@@ -338,12 +334,12 @@ Firebase CLI commands:
 
 | Symptom | Cause | Fix |
 |---|---|---|
-| `VITE_FIREBASE_API_KEY is not set` | Missing environment variable | Add all `VITE_*` vars to `client/.env.local` or your hosting secrets panel |
-| `auth/operation-not-allowed` | Email/Password not enabled in Firebase | Enable it under Firebase Console → Authentication → Sign-in method |
+| `VITE_FIREBASE_API_KEY is not set` | Missing environment variable | Add all `VITE_*` vars to `.env.local` |
+| `auth/operation-not-allowed` | Email/Password not enabled | Enable it in Firebase Console → Authentication → Sign-in method |
 | Firestore `permission-denied` | Rules not deployed or admin role not set | Run `firebase deploy --only firestore:rules` |
-| AI tools return "VITE_GEMINI_API_KEY is not set" | Missing Gemini key | Set `VITE_GEMINI_API_KEY` in environment variables |
+| AI tools return "API key not configured" | Missing Gemini key | Set `VITE_GEMINI_API_KEY` in environment variables |
 | 404 on page refresh | SPA routing not configured | Ensure `vercel.json` or Firebase Hosting rewrites are active |
-| Admin panel shows no data | `role` field not set to `"admin"` | Edit the user's Firestore document manually in Firebase Console |
+| Admin panel shows no data | `role` field not set to `"admin"` | Edit user's Firestore document in Firebase Console |
 | Dispute packages not saving | Firestore subcollection rules missing | Ensure latest `firestore.rules` are deployed |
 
 ---
@@ -352,8 +348,8 @@ Firebase CLI commands:
 
 - Framer Motion is pinned to **v10** — v11+ has a dist structure incompatibility with Vite
 - `initializeFirestore` with `persistentLocalCache` is used, replacing the deprecated `enableIndexedDbPersistence`
-- The Gemini 2.5 Flash API is called **directly from the browser** — the API key is embedded in the browser bundle. For higher security in production, proxy AI requests through a Firebase Function
-- Deleting a user from the Admin panel removes their Firestore document only. Their Firebase Auth account remains (requires the Firebase Admin SDK to fully delete)
+- The Gemini API is called **directly from the browser** using the `VITE_GEMINI_API_KEY`
+- Deleting a user from the Admin panel removes their Firestore document only; their Firebase Auth account requires the Firebase Admin SDK to fully delete
 - The `v7_startTransition` future flag is set on `RouterProvider` to suppress the React Router v7 migration warning
 
 ---

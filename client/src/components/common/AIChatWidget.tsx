@@ -6,15 +6,17 @@ import type { ChatMessage } from '@services/geminiService'
 import { cn } from '@lib/utils'
 
 const SUGGESTED = [
+  'What services do you offer?',
+  'How much does it cost?',
+  'How do I get started?',
+  'What free AI tools are available?',
   'How do I remove a collection?',
-  "What's hurting my score most?",
   'How fast can I raise my score?',
-  'What is a 609 dispute letter?',
 ]
 
 const WELCOME: ChatMessage = {
   role: 'model',
-  text: "Hi! I'm your AI Credit Advisor powered by Google Gemini. I can answer questions about credit repair, dispute strategies, score improvement, and more. What's on your mind?",
+  text: "Hi! I'm your AI Credit Advisor for Proximity Credit Repair. I know everything about our services, pricing, team, and free AI tools — and I can answer any credit repair question you have. What can I help you with?",
 }
 
 export default function AIChatWidget() {

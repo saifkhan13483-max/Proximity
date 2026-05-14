@@ -10,10 +10,6 @@
   },
   "rewrites": [
     {
-      "source": "/api/gemini/(.*)",
-      "destination": "/api/gemini/[...slug]"
-    },
-    {
       "source": "/((?!api/).*)",
       "destination": "/index.html"
     }

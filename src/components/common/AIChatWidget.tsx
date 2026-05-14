@@ -1,29 +1,53 @@
 import { useState, useRef, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
+import { useNavigate } from 'react-router-dom'
 import { MessageSquare, X, Send, Loader2, Brain, ChevronDown, RotateCcw } from 'lucide-react'
 import { sendChatMessage } from '@services/geminiService'
 import type { ChatMessage } from '@services/geminiService'
 import { cn } from '@lib/utils'
 
+function useMarkdownNavigate() {
+  const navigate = useNavigate()
+  return (href: string) => {
+    if (href.startsWith('/')) navigate(href)
+    else window.open(href, '_blank', 'noopener,noreferrer')
+  }
+}
+
+function InlineContent({ text }: { text: string }) {
+  const go = useMarkdownNavigate()
+  const parts: React.ReactNode[] = []
+  const regex = /\[([^\]]+)\]\(([^)]+)\)|\*\*([^*]+)\*\*/g
+  let last = 0
+  let match
+  let key = 0
+  while ((match = regex.exec(text)) !== null) {
+    if (match.index > last) parts.push(text.slice(last, match.index))
+    if (match[1] !== undefined) {
+      const label = match[1]
+      const href = match[2]
+      parts.push(
+        <button
+          key={key++}
+          onClick={() => go(href)}
+          className="inline-flex items-center gap-0.5 text-gold-primary underline underline-offset-2 decoration-gold-primary/40 hover:text-gold-light hover:decoration-gold-light transition-colors font-semibold"
+        >
+          {label}
+        </button>
+      )
+    } else {
+      parts.push(<strong key={key++} className="font-semibold text-gold-light">{match[3]}</strong>)
+    }
+    last = match.index + match[0].length
+  }
+  if (last < text.length) parts.push(text.slice(last))
+  return <>{parts}</>
+}
+
 function renderMarkdown(text: string) {
   const lines = text.split('\n')
   const elements: React.ReactNode[] = []
   let i = 0
-
-  function parseBoldAndLinks(line: string): React.ReactNode[] {
-    const parts: React.ReactNode[] = []
-    const regex = /\*\*([^*]+)\*\*/g
-    let last = 0
-    let match
-    let key = 0
-    while ((match = regex.exec(line)) !== null) {
-      if (match.index > last) parts.push(line.slice(last, match.index))
-      parts.push(<strong key={key++} className="font-semibold text-gold-light">{match[1]}</strong>)
-      last = match.index + match[0].length
-    }
-    if (last < line.length) parts.push(line.slice(last))
-    return parts
-  }
 
   while (i < lines.length) {
     const line = lines[i]
@@ -51,7 +75,7 @@ function renderMarkdown(text: string) {
         bulletItems.push(
           <li key={i} className="flex gap-2 items-start">
             <span className="text-gold-primary mt-1 flex-shrink-0 text-[10px]">◆</span>
-            <span>{parseBoldAndLinks(content)}</span>
+            <span><InlineContent text={content} /></span>
           </li>
         )
         i++
@@ -69,7 +93,7 @@ function renderMarkdown(text: string) {
           numberedItems.push(
             <li key={i} className="flex gap-2 items-start">
               <span className="text-gold-primary font-bold flex-shrink-0 text-xs min-w-[16px]">{m[1]}.</span>
-              <span>{parseBoldAndLinks(m[2])}</span>
+              <span><InlineContent text={m[2]} /></span>
             </li>
           )
         }
@@ -81,7 +105,7 @@ function renderMarkdown(text: string) {
 
     elements.push(
       <p key={i} className="leading-relaxed">
-        {parseBoldAndLinks(trimmed)}
+        <InlineContent text={trimmed} />
       </p>
     )
     i++

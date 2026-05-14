@@ -80,7 +80,7 @@ export default defineConfig({
           target: 'http://localhost:1106/modelfarm/gemini',
           changeOrigin: true,
           rewrite: (path: string) => path.replace(/^\/api\/gemini/, ''),
-          configure: (proxy: import('http-proxy').Server) => {
+          configure: (proxy) => {
             proxy.on('error', (err: Error) => {
               console.error('[vite proxy] Gemini proxy error:', err.message)
             })

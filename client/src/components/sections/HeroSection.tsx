@@ -35,8 +35,8 @@ function StatItem({ stat }: { stat: Stat }) {
   const Icon = statIconMap[stat.icon]
   return (
     <div ref={ref} className="flex flex-col items-center gap-1 sm:gap-2 text-center">
-      {Icon && <Icon className="text-gold-primary mb-0 sm:mb-1 hidden sm:block" size={28} />}
-      <div className="font-heading font-extrabold text-xl sm:text-4xl md:text-5xl text-gold-primary">
+      {Icon && <Icon className="text-gold-accessible mb-0 sm:mb-1 hidden sm:block" size={28} />}
+      <div className="font-heading font-extrabold text-xl sm:text-4xl md:text-5xl text-gold-accessible">
         {formattedValue}
       </div>
       <p className="text-white/60 text-xs sm:text-sm font-body leading-tight">{stat.label}</p>

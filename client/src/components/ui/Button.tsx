@@ -12,10 +12,10 @@ const buttonVariants = cva(
     variants: {
       variant: {
         primary:
-          'bg-gold-gradient text-white rounded-pill font-heading font-bold shadow-gold-sm hover:shadow-gold-md btn-glow-pulse',
+          'bg-gold-gradient text-near-black rounded-pill font-heading font-bold shadow-gold-sm hover:shadow-gold-md btn-glow-pulse',
         secondary:
-          'bg-transparent border-2 border-gold-primary text-gold-primary rounded-pill font-heading font-bold hover:bg-gold-primary hover:text-white',
-        ghost: 'bg-transparent text-gold-primary hover:underline font-heading font-bold',
+          'bg-transparent border-2 border-gold-accessible text-gold-accessible rounded-pill font-heading font-bold hover:bg-gold-accessible hover:text-near-black',
+        ghost: 'bg-transparent text-gold-accessible hover:underline font-heading font-bold',
       },
       size: {
         sm: 'px-5 py-2 text-sm',

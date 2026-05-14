@@ -368,7 +368,7 @@ export default function Navbar() {
                     {isActive && (
                       <motion.span
                         layoutId="nav-pill"
-                        className="absolute inset-0 rounded-lg bg-gold-primary/8 border border-gold-primary/20"
+                        className="absolute bottom-0 left-3 right-3 h-0.5 bg-gold-accessible rounded-full"
                         transition={{ type: 'spring', stiffness: 400, damping: 35 }}
                       />
                     )}

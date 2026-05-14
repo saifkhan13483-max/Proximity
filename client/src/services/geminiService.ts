@@ -1,5 +1,4 @@
-const GEMINI_API_KEY = import.meta.env.VITE_GEMINI_API_KEY as string | undefined
-const GEMINI_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent`
+const GEMINI_PROXY = '/api/gemini/generate'
 
 export interface ChatMessage {
   role: 'user' | 'model'
@@ -203,16 +202,17 @@ RESPONSE RULES
 - Never give legal advice — recommend consulting a professional attorney for complex legal matters
 - If unsure about something, be honest and direct the user to contact Proximity directly at (800) 555-0192 or hello@proximitycreditrepair.com`
 
-async function callGemini(body: object): Promise<Response> {
-  if (!GEMINI_API_KEY) {
-    throw new Error('Gemini API key is not configured. Please set VITE_GEMINI_API_KEY.')
-  }
-  const res = await fetch(`${GEMINI_URL}?key=${GEMINI_API_KEY}`, {
+async function callGeminiProxy(body: object): Promise<{ candidates: { content: { parts: { text: string }[] } }[] }> {
+  const res = await fetch(GEMINI_PROXY, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(body),
   })
-  return res
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}))
+    throw new Error((err as { error?: string }).error || `Server error: ${res.status}`)
+  }
+  return res.json()
 }
 
 export async function sendChatMessage(messages: ChatMessage[]): Promise<string> {
@@ -222,17 +222,11 @@ export async function sendChatMessage(messages: ChatMessage[]): Promise<string> 
     ...messages.map(m => ({ role: m.role, parts: [{ text: m.text }] })),
   ]
 
-  const response = await callGemini({
+  const data = await callGeminiProxy({
     contents,
     generationConfig: { temperature: 0.7, maxOutputTokens: 512 },
   })
 
-  if (!response.ok) {
-    const err = await response.json().catch(() => ({}))
-    throw new Error(err?.error || `Gemini error: ${response.status}`)
-  }
-
-  const data = await response.json()
   return data?.candidates?.[0]?.content?.parts?.[0]?.text ?? 'Sorry, I could not generate a response.'
 }
 
@@ -274,19 +268,13 @@ Write a complete, formal dispute letter that:
 
 Format it as a complete letter ready to print and mail. Use proper letter formatting with date, addresses, salutation, body paragraphs, and closing.`
 
-  const response = await callGemini({
+  const data = await callGeminiProxy({
     contents: [{ parts: [{ text: prompt }] }],
     generationConfig: { temperature: 0.4, maxOutputTokens: 1500 },
   })
 
-  if (!response.ok) {
-    const err = await response.json().catch(() => ({}))
-    throw new Error(err?.error || `Gemini error: ${response.status}`)
-  }
-
-  const data = await response.json()
   const text = data?.candidates?.[0]?.content?.parts?.[0]?.text
-  if (!text) throw new Error('No response from Gemini.')
+  if (!text) throw new Error('No response from AI. Please try again.')
   return text
 }
 
@@ -382,19 +370,13 @@ Write a complete, formal dispute letter that:
 
 Output ONLY the full letter text. Use proper letter formatting with date, addresses, salutation, body, and closing. No preamble or explanation outside the letter itself.`
 
-  const response = await callGemini({
+  const data = await callGeminiProxy({
     contents: [{ parts: [{ text: prompt }] }],
     generationConfig: { temperature: 0.3, maxOutputTokens: 1200 },
   })
 
-  if (!response.ok) {
-    const err = await response.json().catch(() => ({}))
-    throw new Error(err?.error || `Gemini error: ${response.status}`)
-  }
-
-  const data = await response.json()
   const letterText = data?.candidates?.[0]?.content?.parts?.[0]?.text
-  if (!letterText) throw new Error('No response from Gemini.')
+  if (!letterText) throw new Error('No response from AI.')
 
   return {
     id,
@@ -482,7 +464,7 @@ Provide a detailed credit review in the following JSON format (respond ONLY with
 
 Make the advice specific, actionable, and encouraging. Include at least 4-6 action steps. Be realistic but optimistic.`
 
-  const response = await callGemini({
+  const data = await callGeminiProxy({
     contents: [{ parts: [{ text: prompt }] }],
     generationConfig: {
       temperature: 0.7,
@@ -490,16 +472,10 @@ Make the advice specific, actionable, and encouraging. Include at least 4-6 acti
     },
   })
 
-  if (!response.ok) {
-    const errorData = await response.json().catch(() => ({}))
-    throw new Error(errorData?.error || `Gemini API error: ${response.status}`)
-  }
-
-  const data = await response.json()
   const rawText = data?.candidates?.[0]?.content?.parts?.[0]?.text
 
   if (!rawText) {
-    throw new Error('No response received from Gemini.')
+    throw new Error('No response received from AI.')
   }
 
   const cleaned = rawText.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim()
@@ -510,8 +486,6 @@ Make the advice specific, actionable, and encouraging. Include at least 4-6 acti
     throw new Error('Could not parse AI response. Please try again.')
   }
 }
-
-// ── Service Content Generator ─────────────────────────────────────────────────
 
 export interface GeneratedServiceContent {
   shortDescription: string
@@ -545,20 +519,14 @@ Guidelines:
 - Tone: premium, trustworthy, expert — match Proximity Credit Repair's brand voice
 - Reference FCRA, FDCPA, credit bureaus where relevant`
 
-  const response = await callGemini({
+  const data = await callGeminiProxy({
     contents: [{ role: 'user', parts: [{ text: prompt }] }],
     generationConfig: { temperature: 0.7, maxOutputTokens: 600 },
   })
 
-  if (!response.ok) {
-    const err = await response.json().catch(() => ({}))
-    throw new Error(err?.error?.message || `Gemini error: ${response.status}`)
-  }
-
-  const data = await response.json()
   const rawText: string = data?.candidates?.[0]?.content?.parts?.[0]?.text ?? ''
 
-  if (!rawText) throw new Error('No response from Gemini. Please try again.')
+  if (!rawText) throw new Error('No response from AI. Please try again.')
 
   const cleaned = rawText.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim()
 

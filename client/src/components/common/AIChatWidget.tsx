@@ -70,7 +70,7 @@ export default function AIChatWidget() {
           >
             <div className="flex items-center gap-3 px-4 py-3 bg-gradient-to-r from-gold-primary/15 to-transparent border-b border-white/8 flex-shrink-0">
               <div className="w-8 h-8 rounded-xl bg-gold-gradient flex items-center justify-center flex-shrink-0">
-                <Brain size={15} className="text-white" />
+                <Brain size={15} className="text-near-black" />
               </div>
               <div className="flex-1 min-w-0">
                 <p className="font-heading font-bold text-white text-sm leading-none">AI Credit Advisor</p>
@@ -108,7 +108,7 @@ export default function AIChatWidget() {
                     className={cn(
                       'max-w-[85%] rounded-2xl px-3.5 py-2.5 font-body text-sm leading-relaxed whitespace-pre-wrap',
                       msg.role === 'user'
-                        ? 'bg-gold-primary text-white rounded-tr-sm'
+                        ? 'bg-gold-primary text-near-black rounded-tr-sm'
                         : 'bg-white/8 text-white/85 rounded-tl-sm border border-white/8'
                     )}
                   >
@@ -152,7 +152,7 @@ export default function AIChatWidget() {
                   aria-label="Send message"
                   className="w-7 h-7 rounded-lg bg-gold-gradient flex items-center justify-center flex-shrink-0 disabled:opacity-30 hover:opacity-90 transition-opacity"
                 >
-                  {loading ? <Loader2 size={13} className="text-white animate-spin" /> : <Send size={13} className="text-white" />}
+                  {loading ? <Loader2 size={13} className="text-near-black animate-spin" /> : <Send size={13} className="text-near-black" />}
                 </button>
               </div>
             </div>

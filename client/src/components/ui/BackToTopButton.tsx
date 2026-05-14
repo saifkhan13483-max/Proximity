@@ -29,7 +29,7 @@ export default function BackToTopButton() {
           aria-label="Back to top"
           className="fixed bottom-24 right-6 z-40 w-10 h-10 rounded-full bg-gold-gradient flex items-center justify-center shadow-gold-md"
         >
-          <ChevronUp size={20} className="text-white" />
+          <ChevronUp size={20} className="text-near-black" />
         </motion.button>
       )}
     </AnimatePresence>

@@ -5,15 +5,6 @@ import { sendChatMessage } from '@services/geminiService'
 import type { ChatMessage } from '@services/geminiService'
 import { cn } from '@lib/utils'
 
-const SUGGESTED = [
-  'What services do you offer?',
-  'How much does it cost?',
-  'How do I get started?',
-  'What free AI tools are available?',
-  'How do I remove a collection?',
-  'How fast can I raise my score?',
-]
-
 const WELCOME: ChatMessage = {
   role: 'model',
   text: "Hi! I'm your AI Credit Advisor for Proximity Credit Repair. I know everything about our services, pricing, team, and free AI tools — and I can answer any credit repair question you have. What can I help you with?",
@@ -142,20 +133,6 @@ export default function AIChatWidget() {
               )}
               <div ref={messagesEndRef} />
             </div>
-
-            {messages.length === 1 && !loading && (
-              <div className="px-4 pb-2 flex flex-wrap gap-1.5 flex-shrink-0">
-                {SUGGESTED.map(q => (
-                  <button
-                    key={q}
-                    onClick={() => handleSend(q)}
-                    className="text-[11px] font-body text-gold-primary/80 bg-gold-primary/8 border border-gold-primary/20 rounded-full px-3 py-1 hover:bg-gold-primary/15 hover:text-gold-primary transition-all"
-                  >
-                    {q}
-                  </button>
-                ))}
-              </div>
-            )}
 
             <div className="px-3 pb-3 pt-2 border-t border-white/8 flex-shrink-0">
               <div className="flex items-center gap-2 bg-white/6 border border-white/12 rounded-xl px-3 py-2">

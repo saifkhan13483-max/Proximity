@@ -14,6 +14,11 @@ export default defineConfig({
         target: 'http://localhost:1106/modelfarm/gemini',
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/api\/gemini/, ''),
+        configure: (proxy) => {
+          proxy.on('error', (err) => {
+            console.error('[vite proxy] Gemini proxy error:', err.message)
+          })
+        },
       },
     },
   },
@@ -52,6 +57,9 @@ export default defineConfig({
           'vendor-icons': ['lucide-react'],
           'vendor-forms': ['react-hook-form', 'zod', '@hookform/resolvers'],
           'vendor-state': ['zustand', '@tanstack/react-query'],
+          'vendor-firebase-app': ['firebase/app'],
+          'vendor-firebase-auth': ['firebase/auth'],
+          'vendor-firebase-firestore': ['firebase/firestore'],
         },
       },
     },

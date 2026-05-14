@@ -1,13 +1,10 @@
 const GEMINI_MODEL = 'gemini-2.5-flash'
 
 function getGeminiUrl(): string {
-  if (import.meta.env.DEV) {
-    // Replit integration proxy at localhost:1106 — no API version prefix
-    return `/api/gemini/models/${GEMINI_MODEL}:generateContent?key=_DUMMY_API_KEY_`
-  }
-  const key = import.meta.env.VITE_GEMINI_API_KEY as string | undefined
-  if (!key) throw new Error('VITE_GEMINI_API_KEY is not set. Please add it to your environment variables.')
-  return `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent?key=${key}`
+  // Always use the relative proxy path.
+  // Dev:  Vite server proxies /api/gemini/* → Replit integration at localhost:1106
+  // Prod: Vercel serverless function at api/gemini/[...slug].js forwards with server-side GEMINI_API_KEY
+  return `/api/gemini/models/${GEMINI_MODEL}:generateContent`
 }
 
 export interface ChatMessage {
@@ -459,7 +456,7 @@ export async function sendChatMessage(messages: ChatMessage[]): Promise<string> 
   const contents = messages.map(m => ({ role: m.role, parts: [{ text: m.text }] }))
 
   const data = await callGeminiProxy({
-    system_instruction: { parts: [{ text: CREDIT_ADVISOR_SYSTEM }] },
+    systemInstruction: { parts: [{ text: CREDIT_ADVISOR_SYSTEM }] },
     contents,
     generationConfig: { temperature: 0.65, maxOutputTokens: 900 },
   })

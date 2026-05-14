@@ -10,6 +10,15 @@ function setCors(res) {
   Object.entries(CORS_HEADERS).forEach(([key, value]) => res.setHeader(key, value))
 }
 
+async function readRawBody(req) {
+  return new Promise((resolve, reject) => {
+    let data = ''
+    req.on('data', chunk => { data += chunk })
+    req.on('end', () => resolve(data))
+    req.on('error', reject)
+  })
+}
+
 module.exports = async function handler(req, res) {
   setCors(res)
 
@@ -26,7 +35,7 @@ module.exports = async function handler(req, res) {
     console.error('[api/gemini] GEMINI_API_KEY environment variable is not set.')
     return res.status(500).json({
       error: {
-        message: 'AI features are temporarily unavailable. The server is missing a required configuration key.',
+        message: 'GEMINI_API_KEY is not configured on the server. Add it in Vercel → Settings → Environment Variables.',
       },
     })
   }
@@ -44,16 +53,27 @@ module.exports = async function handler(req, res) {
   const slug = slugParts.join('/')
   const geminiUrl = `${GEMINI_BASE}/${slug}?key=${apiKey}`
 
-  let body = req.body
-  if (typeof body === 'string') {
-    try { body = JSON.parse(body) } catch { /* leave as-is */ }
+  // Vercel may or may not pre-parse req.body depending on config.
+  // Always read raw body to be safe.
+  let parsedBody = req.body
+  if (!parsedBody || typeof parsedBody === 'string' || Buffer.isBuffer(parsedBody)) {
+    try {
+      const raw = Buffer.isBuffer(parsedBody)
+        ? parsedBody.toString('utf8')
+        : typeof parsedBody === 'string'
+        ? parsedBody
+        : await readRawBody(req)
+      parsedBody = JSON.parse(raw)
+    } catch (e) {
+      return res.status(400).json({ error: { message: 'Invalid JSON body.' } })
+    }
   }
 
   try {
     const geminiRes = await fetch(geminiUrl, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(body),
+      body: JSON.stringify(parsedBody),
     })
 
     const contentType = geminiRes.headers.get('content-type') || ''
@@ -65,7 +85,7 @@ module.exports = async function handler(req, res) {
   } catch (err) {
     console.error('[api/gemini] Upstream fetch error:', err.message)
     return res.status(502).json({
-      error: { message: 'Could not reach the AI service. Please try again.' },
+      error: { message: `Could not reach Gemini API: ${err.message}` },
     })
   }
 }

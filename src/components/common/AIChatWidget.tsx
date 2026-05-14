@@ -164,7 +164,11 @@ export default function AIChatWidget() {
       if (!open) setHasNew(true)
     } catch (err) {
       console.error('[AIChatWidget] Gemini error:', err)
-      setMessages(prev => [...prev, { role: 'model', text: 'Sorry, I ran into an issue. Please try again in a moment.' }])
+      const detail = err instanceof Error ? err.message : String(err)
+      setMessages(prev => [...prev, {
+        role: 'model',
+        text: `Sorry, I ran into an issue. Please try again in a moment.\n\n_Error: ${detail}_`,
+      }])
     } finally {
       setLoading(false)
     }

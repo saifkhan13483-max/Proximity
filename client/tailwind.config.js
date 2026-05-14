@@ -27,8 +27,11 @@ export default {
         // gold.muted     → #9B7A38  disabled gold on dark, hover midpoint from accessible downward
         gold: {
           DEFAULT:    '#B8924A',   // HSL 35 51% 51%  — decorative
+          primary:    '#B8924A',   // alias for DEFAULT — used site-wide
           accessible: '#D4A853',   // HSL 35 55% 57%  — AA small text on dark
           muted:      '#9B7A38',   // HSL 35 45% 42%  — disabled / subdued
+          light:      '#D4AF72',   // legacy alias
+          dark:       '#8B6A2E',   // legacy alias
         },
 
         // ── Surface Scale — warm dark side (10 steps) ─────────────────────────

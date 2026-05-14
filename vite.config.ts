@@ -11,10 +11,14 @@ export default defineConfig({
     allowedHosts: true,
     proxy: {
       '/api/gemini': {
-        target: 'http://localhost:3001/modelfarm/gemini',
+        target: process.env.AI_INTEGRATIONS_GEMINI_BASE_URL || 'https://generativelanguage.googleapis.com/v1beta',
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/api\/gemini/, ''),
         configure: (proxy) => {
+          proxy.on('proxyReq', (proxyReq) => {
+            const key = process.env.AI_INTEGRATIONS_GEMINI_API_KEY
+            if (key) proxyReq.setHeader('x-goog-api-key', key)
+          })
           proxy.on('error', (err) => {
             console.error('[vite proxy] Gemini proxy error:', err.message)
           })

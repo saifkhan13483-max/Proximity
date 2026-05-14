@@ -2,7 +2,7 @@
 
 > A premium, full-service credit repair platform — marketing website, AI-powered tools, client portal, and admin panel.
 
-Built with **React 18 + Vite + TypeScript**, a gold-and-dark luxury design system, Google Gemini AI, Firebase Authentication, and Cloud Firestore. Pure frontend architecture — no backend server required.
+Built with **React 18 + Vite + TypeScript**, a gold-and-dark luxury design system, Google Gemini AI (via Replit AI Integrations), Firebase Authentication, and Cloud Firestore. **Pure frontend architecture — no backend server required.**
 
 ---
 
@@ -14,6 +14,7 @@ Built with **React 18 + Vite + TypeScript**, a gold-and-dark luxury design syste
 - [Getting Started](#getting-started)
 - [Environment Variables](#environment-variables)
 - [Firebase Setup](#firebase-setup)
+- [AI Integration](#ai-integration)
 - [Design System](#design-system)
 - [Firestore Collections](#firestore-collections)
 - [Security Model](#security-model)
@@ -79,7 +80,7 @@ Built with **React 18 + Vite + TypeScript**, a gold-and-dark luxury design syste
 | State | Zustand with persist middleware |
 | Forms | React Hook Form + Zod validation |
 | Data Fetching | TanStack Query (React Query v5) |
-| AI | Google Gemini 2.5 Flash — called directly client-side |
+| AI | Google Gemini 2.5 Flash — via Replit AI Integrations (Vite proxy) |
 | Icons | Lucide React |
 | Error Handling | React ErrorBoundary wrapping all routes |
 
@@ -115,7 +116,7 @@ Built with **React 18 + Vite + TypeScript**, a gold-and-dark luxury design syste
 │   └── main.tsx              # Entry point — mounts AppProviders + App
 ├── public/                   # favicon.svg, og-image.png, robots.txt, sitemap.xml
 ├── index.html
-├── vite.config.ts
+├── vite.config.ts            # Vite config — dev proxy routes Gemini calls server-side
 ├── tailwind.config.js
 ├── postcss.config.js
 ├── tsconfig.json
@@ -138,7 +139,7 @@ Built with **React 18 + Vite + TypeScript**, a gold-and-dark luxury design syste
 
 - Node.js 20+
 - A Firebase project with **Authentication** and **Firestore** enabled
-- A Google Gemini API key — [get one free at Google AI Studio](https://aistudio.google.com/app/apikey)
+- Running on **Replit** — Gemini AI calls are handled automatically via Replit AI Integrations (no separate API key needed)
 
 ### 1. Install Dependencies
 
@@ -146,9 +147,9 @@ Built with **React 18 + Vite + TypeScript**, a gold-and-dark luxury design syste
 npm install
 ```
 
-### 2. Configure Environment Variables
+### 2. Configure Firebase Environment Variables
 
-Create `.env.local` in the project root (never commit this file):
+Set the following in your Replit **Secrets** tab (or `.env.local` for local dev):
 
 ```env
 VITE_FIREBASE_API_KEY=your_firebase_api_key
@@ -157,7 +158,6 @@ VITE_FIREBASE_PROJECT_ID=your-project-id
 VITE_FIREBASE_STORAGE_BUCKET=your-project.appspot.com
 VITE_FIREBASE_MESSAGING_SENDER_ID=your_sender_id
 VITE_FIREBASE_APP_ID=your_app_id
-VITE_GEMINI_API_KEY=your_gemini_api_key
 ```
 
 ### 3. Deploy Firestore Rules and Indexes
@@ -180,7 +180,7 @@ App runs at **http://localhost:5000**
 
 ## Environment Variables
 
-All variables are prefixed with `VITE_` so Vite bundles them into the client build at compile time.
+Firebase variables are prefixed with `VITE_` so Vite can include them in the client build. Gemini AI credentials are handled automatically by Replit AI Integrations — no manual key setup required.
 
 | Variable | Required | Description |
 |---|---|---|
@@ -190,9 +190,10 @@ All variables are prefixed with `VITE_` so Vite bundles them into the client bui
 | `VITE_FIREBASE_STORAGE_BUCKET` | Yes | Firebase storage bucket |
 | `VITE_FIREBASE_MESSAGING_SENDER_ID` | Yes | Firebase messaging sender ID |
 | `VITE_FIREBASE_APP_ID` | Yes | Firebase App ID |
-| `VITE_GEMINI_API_KEY` | Yes | Google Gemini API key — powers all AI features |
+| `AI_INTEGRATIONS_GEMINI_BASE_URL` | Auto | Set automatically by Replit AI Integrations |
+| `AI_INTEGRATIONS_GEMINI_API_KEY` | Auto | Set automatically by Replit AI Integrations |
 
-> **Note:** All `VITE_` variables are embedded in the browser bundle at build time. For higher security in production, consider proxying Gemini API calls through a Firebase Function.
+> **How Gemini works:** The Vite dev server reads `AI_INTEGRATIONS_GEMINI_BASE_URL` and `AI_INTEGRATIONS_GEMINI_API_KEY` from the environment at startup and uses them to proxy `/api/gemini/*` requests server-side. These values are never exposed to the browser bundle.
 
 ---
 
@@ -222,6 +223,34 @@ There is no automated admin creation — set it manually once:
 2. Open Firebase Console → **Firestore → users → `{your-uid}`**
 3. Edit the `role` field from `"user"` to `"admin"`
 4. The admin panel is now accessible at `/admin`
+
+---
+
+## AI Integration
+
+All AI features are powered by **Google Gemini 2.5 Flash** via Replit AI Integrations.
+
+### How It Works
+
+The Vite dev server acts as a secure proxy:
+
+```
+Browser  →  /api/gemini/*  →  Vite proxy (reads env vars)  →  Gemini API
+```
+
+- The Gemini endpoint and API key are read from `AI_INTEGRATIONS_GEMINI_BASE_URL` and `AI_INTEGRATIONS_GEMINI_API_KEY` inside `vite.config.ts` (Node.js context — never shipped to the browser)
+- No separate backend process is needed
+- No Gemini API key needs to be manually configured — Replit AI Integrations handles it automatically
+
+### AI Features
+
+| Feature | Location | Description |
+|---|---|---|
+| AI Credit Reviewer | `/ai-credit-reviewer` | Full credit profile analysis with score projections |
+| Dispute Letter Generator | `/dispute-letter-generator` | FCRA-compliant dispute letters per bureau |
+| AI Dispute Autopilot | `/ai-dispute-autopilot` | Parallel multi-item, multi-bureau letter packages |
+| AI Chat Widget | All pages | Floating credit advisor chatbot |
+| AI Service Content | Admin panel | AI-generated service descriptions and benefits |
 
 ---
 
@@ -334,10 +363,10 @@ Firebase CLI commands:
 
 | Symptom | Cause | Fix |
 |---|---|---|
-| `VITE_FIREBASE_API_KEY is not set` | Missing environment variable | Add all `VITE_*` vars to `.env.local` |
+| `VITE_FIREBASE_API_KEY is not set` | Missing environment variable | Add all `VITE_*` Firebase vars to Replit Secrets |
 | `auth/operation-not-allowed` | Email/Password not enabled | Enable it in Firebase Console → Authentication → Sign-in method |
 | Firestore `permission-denied` | Rules not deployed or admin role not set | Run `firebase deploy --only firestore:rules` |
-| AI tools return "API key not configured" | Missing Gemini key | Set `VITE_GEMINI_API_KEY` in environment variables |
+| AI tools return no response | Gemini integration not active | Ensure Replit AI Integrations (Gemini) is enabled for this project |
 | 404 on page refresh | SPA routing not configured | Ensure `vercel.json` or Firebase Hosting rewrites are active |
 | Admin panel shows no data | `role` field not set to `"admin"` | Edit user's Firestore document in Firebase Console |
 | Dispute packages not saving | Firestore subcollection rules missing | Ensure latest `firestore.rules` are deployed |
@@ -348,7 +377,7 @@ Firebase CLI commands:
 
 - Framer Motion is pinned to **v10** — v11+ has a dist structure incompatibility with Vite
 - `initializeFirestore` with `persistentLocalCache` is used, replacing the deprecated `enableIndexedDbPersistence`
-- The Gemini API is called **directly from the browser** using the `VITE_GEMINI_API_KEY`
+- Gemini API calls are proxied through the **Vite dev server** using Replit AI Integrations env vars — no API key is ever exposed to the browser
 - Deleting a user from the Admin panel removes their Firestore document only; their Firebase Auth account requires the Firebase Admin SDK to fully delete
 - The `v7_startTransition` future flag is set on `RouterProvider` to suppress the React Router v7 migration warning
 

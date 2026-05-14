@@ -5,7 +5,7 @@
   "type": "module",
   "description": "Proximity Credit Repair — React + Vite frontend with Firebase Auth, Firestore, and Google Gemini AI.",
   "scripts": {
-    "dev": "node server/index.js & vite",
+    "dev": "vite",
     "build": "tsc && vite build",
     "preview": "vite preview",
     "lint": "eslint src/ --ext .ts,.tsx",

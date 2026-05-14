@@ -324,3 +324,61 @@ Make the advice specific, actionable, and encouraging. Include at least 4-6 acti
     throw new Error('Could not parse AI response. Please try again.')
   }
 }
+
+// ── Service Content Generator ─────────────────────────────────────────────────
+
+export interface GeneratedServiceContent {
+  shortDescription: string
+  description: string
+  benefits: string[]
+}
+
+export async function generateServiceContent(
+  title: string
+): Promise<GeneratedServiceContent> {
+  const prompt = `You are a professional copywriter for Proximity Credit Repair, a premium credit repair firm.
+
+Write compelling marketing content for a credit repair service called: "${title}"
+
+Return ONLY valid JSON with exactly this structure (no markdown, no extra text):
+{
+  "shortDescription": "One concise sentence (max 120 chars) summarizing the service for cards and previews",
+  "description": "2-3 sentence paragraph (100-180 words) describing what the service is, how it works, and the outcome clients can expect. Professional, confident, and client-focused tone.",
+  "benefits": [
+    "Benefit one — specific and outcome-focused",
+    "Benefit two — specific and outcome-focused",
+    "Benefit three — specific and outcome-focused",
+    "Benefit four — specific and outcome-focused",
+    "Benefit five — specific and outcome-focused"
+  ]
+}
+
+Guidelines:
+- Write in second-person ("your credit", "you receive") or third-person about the firm
+- Benefits must be concrete and specific — no vague filler
+- Tone: premium, trustworthy, expert — match Proximity Credit Repair's brand voice
+- Reference FCRA, FDCPA, credit bureaus where relevant`
+
+  const response = await callGemini({
+    contents: [{ role: 'user', parts: [{ text: prompt }] }],
+    generationConfig: { temperature: 0.7, maxOutputTokens: 600 },
+  })
+
+  if (!response.ok) {
+    const err = await response.json().catch(() => ({}))
+    throw new Error(err?.error?.message || `Gemini error: ${response.status}`)
+  }
+
+  const data = await response.json()
+  const rawText: string = data?.candidates?.[0]?.content?.parts?.[0]?.text ?? ''
+
+  if (!rawText) throw new Error('No response from Gemini. Please try again.')
+
+  const cleaned = rawText.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim()
+
+  try {
+    return JSON.parse(cleaned) as GeneratedServiceContent
+  } catch {
+    throw new Error('Could not parse AI response. Please try again.')
+  }
+}

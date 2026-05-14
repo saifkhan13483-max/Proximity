@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Plus, Trash2, AlertCircle, RefreshCw, Pencil, X, Check, GripVertical, Star } from 'lucide-react'
+import { Plus, Trash2, AlertCircle, RefreshCw, Pencil, X, Check, GripVertical, Star, Sparkles } from 'lucide-react'
 import AdminLayout from '@components/layout/AdminLayout'
 import {
   fetchAdminServices,
@@ -9,6 +9,7 @@ import {
   deleteService,
   type AdminService,
 } from '@services/adminService'
+import { generateServiceContent } from '@services/geminiService'
 import {
   Dialog,
   DialogContent,
@@ -53,11 +54,38 @@ function ServiceModal({
 }) {
   const [form, setForm] = useState<FormState>(initial)
   const [saving, setSaving] = useState(false)
+  const [generating, setGenerating] = useState(false)
   const [error, setError] = useState('')
+  const [aiSuccess, setAiSuccess] = useState(false)
 
   useEffect(() => {
-    if (isOpen) { setForm(initial); setError('') }
+    if (isOpen) { setForm(initial); setError(''); setAiSuccess(false) }
   }, [isOpen, initial])
+
+  async function handleAIGenerate() {
+    if (!form.title.trim()) {
+      setError('Enter a service title first so AI knows what to write.')
+      return
+    }
+    setGenerating(true)
+    setError('')
+    setAiSuccess(false)
+    try {
+      const result = await generateServiceContent(form.title.trim())
+      setForm((f) => ({
+        ...f,
+        shortDescription: result.shortDescription,
+        description: result.description,
+        benefits: result.benefits.length > 0 ? result.benefits : f.benefits,
+      }))
+      setAiSuccess(true)
+      setTimeout(() => setAiSuccess(false), 3000)
+    } catch (e: unknown) {
+      setError(e instanceof Error ? e.message : 'AI generation failed. Please try again.')
+    } finally {
+      setGenerating(false)
+    }
+  }
 
   function updateField<K extends keyof FormState>(key: K, val: FormState[K]) {
     setForm((f) => ({ ...f, [key]: val }))
@@ -97,15 +125,38 @@ function ServiceModal({
     <Dialog open={isOpen} onOpenChange={(open) => { if (!open) onClose() }}>
       <DialogContent className="bg-[#111] border border-white/10 max-w-xl p-6 max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-xl bg-gold-primary/15 flex items-center justify-center">
-              <Star size={16} className="text-gold-primary" />
+          <div className="flex items-center justify-between gap-3">
+            <div className="flex items-center gap-3">
+              <div className="w-9 h-9 rounded-xl bg-gold-primary/15 flex items-center justify-center">
+                <Star size={16} className="text-gold-primary" />
+              </div>
+              <DialogTitle className="text-base">
+                {mode === 'add' ? 'Add New Service' : 'Edit Service'}
+              </DialogTitle>
             </div>
-            <DialogTitle className="text-base">
-              {mode === 'add' ? 'Add New Service' : 'Edit Service'}
-            </DialogTitle>
+            <button
+              type="button"
+              onClick={handleAIGenerate}
+              disabled={generating || saving}
+              title="Generate descriptions & benefits with AI"
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-gold-primary/10 border border-gold-primary/25 text-gold-primary font-body text-xs font-semibold hover:bg-gold-primary/20 transition-all disabled:opacity-40 disabled:cursor-not-allowed flex-shrink-0"
+            >
+              {generating ? (
+                <span className="w-3 h-3 border border-gold-primary/40 border-t-gold-primary rounded-full animate-spin" />
+              ) : (
+                <Sparkles size={12} />
+              )}
+              {generating ? 'Generating…' : 'Generate with AI'}
+            </button>
           </div>
         </DialogHeader>
+
+        {aiSuccess && (
+          <div className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-green-500/10 border border-green-500/20 text-green-400 font-body text-xs">
+            <Check size={13} />
+            AI content generated — review and save when ready.
+          </div>
+        )}
 
         <div className="space-y-4 mt-1">
           <div className="grid grid-cols-2 gap-3">

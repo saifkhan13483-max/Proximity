@@ -79,12 +79,12 @@ import { useState } from 'react'
         <div className="bg-hero-gradient py-20 px-4">
           <div className="container mx-auto text-center">
             <h1 className="text-h2 font-heading font-black text-white">About Us</h1>
-            <p className="text-muted-text text-caption mt-3">Home / About</p>
+            <p className="text-muted-text-dark text-caption mt-3">Home / About</p>
           </div>
         </div>
 
         <Section>
-          <SectionLabel>OUR MISSION</SectionLabel>
+          <SectionLabel className="text-[#8B6A2E]">OUR MISSION</SectionLabel>
           <div className="flex flex-col md:flex-row mt-6">
             <div className="w-full md:w-1.5 h-1.5 md:h-auto self-stretch bg-gold-gradient rounded-full mb-6 md:mb-0 md:mr-8 flex-shrink-0" />
             <blockquote className="text-h3 font-heading font-semibold text-body-text">
@@ -105,14 +105,14 @@ import { useState } from 'react'
               <Card key={v.title} variant="dark" hover>
                 <v.icon className="text-gold-primary mb-3" size={32} />
                 <h3 className="font-heading font-bold text-white mb-2">{v.title}</h3>
-                <p className="text-muted-text font-body text-caption">{v.description}</p>
+                <p className="text-muted-text-dark font-body text-caption">{v.description}</p>
               </Card>
             ))}
           </div>
         </Section>
 
         <Section alt>
-          <SectionLabel>OUR TEAM</SectionLabel>
+          <SectionLabel className="text-[#8B6A2E]">OUR TEAM</SectionLabel>
           <h2 className="font-heading font-bold text-h2 text-body-text mt-2 mb-12">
             Meet the Experts Behind Your Results
           </h2>

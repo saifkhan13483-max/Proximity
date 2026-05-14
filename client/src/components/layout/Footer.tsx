@@ -32,7 +32,7 @@ export default function Footer() {
                 </span>
               </div>
             </Link>
-            <p className="text-muted-text font-body text-caption leading-relaxed mb-6">
+            <p className="text-muted-text-dark font-body text-caption leading-relaxed mb-6">
               Rebuilding credit. Rebuilding lives.
             </p>
             {socialLinks.length > 0 && (
@@ -122,10 +122,10 @@ export default function Footer() {
         </div>
 
         <div className="flex flex-col md:flex-row justify-between items-center gap-2 pt-6">
-          <p className="text-muted-text text-caption">
+          <p className="text-muted-text-dark text-caption">
             © {new Date().getFullYear()} Proximity Credit Repair. All rights reserved.
           </p>
-          <p className="text-muted-text text-label italic">
+          <p className="text-muted-text-dark text-label italic">
             Results may vary. We do not guarantee specific credit score improvements.
           </p>
         </div>

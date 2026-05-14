@@ -26,7 +26,7 @@ export default function FinalCTABand() {
           initial="hidden"
           animate={inView ? 'visible' : 'hidden'}
           transition={{ delay: 0.15 }}
-          className="text-muted-text font-body text-body-lg mt-6 max-w-xl mx-auto"
+          className="text-muted-text-dark font-body text-body-lg mt-6 max-w-xl mx-auto"
         >
           Join 10,000+ clients who transformed their financial future with Proximity.
         </motion.p>

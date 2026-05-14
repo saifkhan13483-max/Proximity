@@ -40,7 +40,7 @@ export default function ServicesPreview() {
               <h3 className="font-heading font-bold text-white text-subheading">
                 {service.title}
               </h3>
-              <p className="text-muted-text font-body text-caption mt-2 flex-1">
+              <p className="text-muted-text-dark font-body text-caption mt-2 flex-1">
                 {service.shortDescription}
               </p>
               <Link

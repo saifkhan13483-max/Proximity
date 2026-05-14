@@ -84,19 +84,19 @@ function ServiceBlock({ service, index }: { service: Service; index: number }) {
             : <span className="text-gold-primary text-3xl font-bold">★</span>
           }
         </div>
-        <span className="font-heading font-bold text-gold-primary text-sm tracking-widest uppercase">
+        <span className={`font-heading font-bold text-sm tracking-widest uppercase ${isDark ? 'text-gold-primary' : 'text-[#8B6A2E]'}`}>
           Service {String(index + 1).padStart(2, '0')}
         </span>
       </div>
       <h2 className={`font-heading font-bold text-h3 mb-4 ${isDark ? 'text-white' : 'text-body-text'}`}>
         {service.title}
       </h2>
-      <p className={`font-body text-body-base leading-relaxed ${isDark ? 'text-muted-text' : 'text-body-text/80'}`}>
+      <p className={`font-body text-body-base leading-relaxed ${isDark ? 'text-muted-text-dark' : 'text-body-text/80'}`}>
         {service.description}
       </p>
       <Link
         to="/contact"
-        className="inline-flex items-center gap-2 text-gold-primary font-semibold text-sm mt-6 hover:text-gold-light transition-colors group w-fit"
+        className={`inline-flex items-center gap-2 font-semibold text-sm mt-6 transition-colors group w-fit ${isDark ? 'text-gold-primary hover:text-gold-light' : 'text-[#8B6A2E] hover:text-[#6B4918]'}`}
       >
         Get Started
         <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
@@ -113,7 +113,7 @@ function ServiceBlock({ service, index }: { service: Service; index: number }) {
         {service.benefits.map((benefit) => (
           <li key={benefit} className="flex items-start gap-3">
             <CheckCircle className="text-gold-primary flex-shrink-0 mt-0.5" size={20} />
-            <span className={`font-body text-body-base ${isDark ? 'text-muted-text' : 'text-body-text/80'}`}>
+            <span className={`font-body text-body-base ${isDark ? 'text-muted-text-dark' : 'text-body-text/80'}`}>
               {benefit}
             </span>
           </li>
@@ -189,17 +189,17 @@ export default function Services() {
             Everything You Need to<br />
             <span className="gold-gradient-text">Restore Your Credit</span>
           </h1>
-          <p className="text-muted-text font-body text-body-base max-w-xl mx-auto">
+          <p className="text-muted-text-dark font-body text-body-base max-w-xl mx-auto">
             Seven comprehensive services designed to repair, protect, and strengthen your credit — handled by certified specialists at every step.
           </p>
-          <p className="text-muted-text/50 text-caption mt-5">Home / Services</p>
+          <p className="text-muted-text-dark/50 text-caption mt-5">Home / Services</p>
         </div>
       </div>
 
       {/* Quick-nav overview */}
       <div className="bg-near-black py-14 px-4 border-b border-white/10">
         <div className="container mx-auto max-w-6xl">
-          <p className="text-center text-muted-text font-body text-sm mb-8 uppercase tracking-widest">
+          <p className="text-center text-muted-text-dark font-body text-sm mb-8 uppercase tracking-widest">
             Jump to a Service
           </p>
           <motion.div
@@ -232,7 +232,7 @@ export default function Services() {
           <h2 className="text-h2 font-heading font-semibold text-white mb-4">
             Not sure where to start?<br />Talk to an expert.
           </h2>
-          <p className="text-muted-text font-body text-body-base mb-10 max-w-lg mx-auto">
+          <p className="text-muted-text-dark font-body text-body-base mb-10 max-w-lg mx-auto">
             Our specialists will review your credit profile and recommend the right combination of services to hit your goals.
           </p>
           <Link to="/contact">

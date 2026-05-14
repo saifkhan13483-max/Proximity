@@ -64,7 +64,7 @@ export default function TestimonialsSlider() {
 
                 <div className="flex items-center gap-2 mb-4 relative z-10">
                   <Badge variant="neutral">{t.beforeScore}</Badge>
-                  <span className="text-muted-text text-sm">→</span>
+                  <span className="text-muted-text-dark text-sm">→</span>
                   <Badge variant="success">{t.afterScore}</Badge>
                 </div>
 

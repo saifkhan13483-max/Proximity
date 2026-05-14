@@ -166,7 +166,7 @@ function StepRow({ step, index }: { step: Step; index: number }) {
             <div className="w-12 h-[2px] bg-gradient-to-r from-[#D4AF72] to-[#B8924A] rounded-full mb-5" />
 
             {/* Short description */}
-            <p className="font-body text-[#808080] text-[0.88rem] leading-relaxed">
+            <p className="font-body text-[#9A9A9A] text-[0.88rem] leading-relaxed">
               {step.description.split('.')[0]}.
             </p>
 
@@ -202,7 +202,7 @@ export default function HowItWorks() {
 
         {/* Breadcrumb */}
         <div className="relative max-w-7xl mx-auto px-6 lg:px-10 text-center">
-          <p className="font-heading text-[0.7rem] tracking-[0.2em] uppercase text-[#5A5A5A] mb-6">
+          <p className="font-heading text-[0.7rem] tracking-[0.2em] uppercase text-[#8F8F8F] mb-6">
             Home&nbsp;&nbsp;/&nbsp;&nbsp;How It Works
           </p>
 
@@ -233,7 +233,7 @@ export default function HowItWorks() {
               initial={{ opacity: 0, y: 20 }}
               animate={heroInView ? { opacity: 1, y: 0 } : {}}
               transition={{ duration: 0.6, delay: 0.2 }}
-              className="font-body text-[#7A7A7A] text-base max-w-xl mx-auto leading-relaxed mb-10"
+              className="font-body text-[#9A9A9A] text-base max-w-xl mx-auto leading-relaxed mb-10"
             >
               Our structured, transparent process removes every obstacle between you and the credit score you deserve — with zero guesswork and full expert support at every stage.
             </motion.p>
@@ -289,7 +289,7 @@ export default function HowItWorks() {
                 <span className="font-heading font-black text-3xl lg:text-4xl bg-gradient-to-br from-[#D4AF72] to-[#8B6A2E] bg-clip-text text-transparent">
                   {stat.value}
                 </span>
-                <span className="font-body text-[#6A6A6A] text-[0.8rem] leading-snug max-w-[120px]">
+                <span className="font-body text-[#9A9A9A] text-[0.8rem] leading-snug max-w-[120px]">
                   {stat.label}
                 </span>
               </motion.div>
@@ -320,7 +320,7 @@ export default function HowItWorks() {
               <span className="block text-[#D4AF72]">Talk to an expert — free.</span>
             </h2>
 
-            <p className="font-body text-[#7A7A7A] text-[0.95rem] leading-relaxed mb-10 max-w-lg mx-auto">
+            <p className="font-body text-[#9A9A9A] text-[0.95rem] leading-relaxed mb-10 max-w-lg mx-auto">
               Your first consultation is completely free. No pressure, no commitment — just a straight answer on what it will take to fix your credit.
             </p>
 

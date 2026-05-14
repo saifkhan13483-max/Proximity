@@ -41,12 +41,12 @@ import { useState } from 'react'
         <div className="bg-hero-gradient py-20 px-4">
           <div className="container mx-auto text-center">
             <h1 className="text-h2 font-heading font-black text-white">Frequently Asked Questions</h1>
-            <p className="text-muted-text text-caption mt-3">Home / FAQ</p>
+            <p className="text-muted-text-dark text-caption mt-3">Home / FAQ</p>
           </div>
         </div>
 
         <Section>
-          <SectionLabel>HAVE QUESTIONS?</SectionLabel>
+          <SectionLabel className="text-[#8B6A2E]">HAVE QUESTIONS?</SectionLabel>
           <h2 className="font-heading font-bold text-h2 text-body-text mt-2 mb-4">
             Everything You Need to Know
           </h2>

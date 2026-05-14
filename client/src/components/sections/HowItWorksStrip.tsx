@@ -152,7 +152,7 @@ export default function HowItWorksStrip() {
             initial={{ opacity: 0, y: 18 }}
             animate={inView ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 0.6, delay: 0.2 }}
-            className="mt-4 font-body text-[#7A7A7A] text-[0.95rem] max-w-xl mx-auto leading-relaxed"
+            className="mt-4 font-body text-[#9A9A9A] text-[0.95rem] max-w-xl mx-auto leading-relaxed"
           >
             Our proven, structured approach removes the guesswork and puts your credit restoration on autopilot.
           </motion.p>

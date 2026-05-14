@@ -31,12 +31,12 @@ export default function Testimonials() {
       <div className="bg-hero-gradient py-20 px-4">
         <div className="container mx-auto text-center">
           <h1 className="text-h2 font-heading font-black text-white">Client Success Stories</h1>
-          <p className="text-muted-text text-caption mt-3">Home / Testimonials</p>
+          <p className="text-muted-text-dark text-caption mt-3">Home / Testimonials</p>
         </div>
       </div>
 
       <Section>
-        <SectionLabel>TRUSTED & VERIFIED</SectionLabel>
+        <SectionLabel className="text-[#8B6A2E]">TRUSTED & VERIFIED</SectionLabel>
         <h2 className="font-heading font-bold text-h2 text-body-text mt-2 mb-12">
           Why Clients Trust Proximity
         </h2>
@@ -46,7 +46,7 @@ export default function Testimonials() {
               <div className="flex flex-col items-center text-center">
                 <badge.icon className="text-gold-primary mb-3" size={40} />
                 <h3 className="font-heading font-bold text-body-text mb-1">{badge.label}</h3>
-                <p className="text-muted-text text-caption">{badge.sub}</p>
+                <p className="text-[#5C5C5C] text-caption">{badge.sub}</p>
               </div>
             </Card>
           ))}
@@ -54,7 +54,7 @@ export default function Testimonials() {
       </Section>
 
       <Section alt>
-        <SectionLabel>WHAT OUR CLIENTS SAY</SectionLabel>
+        <SectionLabel className="text-[#8B6A2E]">WHAT OUR CLIENTS SAY</SectionLabel>
         <h2 className="font-heading font-bold text-h2 text-body-text mt-2 mb-12">
           Real Results from Real People
         </h2>

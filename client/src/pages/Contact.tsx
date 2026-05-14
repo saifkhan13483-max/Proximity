@@ -90,14 +90,14 @@ export default function Contact() {
       <div className="bg-hero-gradient py-20 px-4">
         <div className="container mx-auto text-center">
           <h1 className="text-h2 font-heading font-black text-white">Contact Us</h1>
-          <p className="text-muted-text text-caption mt-3">Home / Contact</p>
+          <p className="text-muted-text-dark text-caption mt-3">Home / Contact</p>
         </div>
       </div>
 
       <Section>
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
           <div>
-            <SectionLabel>GET IN TOUCH</SectionLabel>
+            <SectionLabel className="text-[#8B6A2E]">GET IN TOUCH</SectionLabel>
             <h2 className="font-heading font-bold text-h2 text-body-text mt-2 mb-8">
               Let's Start Your Credit Journey
             </h2>

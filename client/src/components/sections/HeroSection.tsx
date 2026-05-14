@@ -94,7 +94,7 @@ export default function HeroSection() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.8, duration: 0.6 }}
-          className="font-body text-subheading text-muted-text mt-6 max-w-2xl"
+          className="font-body text-subheading text-muted-text-dark mt-6 max-w-2xl"
         >
           Proven strategies. Transparent process. Real results.
         </motion.p>

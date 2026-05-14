@@ -7,7 +7,7 @@ import { cn } from '@lib/utils'
 
 const WELCOME: ChatMessage = {
   role: 'model',
-  text: "Hi! I'm your AI Credit Advisor for Proximity Credit Repair. I know everything about our services, pricing, team, and free AI tools — and I can answer any credit repair question you have. What can I help you with?",
+  text: "Welcome to Proximity Credit Repair! 👋\n\nI'm your personal AI Credit Advisor — here to guide you through your credit journey, answer questions about our services, pricing, and free AI tools, or help you understand your next steps toward a stronger score.\n\nHow can I assist you today?",
 }
 
 export default function AIChatWidget() {
@@ -106,7 +106,7 @@ export default function AIChatWidget() {
                   )}
                   <div
                     className={cn(
-                      'max-w-[85%] rounded-2xl px-3.5 py-2.5 font-body text-sm leading-relaxed',
+                      'max-w-[85%] rounded-2xl px-3.5 py-2.5 font-body text-sm leading-relaxed whitespace-pre-wrap',
                       msg.role === 'user'
                         ? 'bg-gold-primary text-white rounded-tr-sm'
                         : 'bg-white/8 text-white/85 rounded-tl-sm border border-white/8'

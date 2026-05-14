@@ -1,43 +1,68 @@
 # Proximity Credit Repair
 
-A high-end, premium marketing website and client portal for a professional credit repair firm. Built with React 18 + Vite + TypeScript + Tailwind CSS v3, featuring a gold-and-dark luxury design system, AI-powered credit tools, Firebase Authentication, and a full admin panel.
+> A premium, full-service credit repair platform — marketing website, AI-powered tools, client portal, and admin panel.
+
+Built with **React 18 + Vite + TypeScript**, a gold-and-dark luxury design system, Google Gemini AI, Firebase Authentication, and Cloud Firestore. Pure frontend architecture — no backend server required.
 
 ---
 
-## Live Preview
+## Table of Contents
 
-> Deployed on Replit — run the **Start application** workflow to launch at port 5000.
+- [Features](#features)
+- [Tech Stack](#tech-stack)
+- [Project Structure](#project-structure)
+- [Getting Started](#getting-started)
+- [Environment Variables](#environment-variables)
+- [Firebase Setup](#firebase-setup)
+- [Deployment](#deployment)
+- [Design System](#design-system)
+- [Firestore Collections](#firestore-collections)
+- [Security Model](#security-model)
+- [Path Aliases](#path-aliases)
+- [Available Scripts](#available-scripts)
+- [Common Issues](#common-issues)
 
 ---
 
 ## Features
 
-### Public Marketing Site
-- **Home** — Full-screen animated hero with particle background, stat counters, services preview, how-it-works strip, testimonials slider, and CTA band
-- **About** — Mission statement, core values grid, and team showcase
-- **Services** — 7 detailed service sections with anchor navigation
-- **How It Works** — 4-step animated timeline
-- **Testimonials** — Trust badges and full testimonials grid
-- **FAQ** — Animated accordion organized by category
-- **Pricing** — 4 plan tiers with monthly/annual toggle
-- **Contact** — Split-layout form with Zod validation and animated success state
+### Public Marketing Website
 
-### AI-Powered Tools
-- **AI Credit Reviewer** (`/ai-credit-reviewer`) — Multi-step form → Gemini 2.0 Flash generates a full personalized credit analysis with action plan, score projections, and priority disputes
-- **Dispute Letter Generator** (`/dispute-letter-generator`) — Generate a single FCRA Section 611 dispute letter for any bureau/creditor
-- **AI Dispute Autopilot** (`/ai-dispute-autopilot`) — Add multiple items across multiple bureaus; generates the full letter package in parallel
-- **AI Chat Widget** — Floating credit advisor chatbot powered by Gemini, available on every page
+| Page | Route | Description |
+|---|---|---|
+| Home | `/` | Hero with particle canvas, animated stat counters, services preview, testimonials slider, CTA band |
+| About | `/about` | Mission, core values grid, full team showcase |
+| Services | `/services` | 7 detailed service sections with anchor navigation |
+| How It Works | `/how-it-works` | 4-step animated timeline with gold connector lines |
+| Pricing | `/pricing` | 4 plan tiers with monthly/annual billing toggle |
+| Testimonials | `/testimonials` | Trust badges, full testimonials grid, featured video |
+| FAQ | `/faq` | Animated accordion organized by category |
+| Contact | `/contact` | Split-layout form with Zod validation and animated success state |
 
-### Client Dashboard
-- Protected route (`/dashboard`) — requires authentication
-- View dispute history and credit review history saved to Firestore
-- Plan and account management
+### AI-Powered Tools (Free — No Sign-up Required)
 
-### Admin Panel
-- `/admin/dashboard` — Real-time stats: total users, new leads, plan distribution
-- `/admin/users` — Full user table with search, plan editing, and delete
-- `/admin/contacts` — All contact submissions with status management (New / In Progress / Resolved)
-- `/admin/services` — Full CRUD for the 7 service offerings
+| Tool | Route | Description |
+|---|---|---|
+| AI Credit Reviewer | `/ai-credit-reviewer` | Enter your credit profile → Gemini generates a full analysis with key strengths, critical issues, action plan, and 6/12/24-month score projections |
+| Dispute Letter Generator | `/dispute-letter-generator` | Generate a professional FCRA Section 611 dispute letter for any bureau, ready to print and mail |
+| AI Dispute Autopilot | `/ai-dispute-autopilot` | Add multiple dispute items across multiple bureaus — generates a complete letter package in parallel |
+| AI Chat Widget | Every page | Floating credit advisor chatbot with full knowledge of all site pages, services, pricing, and team |
+
+### Client Dashboard (Protected)
+
+- Firebase email/password authentication with persistent multi-tab sessions
+- View, track, and update dispute package history (Generated → Mailed → Under Review → Resolved)
+- Credit review history with full AI analysis reports
+- Account and plan management
+
+### Admin Panel (Protected)
+
+| Page | Route | Description |
+|---|---|---|
+| Dashboard | `/admin` | Real-time stats — total users, new leads, plan distribution |
+| Users | `/admin/users` | User table with search, plan editing, and delete |
+| Contacts | `/admin/contacts` | All contact submissions with New / In Progress / Resolved status management |
+| Services | `/admin/services` | Full CRUD for all 7 service offerings with AI-generated content |
 
 ---
 
@@ -47,15 +72,17 @@ A high-end, premium marketing website and client portal for a professional credi
 |---|---|
 | Framework | React 18 + Vite 5 (TypeScript) |
 | Styling | Tailwind CSS v3 + custom design tokens |
-| UI Primitives | shadcn/ui (Dialog, Label) via Radix UI |
+| UI Primitives | shadcn/ui (Dialog, Label) via Radix UI · class-variance-authority |
 | Animations | Framer Motion v10 |
-| Routing | React Router v6 (lazy-loaded + `v7_startTransition`) |
-| Auth & Database | Firebase Client SDK (Auth + Firestore) |
-| State | Zustand (with persist middleware) |
+| Routing | React Router v6 — lazy-loaded routes + `v7_startTransition` flag |
+| Auth | Firebase Authentication — Email/Password (Client SDK) |
+| Database | Cloud Firestore — Client SDK with persistent multi-tab cache |
+| State | Zustand with persist middleware |
 | Forms | React Hook Form + Zod validation |
 | Data Fetching | TanStack Query (React Query v5) |
-| AI | Google Gemini 2.0 Flash (via REST API) |
+| AI | Google Gemini 2.0 Flash — REST API, called client-side |
 | Icons | Lucide React |
+| Error Handling | React ErrorBoundary wrapping all routes |
 
 ---
 
@@ -63,38 +90,46 @@ A high-end, premium marketing website and client portal for a professional credi
 
 ```
 /
-├── client/                        # React + Vite frontend
+├── client/                             # React + Vite frontend
 │   ├── src/
 │   │   ├── components/
-│   │   │   ├── common/            # ProximityLogo, AIChatWidget
-│   │   │   ├── guards/            # ProtectedRoute, AdminRoute
-│   │   │   ├── layout/            # Navbar, Footer, AppLayout, SEOHead...
-│   │   │   ├── sections/          # Hero, ServicesPreview, Testimonials...
-│   │   │   └── ui/                # Button, Card, Input, Modal, Toast...
-│   │   ├── config/                # firebase.ts, site.ts, navigation.ts
-│   │   ├── data/                  # Static: services, testimonials, faqs, plans...
-│   │   ├── hooks/                 # useMediaQuery, useCountUp
-│   │   ├── lib/                   # animations.ts, utils.ts, validators.ts
-│   │   ├── pages/                 # Route-level pages + admin/
-│   │   ├── providers/             # AppProviders (QueryClient, ErrorBoundary, Auth)
-│   │   ├── services/              # authService, geminiService, adminService...
-│   │   ├── store/                 # authStore, uiStore, formStore, workflowStore
-│   │   ├── styles/                # globals.css (Tailwind + design tokens)
-│   │   └── types/                 # Shared TypeScript types
-│   ├── public/                    # favicon.svg, og-image.png, robots.txt
+│   │   │   ├── common/                 # ProximityLogo, AIChatWidget
+│   │   │   ├── guards/                 # ProtectedRoute, AdminRoute
+│   │   │   ├── layout/                 # Navbar, Footer, AppLayout, AdminLayout, SEOHead
+│   │   │   ├── sections/               # HeroSection, ServicesPreview, TestimonialsSlider…
+│   │   │   └── ui/                     # Button, Card, Input, Modal, Toast, Badge…
+│   │   ├── config/
+│   │   │   ├── firebase.ts             # Firebase app + Firestore init
+│   │   │   ├── site.ts                 # siteConfig + siteMetadata (single source of truth)
+│   │   │   └── navigation.ts           # Nav links and dropdown definitions
+│   │   ├── data/                       # Static content: services, testimonials, faqs, plans, team
+│   │   ├── hooks/                      # useCountUp, useMediaQuery
+│   │   ├── lib/                        # animations.ts, utils.ts (cn, formatPhone), validators.ts
+│   │   ├── pages/                      # Route-level page components
+│   │   │   └── admin/                  # AdminLogin, AdminDashboard, AdminUsers, AdminContacts, AdminServices
+│   │   ├── providers/                  # AppProviders — QueryClient, ErrorBoundary, AuthObserver
+│   │   ├── services/                   # authService, adminService, geminiService, contactService,
+│   │   │   │                           #   disputeHistoryService, planService
+│   │   ├── store/                      # authStore, uiStore, formStore, workflowStore (Zustand)
+│   │   ├── styles/                     # globals.css — Tailwind base + design tokens
+│   │   ├── types/                      # Shared TypeScript types
+│   │   ├── App.tsx                     # Router definition (all routes)
+│   │   └── main.tsx                    # Entry point — mounts AppProviders + App
+│   ├── public/                         # favicon.svg, og-image.png, robots.txt, sitemap.xml
 │   ├── index.html
 │   ├── vite.config.ts
 │   ├── tsconfig.json
+│   ├── vercel.json                     # SPA rewrites + security headers
 │   └── package.json
 │
 ├── shared/
-│   └── types/index.ts             # Firestore document shapes + API types
+│   └── types/index.ts                  # Shared TypeScript types (Firestore document shapes)
 │
-├── firestore.rules                # Firestore security rules
-├── firestore.indexes.json         # Composite indexes
-├── firebase.json                  # Firebase CLI config
-├── .firebaserc                    # Firebase project aliases
-├── DEPLOYMENT.md                  # Full deployment guide
+├── firestore.rules                     # Firestore security rules
+├── firestore.indexes.json              # Composite + single-field indexes
+├── firebase.json                       # Firebase CLI config (Firestore + Hosting)
+├── .firebaserc                         # Firebase project alias (proximity-2c866)
+├── DEPLOYMENT.md                       # Step-by-step deployment guide
 └── README.md
 ```
 
@@ -105,18 +140,19 @@ A high-end, premium marketing website and client portal for a professional credi
 ### Prerequisites
 
 - Node.js 20+
-- A Firebase project (Auth + Firestore enabled)
-- A Google Gemini API key ([get one here](https://aistudio.google.com/app/apikey))
+- A Firebase project with **Authentication** and **Firestore** enabled
+- A Google Gemini API key — [get one free at Google AI Studio](https://aistudio.google.com/app/apikey)
 
 ### 1. Install Dependencies
 
 ```bash
+# Install root + client dependencies
 npm run install:all
 ```
 
 ### 2. Configure Environment Variables
 
-Create `client/.env.local`:
+Create `client/.env.local` (never commit this file):
 
 ```env
 VITE_FIREBASE_API_KEY=your_firebase_api_key
@@ -128,16 +164,15 @@ VITE_FIREBASE_APP_ID=your_app_id
 VITE_GEMINI_API_KEY=your_gemini_api_key
 ```
 
-### 3. Deploy Firestore Rules
+### 3. Deploy Firestore Rules and Indexes
 
 ```bash
 npm install -g firebase-tools
 firebase login
-firebase use your-project-id
-firebase deploy --only firestore:rules,firestore:indexes
+firebase deploy --only firestore
 ```
 
-### 4. Start Development Server
+### 4. Start the Development Server
 
 ```bash
 npm run dev
@@ -147,38 +182,157 @@ App runs at **http://localhost:5000**
 
 ---
 
-## Available Scripts
+## Environment Variables
+
+All variables are prefixed with `VITE_` so Vite bundles them into the client build at compile time.
+
+| Variable | Required | Description |
+|---|---|---|
+| `VITE_FIREBASE_API_KEY` | Yes | Firebase Web API key |
+| `VITE_FIREBASE_AUTH_DOMAIN` | Yes | Firebase Auth domain (e.g. `project.firebaseapp.com`) |
+| `VITE_FIREBASE_PROJECT_ID` | Yes | Firebase project ID |
+| `VITE_FIREBASE_STORAGE_BUCKET` | Yes | Firebase storage bucket |
+| `VITE_FIREBASE_MESSAGING_SENDER_ID` | Yes | Firebase messaging sender ID |
+| `VITE_FIREBASE_APP_ID` | Yes | Firebase App ID |
+| `VITE_GEMINI_API_KEY` | Yes | Google Gemini API key — powers all AI features |
+
+> **Note:** Because these are `VITE_` prefixed, they are visible in the compiled JavaScript bundle. For production, consider proxying Gemini API calls through a Firebase Function or server to protect the Gemini key.
+
+---
+
+## Firebase Setup
+
+### Enable Authentication
+
+1. Firebase Console → **Authentication → Sign-in method**
+2. Enable **Email/Password** → Save
+
+### Enable Firestore
+
+1. Firebase Console → **Firestore Database → Create database**
+2. Start in **Production mode** → choose your region → Enable
+
+### Deploy Security Rules and Indexes
 
 ```bash
-npm run dev          # Start Vite dev server (port 5000)
-npm run build        # Production build → client/dist
-npm run preview      # Preview production build
-npm run typecheck    # TypeScript type check
-npm run lint         # ESLint on client/src
-npm run install:all  # Install all dependencies
+firebase deploy --only firestore
 ```
+
+### Create the First Admin Account
+
+There is no automated admin creation — set it manually once:
+
+1. Register a normal account via `/register`
+2. Open Firebase Console → **Firestore → users → `{your-uid}`**
+3. Edit the `role` field from `"user"` to `"admin"`
+4. The admin panel is now accessible at `/admin`
+
+---
+
+## Deployment
+
+### Vercel (Recommended)
+
+1. Push the repository to GitHub
+2. Import the project at [vercel.com](https://vercel.com) → **Add New Project**
+3. Set configuration:
+   - **Root Directory:** `client`
+   - **Framework Preset:** Vite
+   - **Build Command:** `npm run build`
+   - **Output Directory:** `dist`
+4. Add all `VITE_*` environment variables in **Project Settings → Environment Variables**
+5. Click **Deploy**
+
+The included `client/vercel.json` automatically configures:
+- SPA routing rewrites (`/* → /index.html`)
+- Long-term asset caching (`/assets/**`)
+- Security headers (HSTS, X-Frame-Options, X-Content-Type-Options, Referrer-Policy, Permissions-Policy)
+
+### Firebase Hosting (Alternative)
+
+```bash
+npm run build --prefix client
+firebase deploy --only hosting
+```
+
+### Replit Deployments
+
+1. All `VITE_*` secrets are managed in the Replit **Secrets** panel
+2. The **Start application** workflow runs `npm run dev --prefix client`
+3. Use **Replit Deployments** to publish — it runs `npm run build --prefix client` and serves `dist/`
+
+For the full step-by-step guide, see **[DEPLOYMENT.md](./DEPLOYMENT.md)**.
 
 ---
 
 ## Design System
 
-The luxury gold-and-dark design system is defined in `client/src/styles/globals.css` and extended in `tailwind.config.js`.
+The luxury gold-and-dark design system is defined in `client/src/styles/globals.css` and extended via Tailwind.
 
-| Token | Value |
-|---|---|
-| Gold Primary | `#B8924A` |
-| Gold Light | `#D4AF72` |
-| Gold Dark | `#8B6A2E` |
-| Near Black | `#0A0A0A` |
-| Off White | `#F9F6F1` |
-| Heading Font | Montserrat (400, 600, 700, 800) |
-| Body Font | Open Sans (400, 600) |
+| Token | Value | Usage |
+|---|---|---|
+| Gold Primary | `#B8924A` | Buttons, borders, accents, highlights |
+| Gold Light | `#D4AF72` | Hover states, gradient end |
+| Gold Dark | `#8B6A2E` | Gradient start, deep accents |
+| Near Black | `#0A0A0A` | Page backgrounds |
+| Off White | `#F9F6F1` | Body text on dark backgrounds |
+| Heading Font | Montserrat (600, 700, 800) | All headings and labels |
+| Body Font | Open Sans (400, 600) | All body text and UI |
+
+---
+
+## Firestore Collections
+
+| Collection | Document ID | Purpose |
+|---|---|---|
+| `users/{uid}` | Firebase Auth UID | User profiles — name, email, plan, role, creditScore |
+| `contacts/{id}` | UUID (v4) | Contact form submissions — managed in admin panel |
+| `services/{slug}` | Service slug (e.g. `credit-analysis`) | Service offerings — admin CRUD, publicly readable |
+| `users/{uid}/disputePackages/{id}` | Auto ID | AI-generated dispute letter packages |
+| `users/{uid}/creditReviews/{id}` | Auto ID | AI credit review analysis history |
+
+---
+
+## Security Model
+
+Firestore security rules are the **sole access control layer** — there is no backend server.
+
+```
+users/{userId}
+  ├── read       owner or admin
+  ├── create     owner only  (role field must be "user")
+  ├── update     owner (safe fields only, cannot change role/email) OR admin
+  └── delete     admin only
+
+users/{userId}/disputePackages/{packageId}
+  ├── read       owner only
+  ├── create     owner only
+  ├── update     owner only (status field only)
+  └── delete     owner or admin
+
+users/{userId}/creditReviews/{reviewId}
+  ├── read       owner only
+  ├── create     owner only
+  └── delete     owner or admin
+
+contacts/{contactId}
+  ├── create     anyone  (public contact form, no auth required)
+  └── read / update / delete   admin only
+
+services/{serviceId}
+  ├── read       anyone  (public website)
+  └── create / update / delete   admin only
+
+all other paths   denied
+```
+
+**Admin role** is determined by reading `role: "admin"` from the user's own Firestore document using `get()`. It is not stored as a Firebase custom claim.
 
 ---
 
 ## Path Aliases
 
-All aliases are configured in both `vite.config.ts` and `tsconfig.json`.
+Configured in both `vite.config.ts` and `tsconfig.json`.
 
 | Alias | Resolves To |
 |---|---|
@@ -198,37 +352,51 @@ All aliases are configured in both `vite.config.ts` and `tsconfig.json`.
 
 ---
 
-## Authentication & Security
+## Available Scripts
 
-- **Auth:** Firebase Email/Password + optional Google Sign-In
-- **Database:** Firestore Client SDK — all reads/writes directly from the browser
-- **Security:** Firestore rules are the sole access control layer (no backend server)
-- **Token Refresh:** Automatic via `onIdTokenChanged` listener in `AppProviders`
-- **Admin Role:** `role: 'admin'` field on the Firestore user document — set manually for the first admin in the Firebase Console
+Run from the project root:
 
----
-
-## Firestore Collections
-
-| Collection | Description |
+| Command | Description |
 |---|---|
-| `users/{uid}` | User profiles — synced with Firebase Auth |
-| `contacts/{id}` | Contact form submissions |
-| `services/{slug}` | Service offerings (admin-managed) |
-| `users/{uid}/disputePackages` | AI-generated dispute letter packages |
-| `users/{uid}/creditReviews` | AI credit review history |
+| `npm run dev` | Start Vite dev server on port 5000 |
+| `npm run build` | Production build → `client/dist` |
+| `npm run preview` | Preview the production build locally |
+| `npm run typecheck` | TypeScript type check (no emit) |
+| `npm run lint` | ESLint on `client/src` |
+| `npm run install:all` | Install root + client dependencies |
+
+Firebase CLI commands:
+
+| Command | Description |
+|---|---|
+| `firebase deploy --only firestore` | Deploy rules and indexes |
+| `firebase deploy --only firestore:rules` | Deploy rules only |
+| `firebase deploy --only firestore:indexes` | Deploy indexes only |
+| `firebase deploy --only hosting` | Deploy to Firebase Hosting |
 
 ---
 
-## Deployment
+## Common Issues
 
-See **[DEPLOYMENT.md](./DEPLOYMENT.md)** for the full step-by-step guide covering:
-- Firebase project setup
-- Firestore rules and indexes deployment
-- Vercel deployment configuration
-- Replit deployment
-- Environment variable reference
-- Production verification checklist
+| Symptom | Cause | Fix |
+|---|---|---|
+| `VITE_FIREBASE_API_KEY is not set` | Missing environment variable | Add all `VITE_*` vars to `client/.env.local` or your hosting secrets panel |
+| `auth/operation-not-allowed` | Email/Password not enabled in Firebase | Enable it under Firebase Console → Authentication → Sign-in method |
+| Firestore `permission-denied` | Rules not deployed or admin role not set | Run `firebase deploy --only firestore:rules` |
+| AI tools return "API key not configured" | Missing Gemini key | Set `VITE_GEMINI_API_KEY` in environment variables |
+| 404 on page refresh | SPA routing not configured | Ensure `vercel.json` or Firebase Hosting rewrites are active |
+| Admin panel shows no data | `role` field not set to `"admin"` | Edit the user's Firestore document manually in Firebase Console |
+| Dispute packages not saving | Firestore subcollection rules missing | Ensure latest `firestore.rules` are deployed |
+
+---
+
+## Notes
+
+- Framer Motion is pinned to **v10** — v11+ has a dist structure incompatibility with Vite
+- `initializeFirestore` with `persistentLocalCache` is used, replacing the deprecated `enableIndexedDbPersistence`
+- The Gemini API is called **client-side** — the API key is embedded in the browser bundle. For higher security in production, proxy AI requests through a Firebase Function or backend
+- Deleting a user from the Admin panel removes their Firestore document only. Their Firebase Auth account remains (requires the Firebase Admin SDK + a server environment to fully delete)
+- The `v7_startTransition` future flag is set on `RouterProvider` to suppress the React Router v7 migration warning
 
 ---
 

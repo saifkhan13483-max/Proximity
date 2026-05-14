@@ -354,7 +354,7 @@ export default function Dashboard() {
                     </div>
                     <Link
                       to="/pricing"
-                      className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-gold-gradient text-white font-heading font-bold text-xs shadow-gold-sm hover:shadow-gold-md transition-all whitespace-nowrap"
+                      className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-gold-gradient text-near-black font-heading font-bold text-xs shadow-gold-sm hover:shadow-gold-md transition-all whitespace-nowrap"
                     >
                       <Zap size={11} /> Upgrade Now
                     </Link>
@@ -368,7 +368,7 @@ export default function Dashboard() {
                     </p>
                     <Link
                       to="/pricing"
-                      className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-gold-gradient text-white font-heading font-bold text-xs shadow-gold-sm hover:shadow-gold-md transition-all whitespace-nowrap"
+                      className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-gold-gradient text-near-black font-heading font-bold text-xs shadow-gold-sm hover:shadow-gold-md transition-all whitespace-nowrap"
                     >
                       <Zap size={11} /> View Plans
                     </Link>
@@ -772,7 +772,7 @@ export default function Dashboard() {
                   <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5 flex-shrink-0">
                     <a
                       href="/contact"
-                      className="inline-flex items-center justify-center gap-2 bg-gold-gradient text-white font-heading font-bold text-sm rounded-xl px-5 py-2.5 hover:opacity-90 transition-opacity shadow-gold-sm whitespace-nowrap"
+                      className="inline-flex items-center justify-center gap-2 bg-gold-gradient text-near-black font-heading font-bold text-sm rounded-xl px-5 py-2.5 hover:opacity-90 transition-opacity shadow-gold-sm whitespace-nowrap"
                     >
                       Book Consultation <ArrowRight size={14} />
                     </a>

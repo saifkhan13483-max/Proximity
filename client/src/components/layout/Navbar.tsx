@@ -685,7 +685,7 @@ export default function Navbar() {
                     <Link
                       to={adminUser ? '/admin' : '/dashboard'}
                       onClick={closeMobileMenu}
-                      className="flex items-center justify-center gap-2 w-full py-3 rounded-pill bg-gold-gradient text-white font-heading font-bold text-sm shadow-gold-sm"
+                      className="flex items-center justify-center gap-2 w-full py-3 rounded-pill bg-gold-gradient text-near-black font-heading font-bold text-sm shadow-gold-sm"
                     >
                       <LayoutDashboard size={14} />
                       {adminUser ? 'Admin Panel' : 'My Dashboard'}
@@ -703,7 +703,7 @@ export default function Navbar() {
                     <Link
                       to="/register"
                       onClick={closeMobileMenu}
-                      className="flex items-center justify-center gap-2 w-full py-3 rounded-pill bg-gold-gradient text-white font-heading font-bold text-sm shadow-gold-sm"
+                      className="flex items-center justify-center gap-2 w-full py-3 rounded-pill bg-gold-gradient text-near-black font-heading font-bold text-sm shadow-gold-sm"
                     >
                       Get Started <ArrowRight size={14} />
                     </Link>

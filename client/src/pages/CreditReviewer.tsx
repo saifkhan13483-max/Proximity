@@ -372,7 +372,7 @@ function ResultCard({
             <div className="flex flex-col sm:flex-row gap-3 justify-center">
               <button
                 onClick={onAutomate}
-                className="flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl bg-gold-gradient text-white font-heading font-bold text-sm shadow-gold-md hover:shadow-gold-lg transition-all duration-200"
+                className="flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl bg-gold-gradient text-near-black font-heading font-bold text-sm shadow-gold-md hover:shadow-gold-lg transition-all duration-200"
               >
                 <Wand2 size={16} />
                 Auto-Generate Dispute Package

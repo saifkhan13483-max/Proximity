@@ -90,7 +90,7 @@ export default function TestimonialsSlider() {
           <button
             onClick={goPrev}
             aria-label="Previous testimonial"
-            className="w-10 h-10 rounded-full border border-gold-primary/40 text-gold-primary flex items-center justify-center hover:bg-gold-primary hover:text-white transition-colors"
+            className="w-10 h-10 rounded-full border border-gold-primary/40 text-gold-primary flex items-center justify-center hover:bg-gold-primary hover:text-near-black transition-colors"
           >
             <ChevronLeft size={20} />
           </button>
@@ -112,7 +112,7 @@ export default function TestimonialsSlider() {
           <button
             onClick={goNext}
             aria-label="Next testimonial"
-            className="w-10 h-10 rounded-full border border-gold-primary/40 text-gold-primary flex items-center justify-center hover:bg-gold-primary hover:text-white transition-colors"
+            className="w-10 h-10 rounded-full border border-gold-primary/40 text-gold-primary flex items-center justify-center hover:bg-gold-primary hover:text-near-black transition-colors"
           >
             <ChevronRight size={20} />
           </button>

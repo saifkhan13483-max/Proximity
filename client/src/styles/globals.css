@@ -366,7 +366,7 @@ body {
      │ Default     │ #D4A853   │ gold.accessible — 8.98:1 on dark          │
      │ Hover       │ #E8C97A   │ +10%L — within safe ΔL threshold          │
      │ Active      │ #B8924A   │ gold.DEFAULT — momentary press            │
-     │ Visited     │ #7A5E2C   │ warm bronze — visually distinct from all  │
+     │ Visited     │ #9B7A38   │ gold.muted token — 4.7:1 on dark, AA ✅  │
      │ Focus-ring  │ #D4A853   │ 2px, 2px offset — same as default         │
      └─────────────┴───────────┴───────────────────────────────────────────┘
      ──────────────────────────────────────────────────────────────────── */
@@ -383,7 +383,7 @@ body {
     color: #B8924A;
   }
   .link-gold:visited {
-    color: #7A5E2C;   /* warm bronze — distinguishable but same gold family */
+    color: #9B7A38;   /* gold.muted token — 4.7:1 on dark, AA Normal pass   */
   }
   .link-gold:focus-visible {
     outline: 2px solid #D4A853;
@@ -461,21 +461,21 @@ body {
      Solution: dual-signal approach:
        1. Background shifts to #282620 (1.22:1 vs card — still subtle but
           more consistent across panel calibrations)
-       2. 1px gold-tinted top border (rgba(212,168,83,0.30)) provides a
+       2. inset box-shadow top edge (rgba(212,168,83,0.30)) provides a
           non-luminance redundant visual cue that is perceptible even when
           the background ΔL is lost to display variance or ambient wash-out
 
-     The border-top acts as a "selection stripe" — a pattern augmentation
-     technique that doesn't rely on background contrast alone.
+     box-shadow: inset is used instead of border-top so the gold stripe
+     survives border-collapse: collapse on <table> rows, where border-top
+     is consumed by the collapse algorithm and never rendered.
      ──────────────────────────────────────────────────────────────────── */
   .admin-row {
     @apply transition-all duration-150;
     background: transparent;
-    border-top: 1px solid transparent;
   }
   .admin-row:hover {
     background: #282620;
-    border-top-color: rgba(212,168,83,0.30);
+    box-shadow: inset 0 1px 0 rgba(212,168,83,0.30);
   }
 }
 
@@ -579,5 +579,50 @@ div[style*="z-index: 9999"][style*="position: fixed"] > a[href*="replit.com"] {
   .glass-card,
   [class*="rounded-card"] {
     break-inside: avoid;
+  }
+}
+
+/* ─── @media (forced-colors: active) — Windows High Contrast Mode ────────────
+   WHY THIS MATTERS:
+   Windows High Contrast Mode (WHCM) strips all custom colors, backgrounds,
+   box-shadows, and gradients, replacing them with a small set of system colors.
+   Without explicit overrides:
+     • Gradient buttons become invisible (no background, dark text on dark OS bg)
+     • Focus rings may vanish if outline colors are overridden by the cascade
+     • Gold borders are erased, leaving buttons with no visible boundary
+
+   STRATEGY:
+   1. forced-color-adjust: none on .btn-primary preserves the gold gradient —
+      critical because the gradient IS the primary brand signal.
+   2. Explicit border: 1px solid ButtonText on all button variants ensures they
+      remain visible when backgrounds are stripped by the OS.
+   3. Focus rings are remapped to the system Highlight color so they remain
+      perceptible against any WHCM theme (white-on-black or black-on-white).
+
+   ACCESSIBILITY NOTE: This demographic (credit-repair customers) skews older
+   and has higher rates of low-vision and Windows usage. WHCM support is a
+   legal and ethical accessibility requirement.
+   ──────────────────────────────────────────────────────────────────────── */
+@media (forced-colors: active) {
+  /* Preserve gold gradient on primary button — opt out of forced-color override */
+  .btn-primary {
+    forced-color-adjust: none;
+  }
+
+  /* Ensure all button variants have a visible boundary when backgrounds are stripped */
+  .btn-primary,
+  .btn-secondary,
+  .btn-ghost {
+    border: 1px solid ButtonText;
+  }
+
+  /* Remap all focus rings to the system Highlight color */
+  *:focus-visible,
+  .btn-primary:focus-visible,
+  .btn-secondary:focus-visible,
+  .btn-ghost:focus-visible,
+  .link-gold:focus-visible,
+  .input-field:focus {
+    outline-color: Highlight;
   }
 }

@@ -44,7 +44,8 @@ export default function AIChatWidget() {
       const reply = await sendChatMessage(newHistory.filter(m => m.role === 'user' || m !== WELCOME))
       setMessages(prev => [...prev, { role: 'model', text: reply }])
       if (!open) setHasNew(true)
-    } catch {
+    } catch (err) {
+      console.error('[AIChatWidget] Gemini error:', err)
       setMessages(prev => [...prev, { role: 'model', text: 'Sorry, I ran into an issue. Please try again in a moment.' }])
     } finally {
       setLoading(false)

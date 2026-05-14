@@ -9,6 +9,13 @@ export default defineConfig({
     port: 5000,
     strictPort: true,
     allowedHosts: true,
+    proxy: {
+      '/api/gemini': {
+        target: 'http://localhost:1106/modelfarm/gemini',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api\/gemini/, ''),
+      },
+    },
   },
   preview: {
     host: '0.0.0.0',

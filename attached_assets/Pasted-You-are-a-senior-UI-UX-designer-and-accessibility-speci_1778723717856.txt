@@ -1,0 +1,61 @@
+You are a senior UI/UX designer and accessibility specialist with expertise in luxury brand design systems, WCAG 2.2 compliance, and Tailwind CSS / shadcn/ui token architecture. I need you to audit and refine the color palette for Proximity Credit Repair — a high-end credit repair marketing site and client portal built with React 18 + Vite + Tailwind CSS v3 + shadcn/ui + Framer Motion.
+
+Current Design Philosophy (preserve this)
+
+The brand is built around a "gold on dark" luxury aesthetic:
+
+Dark layered backgrounds: #0A0A0A → #141414 → #1A1A1A
+Signature gold #B8924A appears on every interactive element
+Warm off-white #F9F6F1 used instead of pure white to maintain warmth
+Diagonal gold gradient (#B8924A → #D4AF72 → #8B6A2E at 135deg) across buttons, text highlights, dividers
+The Problem to Solve
+
+The current palette looks premium but has real-world readability and accessibility issues:
+
+Gold #B8924A on dark backgrounds may fail WCAG AA contrast (4.5:1 for body text, 3:1 for large text/UI).
+Muted text #6B6B6B on white likely sits below AA contrast.
+Body text #1A1A1A on #F9F6F1 is fine, but on #141414 cards it would be invisible — clarify which surface owns which text token.
+Gold gradients can lose legibility when used on text (especially small text and on light surfaces).
+There's no clearly defined semantic state palette (success, warning, info, destructive-on-dark) that harmonizes with gold.
+Hover, active, focus, and disabled states aren't explicitly defined — they're often the weakest link in luxury sites.
+The dark-mode token set (for /dashboard and /admin) isn't fully specified — only light-mode shadcn tokens are listed.
+What I Want You to Produce
+
+Deliver a refined color system with the following sections, in order:
+
+Contrast Audit Table — For every existing foreground/background pairing actually used on the site (gold on near-black, muted on off-white, body on card-black, gold gradient text on dark, etc.), give: contrast ratio, WCAG AA pass/fail for normal text, AA pass/fail for large text, and AAA status. Flag every failure.
+
+Refined Core Palette — Adjusted hex values that:
+
+Keep the brand identity instantly recognizable (same gold family, same warm darks)
+Pass WCAG AA on every intended pairing
+Include a brighter "Gold Accessible" variant specifically for small text and icons on dark backgrounds (target ≥ 4.5:1 against #0A0A0A and #141414)
+Keep the original #B8924A as a decorative-only token for large surfaces, borders, and shadows where contrast isn't critical
+Expanded Neutral Scale — A full 10-step warm-neutral ramp (50–950) for the dark side and a parallel warm off-white ramp for the light side, so I can stop hand-picking hex values and use tokens like surface-100, surface-200, etc.
+
+Semantic State Colors — Success, warning, info, destructive — each with a "default," "on-dark," and "on-light" variant that harmonizes with gold (no clashing cool blues or harsh reds; lean toward muted, slightly desaturated tones with warm undertones).
+
+Interaction States — Explicit values for default / hover / active / focus / disabled for: primary gold button, secondary outlined button, ghost button, input field, and link. Specify focus-ring color, width, and offset.
+
+Gradient Refinements — Revised gold gradient stops, plus guidance on when gradients should never be used (e.g., body text under 18px, on light backgrounds, on disabled states). Provide an alternative "solid accessible gold" for those cases.
+
+Shadow Re-tuning — The current gold shadows at 0.20 / 0.35 / 0.50 opacity may be too aggressive. Suggest opacity and blur values calibrated for #0A0A0A backgrounds vs. #F9F6F1 light surfaces.
+
+Complete Dark-Mode shadcn Token Set — Full HSL values for --background, --foreground, --card, --card-foreground, --popover, --primary, --primary-foreground, --secondary, --muted, --muted-foreground, --accent, --destructive, --border, --input, --ring — tuned for the dashboard and admin panel.
+
+Tailwind Config Snippet — Drop-in theme.extend.colors block I can paste into tailwind.config.ts, using semantic naming (e.g., gold.DEFAULT, gold.accessible, gold.muted, surface.base, surface.raised, surface.overlay).
+
+CSS Variables Block — A :root and .dark CSS custom property block ready for globals.css, matching shadcn's HSL convention.
+
+Usage Rules (one-paragraph each, no bullet lists) — When to reach for each gold variant, when to use gradient vs. solid, how to layer surfaces (#0A0A0A base → #141414 cards → #1A1A1A raised), and how to handle text on gold-filled buttons.
+
+Before/After Comparison — For five high-impact components (primary CTA button, hero headline with gradient text, muted helper text on form, testimonial card on dark, admin table row hover), show the old hex pairing → new hex pairing → contrast ratio improvement.
+
+Constraints
+
+Do not introduce any cool/blue undertones — keep everything warm (gold, champagne, bronze, warm charcoal).
+Do not exceed 3 gold variants total (one decorative, one accessible, one muted/disabled).
+Every color must be expressible as both hex and HSL.
+Final palette must work with Framer Motion fade/scale animations without "flashing" between states (avoid huge lightness jumps in hover transitions — keep deltas ≤ 10% L).
+Fonts in use are Montserrat (headings) and Open Sans (body) — factor font weight into contrast recommendations (thin weights need higher contrast).
+Output Format Use clear markdown headers for each of the 12 sections. Tables for palette and contrast data. Code blocks for Tailwind config and CSS variables. Prose for usage rules. End with a short "migration checklist" of which files in a typical Vite + shadcn project I should update.

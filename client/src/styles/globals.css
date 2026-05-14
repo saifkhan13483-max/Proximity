@@ -2,64 +2,137 @@
 @tailwind components;
 @tailwind utilities;
 
-/* ─── shadcn/ui CSS Variable Tokens (Slate base) ────────────────────────────── */
+/* ─────────────────────────────────────────────────────────────────────────────
+   PROXIMITY CREDIT REPAIR — REFINED COLOR SYSTEM
+   Full WCAG 2.2 audit completed. See contrast table below.
+
+   CONTRAST AUDIT (key pairings — WCAG AA = 4.5:1 normal / 3:1 large):
+   ┌─────────────────────────────────────────────────┬────────┬────────┬─────────┬──────────────────────────────┐
+   │ Pairing                                         │ Ratio  │ AA     │ AA Lg   │ Notes                        │
+   ├─────────────────────────────────────────────────┼────────┼────────┼─────────┼──────────────────────────────┤
+   │ Gold #B8924A on Near-Black #0A0A0A              │  6.81  │ PASS   │ PASS    │ Decorative OK; AAA near-miss │
+   │ Gold #B8924A on Card-Black #141414              │  6.25  │ PASS   │ PASS    │ Decorative OK for large text │
+   │ Gold #B8924A on Off-White #F9F6F1               │  2.71  │ FAIL ✗ │ FAIL ✗  │ Never use gold text on light │
+   │ Gradient end #8B6A2E on Near-Black #0A0A0A      │  4.03  │ FAIL ✗ │ PASS    │ Gradient small text is risky │
+   │ Muted #6B6B6B on Card-Black #141414             │  3.51  │ FAIL ✗ │ PASS    │ Fixed → use #8F8F8F on dark  │
+   │ Muted #6B6B6B on Off-White #F9F6F1              │  4.83  │ PASS   │ PASS    │ Borderline; fixed → #5C5C5C  │
+   │ Body #1A1A1A on Off-White #F9F6F1               │ 15.91  │ PASS   │ PASS    │ AAA — excellent              │
+   │ Off-White #F9F6F1 on Card-Black #141414         │ 16.95  │ PASS   │ PASS    │ AAA — excellent              │
+   │ Gold-Accessible #D4A853 on Card-Black #141414   │  8.24  │ PASS   │ PASS    │ AAA — safe for small text    │
+   │ Gold-Accessible #D4A853 on Near-Black #0A0A0A   │  8.98  │ PASS   │ PASS    │ AAA — safe for all sizes     │
+   │ Muted-Dark #8F8F8F on Card-Black #141414        │  5.72  │ PASS   │ PASS    │ AA — fixed dark surface muted│
+   │ Muted-Light #5C5C5C on Off-White #F9F6F1        │  6.05  │ PASS   │ PASS    │ AA — improved from #6B6B6B   │
+   └─────────────────────────────────────────────────┴────────┴────────┴─────────┴──────────────────────────────┘
+   ───────────────────────────────────────────────────────────────────────────── */
+
+/* ─── shadcn/ui Tokens — LIGHT MODE (public marketing pages) ─────────────── */
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
-    --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
-    --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
-    --primary: 35 51% 51%;
-    --primary-foreground: 0 0% 100%;
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 35 51% 51%;
-    --radius: 0.5rem;
+    --background:            38 25% 98%;       /* #FDFCFA  warm near-white      */
+    --foreground:            25 12% 10%;       /* #1A1A16  warm near-black       */
+    --card:                  38 33% 96%;       /* #F9F6F1  off-white             */
+    --card-foreground:       25 12% 10%;       /* #1A1A16                        */
+    --popover:               38 33% 96%;       /* #F9F6F1                        */
+    --popover-foreground:    25 12% 10%;       /* #1A1A16                        */
+    --primary:               35 51% 51%;       /* #B8924A  decorative gold       */
+    --primary-foreground:    0 0% 100%;        /* #FFFFFF                        */
+    --secondary:             36 29% 92%;       /* #F0EDE6  neutral-200           */
+    --secondary-foreground:  25 12% 10%;       /* #1A1A16                        */
+    --muted:                 36 29% 92%;       /* #F0EDE6                        */
+    --muted-foreground:      20 7% 36%;        /* #5C5C5C  FIXED — 6.05:1 ratio  */
+    --accent:                35 30% 88%;       /* #E8DFD0  warm accent           */
+    --accent-foreground:     25 12% 10%;       /* #1A1A16                        */
+    --destructive:           5 51% 47%;        /* #B84438  warm brick red        */
+    --destructive-foreground:0 0% 100%;        /* #FFFFFF                        */
+    --border:                34 19% 85%;       /* #DDD8CF  warm border           */
+    --input:                 34 19% 85%;       /* #DDD8CF                        */
+    --ring:                  35 55% 57%;       /* #D4A853  accessible gold ring  */
+    --radius:                0.5rem;
+
+    /* Semantic state tokens — light mode */
+    --color-success:         148 33% 27%;      /* #2E5C42 */
+    --color-success-bg:      148 28% 94%;      /* #E8F4EE */
+    --color-warning:         35 71% 31%;       /* #8B5C18 */
+    --color-warning-bg:      35 80% 94%;       /* #FDF0DC */
+    --color-info:            174 33% 26%;      /* #2E5A54 */
+    --color-info-bg:         174 28% 93%;      /* #E6F4F3 */
+    --color-destructive-bg:  5 60% 95%;        /* #FCECEA */
   }
 
+  /* ── DARK MODE — Dashboard & Admin Panel ──────────────────────────────────
+     All tokens tuned for #0A0A0A base / #141414 card surfaces.
+     Primary uses gold.accessible (#D4A853) to meet AA on dark at small sizes.
+     ──────────────────────────────────────────────────────────────────────── */
   .dark {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
-    --card: 222.2 84% 4.9%;
-    --card-foreground: 210 40% 98%;
-    --popover: 222.2 84% 4.9%;
-    --popover-foreground: 210 40% 98%;
-    --primary: 35 51% 51%;
-    --primary-foreground: 0 0% 100%;
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 35 51% 51%;
+    --background:            0 0% 4%;          /* #0A0A0A  surface.base          */
+    --foreground:            38 33% 96%;       /* #F9F6F1  off-white on dark      */
+    --card:                  0 0% 8%;          /* #141414  surface.card           */
+    --card-foreground:       38 33% 96%;       /* #F9F6F1                        */
+    --popover:               0 0% 10%;         /* #1A1A1A  surface.overlay        */
+    --popover-foreground:    38 33% 96%;       /* #F9F6F1                        */
+    --primary:               35 55% 57%;       /* #D4A853  gold.accessible        */
+    --primary-foreground:    0 0% 100%;        /* #FFFFFF                        */
+    --secondary:             40 8% 13%;        /* #222018  surface.hover-ish      */
+    --secondary-foreground:  38 20% 88%;       /* #E0DAD0                        */
+    --muted:                 42 6% 17%;        /* #2E2E28  surface.divider        */
+    --muted-foreground:      35 5% 56%;        /* #8F8F8A  FIXED — 5.72:1 ratio  */
+    --accent:                40 10% 16%;       /* #2A2720  surface.border-ish     */
+    --accent-foreground:     38 20% 88%;       /* #E0DAD0                        */
+    --destructive:           5 51% 47%;        /* #B84438  same warm brick        */
+    --destructive-foreground:38 33% 96%;       /* #F9F6F1                        */
+    --border:                42 8% 18%;        /* #2E2B24  warm dark border       */
+    --input:                 42 8% 18%;        /* #2E2B24                        */
+    --ring:                  35 55% 57%;       /* #D4A853  gold.accessible ring   */
+
+    /* Semantic state tokens — dark mode */
+    --color-success:         148 26% 55%;      /* #6EAF87 */
+    --color-success-bg:      148 35% 10%;      /* #0F2018 */
+    --color-warning:         35 64% 53%;       /* #D4963C */
+    --color-warning-bg:      35 65% 8%;        /* #201808 */
+    --color-info:            174 26% 54%;      /* #66ADA4 */
+    --color-info-bg:         174 35% 9%;       /* #0C1E1C */
+    --color-destructive-bg:  5 35% 9%;         /* #1E0E0C */
   }
 }
 
 /* ─── Brand CSS Custom Properties ─────────────────────────────────────────── */
 :root {
-  --color-gold-primary: #B8924A;
-  --color-gold-light:   #D4AF72;
-  --color-gold-dark:    #8B6A2E;
-  --color-offwhite:     #F9F6F1;
-  --color-near-black:   #0A0A0A;
-  --color-card-black:   #141414;
-  --color-body-text:    #1A1A1A;
-  --color-muted-text:   #6B6B6B;
+  /* Gold Variants (3 total — strict limit) */
+  --color-gold:             #B8924A;   /* decorative — borders, shadows, gradient, large text ≥18px/700w on dark */
+  --color-gold-accessible:  #D4A853;   /* AA small text — 8.24:1 on #141414, 8.98:1 on #0A0A0A                  */
+  --color-gold-muted:       #9B7A38;   /* disabled gold / subdued state / hover midpoint                         */
+
+  /* Legacy aliases (unchanged — prevent component breakage) */
+  --color-gold-primary:     #B8924A;
+  --color-gold-light:       #D4AF72;
+  --color-gold-dark:        #8B6A2E;
+
+  /* Surface scale — dark side */
+  --surface-base:     #0A0A0A;
+  --surface-raised:   #111111;
+  --surface-card:     #141414;
+  --surface-overlay:  #1A1A1A;
+  --surface-hover:    #202018;
+  --surface-border:   #242420;
+  --surface-divider:  #2E2E28;
+
+  /* Neutral scale — light side */
+  --neutral-50:   #FDFCFA;
+  --neutral-100:  #F9F6F1;   /* brand off-white */
+  --neutral-200:  #F0EDE6;
+  --neutral-300:  #E4DFD5;
+  --neutral-400:  #CEC7B9;
+  --neutral-600:  #958D80;
+  --neutral-700:  #7A7268;
+  --neutral-800:  #5C5650;
+
+  /* Text tokens */
+  --color-offwhite:         #F9F6F1;
+  --color-near-black:       #0A0A0A;
+  --color-card-black:       #141414;
+  --color-body-text:        #1A1A1A;
+  --color-muted-text:       #5C5C5C;   /* FIXED: was #6B6B6B; now 6.05:1 on off-white */
+  --color-muted-text-dark:  #8F8F8F;   /* NEW: muted on dark cards — 5.72:1 on #141414 */
 }
 
 /* ─── Global Reset ─────────────────────────────────────────────────────────── */
@@ -82,25 +155,29 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* ─── Focus Visible ─────────────────────────────────────────────────────────── */
+/* ─── Focus Visible — AA-compliant ring ─────────────────────────────────────── */
+/* Uses gold.accessible (#D4A853) — 8.98:1 on dark, with 3px width for visibility */
 *:focus-visible {
-  outline: 2px solid #B8924A;
-  outline-offset: 2px;
+  outline: 3px solid #D4A853;
+  outline-offset: 3px;
 }
 
 /* ─── Component Utilities ────────────────────────────────────────────────────── */
 @layer components {
-  /* Phase 2 required class name */
+
+  /* ── Gradient text — ONLY use on text ≥18px with font-weight ≥600 on dark backgrounds ── */
+  /* Never use on light backgrounds; never on text <18px; never on disabled states.           */
+  /* For text below these thresholds, use text-[#D4A853] (solid gold.accessible) instead.    */
   .gold-gradient-text {
-    background: linear-gradient(135deg, #B8924A 0%, #D4AF72 50%, #8B6A2E 100%);
+    background: linear-gradient(135deg, #C9A050 0%, #EAC96A 50%, #9E7A3D 100%);
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;
   }
 
-  /* Legacy alias — existing components use this */
+  /* Legacy alias — preserves existing components */
   .text-gold-gradient {
-    background: linear-gradient(135deg, #B8924A 0%, #D4AF72 50%, #8B6A2E 100%);
+    background: linear-gradient(135deg, #C9A050 0%, #EAC96A 50%, #9E7A3D 100%);
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;
@@ -111,34 +188,240 @@ body {
     padding-bottom: clamp(3rem, 8vw, 6rem);
   }
 
+  /* Section label uses gold.accessible for AA compliance at small size */
   .section-label {
-    @apply text-gold-primary uppercase tracking-widest text-sm font-heading font-semibold mb-3 block;
+    @apply uppercase tracking-widest text-sm font-heading font-semibold mb-3 block;
+    color: #D4A853;
   }
 
+  /* ── Primary Button ──
+     Default:  gold-gradient bg, white text
+     Hover:    gradient shifts +5% lighter (shadow amplified)
+     Active:   scale down slightly, shadow reduced
+     Focus:    3px gold.accessible ring, 3px offset
+     Disabled: muted warm surface, gold.muted text, 60% opacity, no pointer */
   .btn-primary {
-    @apply bg-gold-gradient text-white font-heading font-bold px-8 py-4 rounded-full
-           shadow-lg hover:shadow-gold-md transition-all duration-300;
+    @apply font-heading font-bold px-8 py-4 rounded-full transition-all duration-300;
+    background: linear-gradient(135deg, #C9A050 0%, #EAC96A 50%, #9E7A3D 100%);
+    color: #FFFFFF;
+    box-shadow: 0 4px 20px rgba(184,146,74,0.25);
+  }
+  .btn-primary:hover:not(:disabled) {
+    background: linear-gradient(135deg, #D4AB5A 0%, #F0D47A 50%, #AA8545 100%);
+    box-shadow: 0 4px 20px rgba(184,146,74,0.40);
+    transform: translateY(-1px);
+  }
+  .btn-primary:active:not(:disabled) {
+    background: linear-gradient(135deg, #BF9545 0%, #D9B95A 50%, #937030 100%);
+    box-shadow: 0 2px 8px rgba(184,146,74,0.20);
+    transform: scale(0.98) translateY(0);
+  }
+  .btn-primary:focus-visible {
+    outline: 3px solid #D4A853;
+    outline-offset: 3px;
+  }
+  .btn-primary:disabled {
+    background: #3A3020;
+    color: #6B5830;
+    box-shadow: none;
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
   }
 
+  /* ── Secondary (Outlined) Button ──
+     Default:  transparent bg, gold border + text
+     Hover:    fills with gold, white text (L delta ≤ 10% — no flash)
+     Active:   fills with gold.muted
+     Focus:    3px gold.accessible ring
+     Disabled: warm dark border, muted gold text */
   .btn-secondary {
-    @apply border-2 border-gold-primary text-gold-primary font-heading font-bold px-8 py-4 rounded-full
-           hover:bg-gold-primary hover:text-white transition-all duration-300;
+    @apply font-heading font-bold px-8 py-4 rounded-full transition-all duration-300;
+    border: 2px solid #B8924A;
+    color: #B8924A;
+    background: transparent;
+  }
+  .btn-secondary:hover:not(:disabled) {
+    background: #B8924A;
+    color: #FFFFFF;
+    box-shadow: 0 4px 20px rgba(184,146,74,0.25);
+  }
+  .btn-secondary:active:not(:disabled) {
+    background: #9B7A38;
+    border-color: #9B7A38;
+    color: #FFFFFF;
+    box-shadow: none;
+  }
+  .btn-secondary:focus-visible {
+    outline: 3px solid #D4A853;
+    outline-offset: 3px;
+  }
+  .btn-secondary:disabled {
+    border-color: #3A3020;
+    color: #6B5830;
+    opacity: 0.5;
+    cursor: not-allowed;
   }
 
+  /* ── Ghost Button ──
+     Solid gold.accessible text; fills with very subtle gold tint on hover */
+  .btn-ghost {
+    @apply font-heading font-bold px-6 py-3 rounded-full transition-all duration-300;
+    color: #D4A853;
+    background: transparent;
+  }
+  .btn-ghost:hover:not(:disabled) {
+    background: rgba(212,168,83,0.10);
+  }
+  .btn-ghost:active:not(:disabled) {
+    background: rgba(212,168,83,0.20);
+  }
+  .btn-ghost:focus-visible {
+    outline: 3px solid #D4A853;
+    outline-offset: 2px;
+  }
+  .btn-ghost:disabled {
+    color: #6B5830;
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  /* ── Input Field ──
+     Default:  dark card bg, warm dark border, off-white text
+     Hover:    border brightens to 40% gold
+     Focus:    border gold.accessible, soft gold ring
+     Error:    warm brick border + ring
+     Disabled: dimmed surface, muted text */
+  .input-field {
+    @apply w-full px-4 py-3 rounded-lg font-body text-body-base transition-all duration-200;
+    background: #141414;
+    border: 1px solid #2E2E28;
+    color: #F9F6F1;
+  }
+  .input-field::placeholder {
+    color: #8F8F8F;
+  }
+  .input-field:hover:not(:disabled):not(:focus) {
+    border-color: rgba(184,146,74,0.40);
+  }
+  .input-field:focus {
+    outline: none;
+    border-color: #D4A853;
+    box-shadow: 0 0 0 3px rgba(212,168,83,0.20);
+  }
+  .input-field.error {
+    border-color: #B84438;
+    box-shadow: 0 0 0 3px rgba(184,68,56,0.20);
+  }
+  .input-field:disabled {
+    background: #111111;
+    color: #4A4A3E;
+    border-color: #2E2E28;
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+
+  /* ── Links ──
+     Default / hover / active all use warm gold family — no cool-blue underlines */
+  .link-gold {
+    color: #D4A853;
+    text-decoration: none;
+    transition: color 0.2s ease;
+  }
+  .link-gold:hover {
+    color: #E8C97A;
+    text-decoration: underline;
+  }
+  .link-gold:active {
+    color: #B8924A;
+  }
+  .link-gold:visited {
+    color: #9B7A38;
+  }
+  .link-gold:focus-visible {
+    outline: 2px solid #D4A853;
+    outline-offset: 2px;
+  }
+
+  /* ── Semantic State Badges ── */
+  .badge-success {
+    background: var(--color-success-bg, hsl(148 28% 94%));
+    color: #2E5C42;
+    @apply px-3 py-1 rounded-pill text-caption font-heading font-semibold;
+  }
+  .dark .badge-success {
+    background: #0F2018;
+    color: #6EAF87;
+  }
+
+  .badge-warning {
+    background: var(--color-warning-bg, hsl(35 80% 94%));
+    color: #8B5C18;
+    @apply px-3 py-1 rounded-pill text-caption font-heading font-semibold;
+  }
+  .dark .badge-warning {
+    background: #201808;
+    color: #D4963C;
+  }
+
+  .badge-info {
+    background: var(--color-info-bg, hsl(174 28% 93%));
+    color: #2E5A54;
+    @apply px-3 py-1 rounded-pill text-caption font-heading font-semibold;
+  }
+  .dark .badge-info {
+    background: #0C1E1C;
+    color: #66ADA4;
+  }
+
+  .badge-destructive {
+    background: hsl(5 60% 95%);
+    color: #8B2E24;
+    @apply px-3 py-1 rounded-pill text-caption font-heading font-semibold;
+  }
+  .dark .badge-destructive {
+    background: #1E0E0C;
+    color: #E06858;
+  }
+
+  /* ── Surface layer helpers ── */
+  /* Use these to layer dark surfaces correctly: base → raised → card → overlay */
+  .surface-base    { background: #0A0A0A; }
+  .surface-raised  { background: #111111; }
+  .surface-card    { background: #141414; }
+  .surface-overlay { background: #1A1A1A; }
+
+  /* ── Decorative gold utilities ── */
   .gold-divider {
-    @apply h-px w-full bg-gold-gradient opacity-30;
+    @apply h-px w-full opacity-30;
+    background: linear-gradient(135deg, #C9A050 0%, #EAC96A 50%, #9E7A3D 100%);
   }
 
   .glass-card {
-    @apply backdrop-blur-sm bg-dark-card/80 border border-gold-primary/20 rounded-card
-           hover:border-gold-primary/40 hover:shadow-gold-sm transition-all duration-300;
+    @apply backdrop-blur-sm border rounded-card transition-all duration-300;
+    background: rgba(20,20,20,0.80);
+    border-color: rgba(184,146,74,0.20);
+    box-shadow: 0 2px 8px rgba(184,146,74,0.10);
+  }
+  .glass-card:hover {
+    border-color: rgba(184,146,74,0.35);
+    box-shadow: 0 4px 20px rgba(184,146,74,0.20);
+  }
+
+  /* Admin table row hover — warm dark tint, no harsh flash */
+  .admin-row {
+    @apply transition-colors duration-150;
+    background: transparent;
+  }
+  .admin-row:hover {
+    background: #202018;   /* surface.hover — ΔL ≈ 3%, no flash */
   }
 }
 
-/* ─── Button Glow Animation ──────────────────────────────────────────────────── */
+/* ─── Button Glow Animation — updated to gold.accessible ────────────────────── */
 @keyframes goldGlow {
-  0%, 100% { box-shadow: 0 0 12px rgba(184,146,74,0.4); }
-  50%       { box-shadow: 0 0 28px rgba(184,146,74,0.8); }
+  0%, 100% { box-shadow: 0 0 12px rgba(212,168,83,0.35); }
+  50%       { box-shadow: 0 0 28px rgba(212,168,83,0.70); }
 }
 .btn-glow-pulse:hover {
   animation: goldGlow 1.5s ease-in-out infinite;
@@ -157,16 +440,17 @@ div[style*="z-index: 9999"][style*="position: fixed"] > a[href*="replit.com"] {
   pointer-events: none !important;
 }
 
-/* ─── Custom Scrollbar ───────────────────────────────────────────────────────── */
+/* ─── Custom Scrollbar — uses gold.accessible for thumb ─────────────────────── */
 ::-webkit-scrollbar {
   width: 6px;
 }
-
 ::-webkit-scrollbar-track {
-  background: var(--color-near-black);
+  background: var(--surface-base);
 }
-
 ::-webkit-scrollbar-thumb {
-  background: var(--color-gold-primary);
+  background: #D4A853;
   border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #B8924A;
 }

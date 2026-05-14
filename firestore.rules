@@ -7,13 +7,15 @@ rules_version = '2';
 // from the browser. Firestore rules are the sole security layer.
 //
 // Collections:
-//   users/{userId}        — user profiles (doc ID == Firebase Auth UID)
-//   contacts/{contactId}  — contact form submissions (doc ID == UUID)
-//   services/{serviceId}  — service offerings (doc ID == slug)
+//   users/{userId}                          — user profiles (doc ID == Firebase Auth UID)
+//   users/{userId}/disputePackages/{id}     — AI-generated dispute letter packages
+//   users/{userId}/creditReviews/{id}       — AI credit review history
+//   contacts/{contactId}                    — contact form submissions (doc ID == UUID)
+//   services/{serviceId}                    — service offerings (doc ID == slug)
 //
 // Roles:
-//   Admin — Firebase Auth custom claim: request.auth.token.role == 'admin'
-//   User  — any authenticated user without the admin claim
+//   Admin — role field on the user's Firestore document == 'admin'
+//   User  — any authenticated user without the admin role
 // ─────────────────────────────────────────────────────────────────────────────
 
 service cloud.firestore {
@@ -25,8 +27,12 @@ service cloud.firestore {
       return request.auth != null;
     }
 
+    // Reads the role from the user's Firestore document.
+    // NOTE: The app stores role in Firestore (not as a Firebase custom claim),
+    // so we must use get() here rather than request.auth.token.role.
     function isAdmin() {
-      return isSignedIn() && request.auth.token.role == 'admin';
+      return isSignedIn()
+        && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
     }
 
     function isOwner(uid) {
@@ -62,7 +68,7 @@ service cloud.firestore {
            ])
         && !('passwordHash' in request.resource.data);
 
-      // Owners may update safe fields only (cannot change role, email, or id).
+      // Owners may update safe fields only (cannot escalate role, change email, or id).
       // Admins may update any field (plan, creditScore, etc.).
       allow update: if
         (
@@ -75,6 +81,46 @@ service cloud.firestore {
         || isAdmin();
 
       allow delete: if isAdmin();
+
+      // ─── users/{userId}/disputePackages/{packageId} ───────────────────────
+      //
+      // Schema:
+      //   createdAt   : timestamp
+      //   status      : 'Generated' | 'Mailed' | 'Under Review' | 'Resolved'
+      //   letterCount : number
+      //   bureaus     : string[]
+      //   itemNames   : string[]
+      //   letters     : array of letter objects
+      //
+      // Access:
+      //   READ, CREATE, UPDATE — owner only
+      //   DELETE              — owner or admin
+
+      match /disputePackages/{packageId} {
+        allow read, create: if isOwner(userId);
+        allow update: if isOwner(userId)
+          && request.resource.data.diff(resource.data).affectedKeys()
+               .hasOnly(['status']);
+        allow delete: if isOwner(userId) || isAdmin();
+      }
+
+      // ─── users/{userId}/creditReviews/{reviewId} ──────────────────────────
+      //
+      // Schema:
+      //   createdAt    : timestamp
+      //   firstName    : string
+      //   currentScore : string
+      //   goalScore    : string
+      //   result       : object (CreditReviewResult)
+      //
+      // Access:
+      //   READ, CREATE — owner only
+      //   DELETE       — owner or admin
+
+      match /creditReviews/{reviewId} {
+        allow read, create: if isOwner(userId);
+        allow delete: if isOwner(userId) || isAdmin();
+      }
     }
 
     // ─── contacts/{contactId} ────────────────────────────────────────────────
@@ -90,7 +136,7 @@ service cloud.firestore {
     //   createdAt         : string  (ISO-8601)
     //
     // Access:
-    //   CREATE — anyone (public contact form)
+    //   CREATE — anyone (public contact form, no auth required)
     //   READ   — admin only
     //   UPDATE — admin only (status changes)
     //   DELETE — admin only

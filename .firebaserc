@@ -1,7 +1,6 @@
 {
   "projects": {
-    "default": "your-firebase-project-id",
-    "production": "your-firebase-project-id",
-    "staging": "your-firebase-project-id-staging"
+    "default":    "proximity-2c866",
+    "production": "proximity-2c866"
   }
 }

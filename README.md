@@ -14,7 +14,6 @@ Built with **React 18 + Vite + TypeScript**, a gold-and-dark luxury design syste
 - [Getting Started](#getting-started)
 - [Environment Variables](#environment-variables)
 - [Firebase Setup](#firebase-setup)
-- [Deployment](#deployment)
 - [Design System](#design-system)
 - [Firestore Collections](#firestore-collections)
 - [Security Model](#security-model)
@@ -129,7 +128,6 @@ Built with **React 18 + Vite + TypeScript**, a gold-and-dark luxury design syste
 ├── firestore.indexes.json              # Composite + single-field indexes
 ├── firebase.json                       # Firebase CLI config (Firestore + Hosting)
 ├── .firebaserc                         # Firebase project alias (proximity-2c866)
-├── DEPLOYMENT.md                       # Step-by-step deployment guide
 └── README.md
 ```
 
@@ -226,42 +224,6 @@ There is no automated admin creation — set it manually once:
 2. Open Firebase Console → **Firestore → users → `{your-uid}`**
 3. Edit the `role` field from `"user"` to `"admin"`
 4. The admin panel is now accessible at `/admin`
-
----
-
-## Deployment
-
-### Vercel (Recommended)
-
-1. Push the repository to GitHub
-2. Import the project at [vercel.com](https://vercel.com) → **Add New Project**
-3. Set configuration:
-   - **Root Directory:** `client`
-   - **Framework Preset:** Vite
-   - **Build Command:** `npm run build`
-   - **Output Directory:** `dist`
-4. Add all `VITE_*` environment variables in **Project Settings → Environment Variables**
-5. Click **Deploy**
-
-The included `client/vercel.json` automatically configures:
-- SPA routing rewrites (`/* → /index.html`)
-- Long-term asset caching (`/assets/**`)
-- Security headers (HSTS, X-Frame-Options, X-Content-Type-Options, Referrer-Policy, Permissions-Policy)
-
-### Firebase Hosting (Alternative)
-
-```bash
-npm run build --prefix client
-firebase deploy --only hosting
-```
-
-### Replit Deployments
-
-1. All `VITE_*` secrets are managed in the Replit **Secrets** panel
-2. The **Start application** workflow runs `npm run dev --prefix client`
-3. Use **Replit Deployments** to publish — it runs `npm run build --prefix client` and serves `dist/`
-
-For the full step-by-step guide, see **[DEPLOYMENT.md](./DEPLOYMENT.md)**.
 
 ---
 

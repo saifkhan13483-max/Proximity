@@ -81,7 +81,7 @@ function ServicesDropdown({ onClose }: { onClose: () => void }) {
             </div>
             <div>
               <p className="font-body font-semibold text-white text-sm leading-none">{item.label}</p>
-              <p className="font-body text-muted-text text-xs mt-0.5">{item.desc}</p>
+              <p className="font-body text-muted-text-dark text-xs mt-0.5">{item.desc}</p>
             </div>
             <ArrowRight size={13} className="ml-auto text-gold-primary/0 group-hover:text-gold-primary/70 transition-colors duration-150" />
           </Link>
@@ -339,7 +339,7 @@ export default function Navbar() {
                                           </span>
                                         )}
                                       </div>
-                                      <p className="font-body text-muted-text text-xs mt-0.5">{item.desc}</p>
+                                      <p className="font-body text-muted-text-dark text-xs mt-0.5">{item.desc}</p>
                                     </div>
                                     <ArrowRight size={13} className="ml-auto text-gold-primary/0 group-hover:text-gold-primary/70 transition-colors duration-150" />
                                   </Link>
@@ -575,7 +575,7 @@ export default function Navbar() {
                                     <item.icon size={14} className="text-gold-primary flex-shrink-0" />
                                     <div>
                                       <p className="font-body text-white/80 text-sm font-medium leading-none">{item.label}</p>
-                                      <p className="font-body text-white/30 text-[11px] mt-0.5">{item.desc}</p>
+                                      <p className="font-body text-white/60 text-[11px] mt-0.5">{item.desc}</p>
                                     </div>
                                   </Link>
                                 ))}
@@ -636,7 +636,7 @@ export default function Navbar() {
                                             </span>
                                           )}
                                         </div>
-                                        <p className="font-body text-white/30 text-[11px] mt-0.5">{item.desc}</p>
+                                        <p className="font-body text-white/60 text-[11px] mt-0.5">{item.desc}</p>
                                       </div>
                                     </Link>
                                   )

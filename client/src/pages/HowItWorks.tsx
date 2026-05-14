@@ -109,7 +109,7 @@ function StepRow({ step, index }: { step: Step; index: number }) {
 
           {/* Step number + title */}
           <div className="flex items-baseline gap-4 mb-3">
-            <span className="font-heading font-black text-[3.5rem] leading-none bg-gradient-to-br from-[#D4AF72] to-[#8B6A2E] bg-clip-text text-transparent select-none">
+            <span className="font-heading font-black text-[3.5rem] leading-none bg-gradient-to-br from-[#D4AF72] to-[#9E7A3D] bg-clip-text text-transparent select-none">
               {step.number}
             </span>
             <h2 className="font-heading font-bold text-white text-2xl lg:text-3xl leading-tight">
@@ -224,7 +224,7 @@ export default function HowItWorks() {
               className="font-heading font-black text-white text-4xl sm:text-5xl lg:text-6xl leading-tight mb-6"
             >
               Four Steps to a
-              <span className="block bg-gradient-to-r from-[#D4AF72] via-[#B8924A] to-[#8B6A2E] bg-clip-text text-transparent">
+              <span className="block bg-gradient-to-r from-[#D4AF72] via-[#B8924A] to-[#9E7A3D] bg-clip-text text-transparent">
                 Better Credit Score
               </span>
             </motion.h1>
@@ -286,7 +286,7 @@ export default function HowItWorks() {
                 transition={{ duration: 0.5, delay: i * 0.1 }}
                 className="flex flex-col items-center gap-2"
               >
-                <span className="font-heading font-black text-3xl lg:text-4xl bg-gradient-to-br from-[#D4AF72] to-[#8B6A2E] bg-clip-text text-transparent">
+                <span className="font-heading font-black text-3xl lg:text-4xl bg-gradient-to-br from-[#D4AF72] to-[#9E7A3D] bg-clip-text text-transparent">
                   {stat.value}
                 </span>
                 <span className="font-body text-[#9A9A9A] text-[0.8rem] leading-snug max-w-[120px]">

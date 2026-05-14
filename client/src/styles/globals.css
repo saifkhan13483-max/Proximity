@@ -274,13 +274,13 @@ body {
   }
   .btn-secondary:hover:not(:disabled):not([aria-disabled="true"]) {
     background: #B8924A;
-    color: #FFFFFF;
+    color: #0A0A0A;
     box-shadow: 0 4px 20px rgba(184,146,74,0.25);
   }
   .btn-secondary:active:not(:disabled):not([aria-disabled="true"]) {
     background: #9B7A38;
     border-color: #9B7A38;
-    color: #FFFFFF;
+    color: #0A0A0A;
     box-shadow: none;
   }
   .btn-secondary:focus-visible {

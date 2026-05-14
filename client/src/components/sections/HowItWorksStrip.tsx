@@ -62,11 +62,11 @@ function StepCard({ step, index }: { step: (typeof steps)[0]; index: number }) {
         {/* Icon + number row */}
         <div className="flex items-center gap-4">
           <div className="relative flex-shrink-0">
-            <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-[#B8924A] to-[#8B6A2E] flex items-center justify-center shadow-[0_0_20px_rgba(184,146,74,0.25)] group-hover:shadow-[0_0_30px_rgba(184,146,74,0.4)] transition-shadow duration-500">
-              <Icon className="w-6 h-6 text-white" strokeWidth={1.75} />
+            <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-[#B8924A] to-[#9E7A3D] flex items-center justify-center shadow-[0_0_20px_rgba(184,146,74,0.25)] group-hover:shadow-[0_0_30px_rgba(184,146,74,0.4)] transition-shadow duration-500">
+              <Icon className="w-6 h-6 text-near-black" strokeWidth={1.75} />
             </div>
           </div>
-          <span className="font-heading font-black text-[2rem] leading-none bg-gradient-to-br from-[#D4AF72] to-[#8B6A2E] bg-clip-text text-transparent">
+          <span className="font-heading font-black text-[2rem] leading-none bg-gradient-to-br from-[#D4AF72] to-[#9E7A3D] bg-clip-text text-transparent">
             {step.number}
           </span>
         </div>
@@ -143,7 +143,7 @@ export default function HowItWorksStrip() {
             className="font-heading font-bold text-white text-3xl sm:text-4xl lg:text-[2.75rem] leading-tight"
           >
             Four Simple Steps to a
-            <span className="block bg-gradient-to-r from-[#D4AF72] via-[#B8924A] to-[#8B6A2E] bg-clip-text text-transparent">
+            <span className="block bg-gradient-to-r from-[#D4AF72] via-[#B8924A] to-[#9E7A3D] bg-clip-text text-transparent">
               Better Score
             </span>
           </motion.h2>

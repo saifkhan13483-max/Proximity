@@ -528,7 +528,7 @@ export default function DisputeAutopilot() {
               </span>
             </motion.div>
             <motion.h1 variants={fadeUp} className="font-heading font-extrabold text-4xl md:text-5xl lg:text-6xl text-white mb-4 leading-tight">
-              Dispute <span className="bg-gradient-to-r from-[#D4AF72] via-[#B8924A] to-[#8B6A2E] bg-clip-text text-transparent">Autopilot</span>
+              Dispute <span className="bg-gradient-to-r from-[#D4AF72] via-[#B8924A] to-[#9E7A3D] bg-clip-text text-transparent">Autopilot</span>
             </motion.h1>
             <motion.p variants={fadeUp} className="font-body text-white/60 text-lg max-w-2xl mx-auto leading-relaxed">
               Enter all your negative credit items at once. Our AI generates your complete, bureau-specific dispute package — ready to mail in minutes.

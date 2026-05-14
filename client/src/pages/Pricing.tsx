@@ -82,8 +82,8 @@ function PlanCard({
     >
       {plan.badge && (
         <div className="absolute -top-3.5 left-1/2 -translate-x-1/2">
-          <span className="inline-flex items-center gap-1 px-3 py-1 bg-gold-gradient text-white font-heading font-bold text-xs rounded-full shadow-gold-sm whitespace-nowrap">
-            <Star size={10} fill="white" />
+          <span className="inline-flex items-center gap-1 px-3 py-1 bg-gold-gradient text-near-black font-heading font-bold text-xs rounded-full shadow-gold-sm whitespace-nowrap">
+            <Star size={10} fill="currentColor" />
             {plan.badge}
           </span>
         </div>
@@ -156,7 +156,7 @@ function PlanCard({
             className={cn(
               'w-full flex items-center justify-center gap-2 py-3 rounded-xl font-heading font-bold text-sm transition-all duration-200 disabled:opacity-60',
               plan.highlighted
-                ? 'bg-gold-gradient text-white shadow-gold-sm hover:shadow-gold-md'
+                ? 'bg-gold-gradient text-near-black shadow-gold-sm hover:shadow-gold-md'
                 : 'bg-white/8 hover:bg-white/12 text-white border border-white/10 hover:border-gold-primary/25'
             )}
           >
@@ -339,7 +339,7 @@ export default function Pricing() {
             <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
               <a
                 href="/contact"
-                className="inline-flex items-center gap-2 px-6 py-3 rounded-pill bg-gold-gradient text-white font-heading font-bold text-sm shadow-gold-sm hover:shadow-gold-md transition-all"
+                className="inline-flex items-center gap-2 px-6 py-3 rounded-pill bg-gold-gradient text-near-black font-heading font-bold text-sm shadow-gold-sm hover:shadow-gold-md transition-all"
               >
                 Book Free Consultation <ArrowRight size={14} />
               </a>

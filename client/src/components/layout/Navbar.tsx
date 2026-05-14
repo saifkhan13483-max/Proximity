@@ -435,7 +435,7 @@ export default function Navbar() {
                   </Link>
                   <Link
                     to="/register"
-                    className="inline-flex items-center gap-1.5 rounded-pill bg-gold-gradient font-heading font-bold text-white shadow-gold-sm hover:shadow-gold-md transition-all duration-200 overflow-hidden px-3.5 py-2 text-xs lg:px-5 lg:py-2.5 lg:text-sm lg:gap-2"
+                    className="inline-flex items-center gap-1.5 rounded-pill bg-gold-gradient font-heading font-bold text-near-black shadow-gold-sm hover:shadow-gold-md transition-all duration-200 overflow-hidden px-3.5 py-2 text-xs lg:px-5 lg:py-2.5 lg:text-sm lg:gap-2"
                   >
                     <UserPlus size={12} className="lg:hidden" />
                     <span className="lg:hidden">Register</span>

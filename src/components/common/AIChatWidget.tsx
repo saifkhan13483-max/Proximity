@@ -7,8 +7,17 @@ import { cn } from '@lib/utils'
 
 const WELCOME: ChatMessage = {
   role: 'model',
-  text: "Welcome to Proximity Credit Repair! 👋\n\nI'm your personal AI Credit Advisor — here to guide you through your credit journey, answer questions about our services, pricing, and free AI tools, or help you understand your next steps toward a stronger score.\n\nHow can I assist you today?",
+  text: "Welcome to Proximity Credit Repair!\n\nI'm your AI Credit Advisor — I know everything about this site: every service, pricing plan, free tool, team member, and FAQ. I can also give you real credit advice.\n\nHow can I help you today?",
 }
+
+const QUICK_REPLIES = [
+  { label: 'Pricing & Plans', text: 'What are your pricing plans?' },
+  { label: 'Free AI Tools', text: 'What free AI tools do you offer?' },
+  { label: 'How It Works', text: 'How does the credit repair process work?' },
+  { label: 'Services', text: 'What services does Proximity offer?' },
+  { label: 'Get Started', text: 'How do I get started?' },
+  { label: 'Success Stories', text: 'Can you share some client success stories?' },
+]
 
 export default function AIChatWidget() {
   const [open, setOpen] = useState(false)
@@ -117,6 +126,20 @@ export default function AIChatWidget() {
                   </div>
                 </div>
               ))}
+
+              {messages.length === 1 && !loading && (
+                <div className="flex flex-col gap-2 pl-8">
+                  {QUICK_REPLIES.map((qr) => (
+                    <button
+                      key={qr.label}
+                      onClick={() => handleSend(qr.text)}
+                      className="text-left px-3 py-2 rounded-xl border border-gold-primary/25 bg-gold-primary/5 text-gold-primary font-body text-xs hover:bg-gold-primary/15 hover:border-gold-primary/50 transition-all"
+                    >
+                      {qr.label}
+                    </button>
+                  ))}
+                </div>
+              )}
 
               {loading && (
                 <div className="flex gap-2 justify-start">
